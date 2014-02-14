@@ -1,3 +1,4 @@
+%bcond_with x
 %define PREFIX /usr/apps/org.tizen.lockscreen
 
 Name:       org.tizen.lockscreen
@@ -8,7 +9,9 @@ Group:      TBD
 License:    Apache
 Source0:    %{name}-%{version}.tar.gz
 BuildRequires: pkgconfig(capi-appfw-application)
+%if %{with x}
 BuildRequires: pkgconfig(ecore-x)
+%endif
 BuildRequires: pkgconfig(appcore-efl)
 BuildRequires: pkgconfig(capi-ui-efl-util)
 BuildRequires: pkgconfig(ail)
