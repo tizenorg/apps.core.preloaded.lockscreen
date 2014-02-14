@@ -18,7 +18,7 @@
 #include <vconf.h>
 #include <vconf-keys.h>
 #include <ail.h>
-#include <ui-gadget.h>
+#include <ui-gadget-efl.h>
 #include <heynoti.h>
 #include <efl_util.h>
 
