@@ -70,7 +70,7 @@ collections {
 				mouse_events: 1;
 				scale: 1;
 				entry_mode: EDITABLE;
-				select_mode: BLOCK_HANDLE;
+				select_mode: DEFAULT;
 				multiline: 0;
 				source: "elm/entry/selection/default";
 				source2: "elm/entry/selection/block_handle";
@@ -145,7 +145,7 @@ collections {
 				mouse_events: 1;
 				scale: 1;
 				entry_mode: PASSWORD;
-				select_mode: BLOCK_HANDLE;
+				select_mode: DEFAULT;
 				multiline: 0;
 				source: "elm/entry/selection/default";
 				source2: "elm/entry/selection/block_handle";
