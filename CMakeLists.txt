@@ -19,7 +19,6 @@ SET(PKGNAME "org.${VENDOR}.${PACKAGE}")
 SET(PREFIX ${CMAKE_INSTALL_PREFIX})
 SET(BINDIR "${PREFIX}/bin")
 SET(RESDIR "${PREFIX}/res")
-SET(DATADIR "/opt/usr/${PKGNAME}/data")
 SET(LOCALEDIR "${RESDIR}/locale")
 SET(IMAGEDIR "${RESDIR}/image/${PROJECT_NAME}")
 SET(EDJEDIR "${RESDIR}/edje/${PROJECT_NAME}")
@@ -48,6 +47,7 @@ pkg_check_modules(pkgs REQUIRED
 	ui-gadget-1
 	heynoti
 	capi-system-info
+	libtzplatform-config
 )
 
 FOREACH(flag ${pkgs_CFLAGS})
@@ -106,7 +106,7 @@ CONFIGURE_FILE(${PKGNAME}.xml.in ${CMAKE_BINARY_DIR}/${PKGNAME}.xml)
 INSTALL(FILES ${CMAKE_BINARY_DIR}/${PKGNAME}.xml DESTINATION ${MANIFESTXMLDIR})
 
 #Install smack file
-#INSTALL(FILES ${CMAKE_SOURCE_DIR}/${PKGNAME}.rule DESTINATION /opt/etc/smack/accesses.d)
+#INSTALL(FILES ${CMAKE_SOURCE_DIR}/${PKGNAME}.rule DESTINATION ${TZ_SYS_ETC}/smack/accesses.d)
 INSTALL(DIRECTORY DESTINATION ${DATADIR})
 
 ADD_SUBDIRECTORY(po)

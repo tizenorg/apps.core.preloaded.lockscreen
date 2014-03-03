@@ -18,17 +18,18 @@
 #define __LOCKSCREEN_H__
 
 #include <Elementary.h>
+
+/* For multi-user support */
+#include <tzplatform_config.h>
+
 #include "log.h"
 
 #if !defined(PACKAGE)
 #define PACKAGE "lockscreen"
 #endif
 
-#if !defined(EDJDIR)
-#define EDJDIR "/usr/apps/org.tizen."PACKAGE"/res/edje/lockscreen"
-#endif
-
-#define EDJEFILE EDJEDIR"/"PACKAGE".edj"
+#define EDJEFILE tzplatform_mkpath(TZ_SYS_RO_APP, "org.tizen."PACKAGE"/res/edje/lockscreen/"PACKAGE".edj")
+#define EDJ_LOCKSCREEN_ENTRY tzplatform_mkpath(TZ_SYS_RO_APP, "org.tizen."PACKAGE"/res/edje/lockscreen/lockscreen-entry.edj")
 
 #define _S(str)	dgettext("sys_string", str)
 #define _L(str) dgettext("lockscreen", str)
