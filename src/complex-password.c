@@ -16,6 +16,9 @@
 
 #include <vconf.h>
 
+/* For multi-user support */
+#include <tzplatform_config.h>
+
 #include "lockscreen.h"
 #include "util.h"
 #include "log.h"
@@ -29,7 +32,7 @@
 #define VCONFKEY_SETAPPL_PASSWORD_TIMESTAMP_STR       VCONFKEY_SETAPPL_PREFIX"/phone_lock_timestamp"
 #define PASSWORD_TIMESTAMP_STR_LENGTH 512
 #define PASSWORD_BLOCK_SECONDS        30
-#define EDJ_LOCKSCREEN_ENTRY EDJDIR"/lockscreen-entry.edj"
+#define EDJ_LOCKSCREEN_ENTRY tzplatform_mkpath3(TZ_SYS_RO_APP, EDJDIR, PACKAGE"-entry.edj")
 
 static Evas_Coord complex_pw_down_y = 0;
 

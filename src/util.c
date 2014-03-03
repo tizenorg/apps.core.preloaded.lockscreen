@@ -22,13 +22,16 @@
 #include <heynoti.h>
 #include <efl_util.h>
 
+/* For multi-user support */
+#include <tzplatform_config.h>
+
 #include "util.h"
 #include "sim-state.h"
 #include "info.h"
 #include "bg.h"
 #include "noti.h"
 
-#define DEFAULT_BG_PATH     "/opt/share/settings/Wallpapers/Home_default.jpg"
+#define DEFAULT_BG_PATH     tzplatform_mkpath(TZ_SYS_SHARE, "settings/Wallpapers/Home_default.jpg")
 #define SYSTEM_RESUME       "system_wakeup"
 
 static Evas_Coord pos_down_y = 0;
