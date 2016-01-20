@@ -205,6 +205,8 @@ bool _create_app(void *data)
 
 	_D("base scale : %f", elm_app_base_scale_get());
 
+// FIXME
+#if 0
 	/* Get lockscreen type */
 	int ret = lock_property_get_int(PROPERTY_TYPE_VCONFKEY, VCONFKEY_SETAPPL_SCREEN_LOCK_TYPE_INT, &locktype);
 	if (ret != LOCK_ERROR_OK) {
@@ -213,6 +215,8 @@ bool _create_app(void *data)
 	}
 	_D("lockscreen type : %d", locktype);
 	s_info.lock_type = locktype;
+#endif
+	s_info.lock_type = 1;
 
 	/* Create lockscreen window */
 	win = lock_window_create(locktype);
