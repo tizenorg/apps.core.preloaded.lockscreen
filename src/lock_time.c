@@ -40,7 +40,7 @@ static struct _s_info {
 	UDateFormat *formatter_time;
 	UDateFormat *formatter_ampm;
 	UDateTimePatternGenerator *generator;
-	int timeformat;
+	Eina_Bool use12hformat;
 	char *timeregion_format;
 	char *timezone_id;
 	Eina_Bool is_pre_meridiem;
@@ -55,7 +55,7 @@ static struct _s_info {
 	.formatter_time = NULL,
 	.formatter_ampm = NULL,
 	.generator = NULL,
-	.timeformat = APPCORE_TIME_FORMAT_24,
+	.use12hformat = EINA_FALSE,
 	.timeregion_format = NULL,
 	.timezone_id = NULL,
 	.is_pre_meridiem = EINA_FALSE,
@@ -96,7 +96,7 @@ static UDateFormat *__util_time_ampm_formatter_get(void *data, const char *timez
 	return formatter;
 }
 
-static UDateFormat *__util_time_time_formatter_get(void *data, int time_format, const char *timezone_id)
+static UDateFormat *__util_time_time_formatter_get(void *data, Eina_Bool use12hformat, const char *timezone_id)
 {
 	char buf[64] = {0,};
 	UErrorCode status = U_ZERO_ERROR;
@@ -109,7 +109,7 @@ static UDateFormat *__util_time_time_formatter_get(void *data, int time_format, 
 
 	retv_if(!s_info.generator, NULL);
 
-	if (time_format == APPCORE_TIME_FORMAT_24) {
+	if (use12hformat) {
 		snprintf(buf, sizeof(buf)-1, "%s", "HH:mm");
 	} else {
 		/* set time format 12 */
@@ -258,8 +258,8 @@ static void _util_time_get(int is_current_time, time_t tt_a, char *timezone, cha
 		} else {
 			formatter_date = __util_time_date_formatter_get(NULL, timezone, skeleton);
 		}
-		formatter_time = __util_time_time_formatter_get(NULL, s_info.timeformat, timezone);
-		if (s_info.timeformat == APPCORE_TIME_FORMAT_12) {
+		formatter_time = __util_time_time_formatter_get(NULL, s_info.use12hformat, timezone);
+		if (s_info.use12hformat) {
 			formatter_ampm = __util_time_ampm_formatter_get(NULL, timezone);
 		}
 	} else {
@@ -273,13 +273,13 @@ static void _util_time_get(int is_current_time, time_t tt_a, char *timezone, cha
 	}
 
 	if (!s_info.formatter_time) {
-		s_info.formatter_time = __util_time_time_formatter_get(NULL, s_info.timeformat, NULL);
+		s_info.formatter_time = __util_time_time_formatter_get(NULL, s_info.use12hformat, NULL);
 	}
 
 	__util_time_formatted_time_get(formatter_date, tt, buf_date, sizeof(buf_date));
 
 	/* time */
-	if (s_info.timeformat == APPCORE_TIME_FORMAT_24) {
+	if (!s_info.use12hformat) {
 		__util_time_formatted_time_get(formatter_time, tt, buf_time, sizeof(buf_time)-1);
 	} else {
 		__util_time_formatted_time_get(formatter_time, tt, buf_time, sizeof(buf_time)-1);
@@ -349,7 +349,7 @@ lock_error_e lock_time_update(void)
 	retv_if(!swipe_layout, LOCK_ERROR_FAIL);
 
 	_util_time_get(1, 0, NULL, "MMMMEd", &str_date, &str_time, &str_meridiem);
-	if (s_info.timeformat == APPCORE_TIME_FORMAT_12) {
+	if (s_info.use12hformat) {
 		if (_is_korea_locale()) {
 			snprintf(time_buf, sizeof(time_buf), "<%s>%s </>%s", "small_font", str_meridiem, str_time);
 		} else {
@@ -401,14 +401,14 @@ static void _util_time_formatters_create(void *data)
 		s_info.formatter_date = __util_time_date_formatter_get(NULL, NULL, "MMMMEd");
 	}
 
-	if (s_info.timeformat == APPCORE_TIME_FORMAT_12) {
+	if (s_info.use12hformat) {
 		if (!s_info.formatter_ampm) {
 			s_info.formatter_ampm = __util_time_ampm_formatter_get(NULL, NULL);
 		}
 	}
 
 	if (!s_info.formatter_time) {
-		s_info.formatter_time = __util_time_time_formatter_get(NULL, s_info.timeformat, NULL);
+		s_info.formatter_time = __util_time_time_formatter_get(NULL, s_info.use12hformat, NULL);
 	}
 }
 
@@ -431,16 +431,16 @@ static char *_util_time_regionformat_get(void)
 
 static void _formatter_create(void)
 {
-	bool timeformat_24_bool = false;
+	bool use12hformat_24_bool = false;
 
-	timeformat_24_bool = true;
+	use12hformat_24_bool = true;
 
-	if (timeformat_24_bool) {
-		_D("TIMEFORMAT : 24");
-		s_info.timeformat = APPCORE_TIME_FORMAT_24;
+	if (use12hformat_24_bool) {
+		_D("use12hformat : 24");
+		s_info.use12hformat = EINA_FALSE;
 	} else {
-		_D("TIMEFORMAT : 12");
-		s_info.timeformat = APPCORE_TIME_FORMAT_12;
+		_D("use12hformat : 12");
+		s_info.use12hformat = EINA_TRUE;
 	}
 
 	if (!s_info.timeregion_format) {
@@ -454,7 +454,7 @@ static void _formatter_create(void)
 	_util_time_formatters_create(NULL);
 
 	s_info.is_initialized = 1;
-	_D("%d %s %s", s_info.timeformat, s_info.timeregion_format, s_info.timezone_id);
+	_D("%d %s %s", s_info.use12hformat, s_info.timeregion_format, s_info.timezone_id);
 }
 
 static void _util_time_formatters_destroy(void)
@@ -606,7 +606,7 @@ char *lock_time_formatted_noti_time_get(time_t ts)
 		}
 	}
 
-	if (s_info.timeformat == APPCORE_TIME_FORMAT_24) {
+	if (!s_info.use12hformat) {
 		_util_time_get(0, ts, NULL, UDAT_HOUR_MINUTE , NULL, &time_str, NULL);
 		if (time_str) {
 			return time_str;
