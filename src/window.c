@@ -17,7 +17,6 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Elementary.h>
-#include <vconf.h>
 
 #include "lockscreen.h"
 #include "log.h"

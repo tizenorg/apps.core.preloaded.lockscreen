@@ -23,10 +23,7 @@
 #include <efl_extension.h>
 
 #include <app.h>
-#include <vconf.h>
-#include <aul.h>
 #include <feedback.h>
-#include <dd-display.h>
 
 #include "lockscreen.h"
 #include "log.h"
@@ -87,14 +84,16 @@ void lockscreen_feedback_tap_play(void)
 
 static Eina_Bool _lcd_off_timer_cb(void *data)
 {
-	int ret = 0;
+	//int ret = 0;
 
-	ret = display_change_state(LCD_OFF);
+	// FIXME
+	/* ret = display_change_state(LCD_OFF);
 	if (ret != 0) {
 		_E("Failed to change LCD state : LCD_OFF(%d)", ret);
 	} else {
 		_I("lcd off : %dsec", LOCK_LCD_OFF_TIMEOUT_TIME);
 	}
+	*/
 
 	return ECORE_CALLBACK_CANCEL;
 }
@@ -166,8 +165,11 @@ static Eina_Bool _lock_idler_cb(void *data)
 	/* register callback func. : key sound, touch sound, rotation */
 	lock_property_register(NULL);
 
+	//FIXME
+#if 0
 	/* initialize dbus */
 	lock_dbus_init(NULL);
+#endif
 
 	feedback_initialize();
 
@@ -200,12 +202,11 @@ bool _create_app(void *data)
 	Evas_Object *win = NULL;
 	Evas_Object *bg = NULL;
 	int locktype = 0;
-	int ret = 0;
 
 	_D("base scale : %f", elm_app_base_scale_get());
 
 	/* Get lockscreen type */
-	ret = lock_property_get_int(PROPERTY_TYPE_VCONFKEY, VCONFKEY_SETAPPL_SCREEN_LOCK_TYPE_INT, &locktype);
+	int ret = lock_property_get_int(PROPERTY_TYPE_VCONFKEY, VCONFKEY_SETAPPL_SCREEN_LOCK_TYPE_INT, &locktype);
 	if (ret != LOCK_ERROR_OK) {
 		_E("Failed to get lockscreen type. Set default lockscreen.");
 		locktype = SETTING_SCREEN_LOCK_TYPE_SWIPE;
@@ -253,7 +254,10 @@ void _terminate_app(void *data)
 
 	lock_property_unregister();
 	feedback_deinitialize();
+#if 0
+	//FIXME
 	lock_dbus_fini(NULL);
+#endif
 
 	_fini_theme();
 }

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <appcore-common.h>
 
 #include <unicode/utypes.h>
 #include <unicode/putil.h>
@@ -494,6 +493,7 @@ static void _formatter_destroy(void)
 	s_info.is_initialized = 0;
 }
 
+#if 0
 static void _util_time_vconf_changed_cb(keynode_t *key, void *data)
 {
 	int index = (int)data;
@@ -505,20 +505,26 @@ static void _util_time_vconf_changed_cb(keynode_t *key, void *data)
 		s_info.need_sync = 1;
 	}
 }
+#endif
 
 static void _time_event_attach(void)
 {
-	int ret = 0;
+	//FIXME
+	#if 0
 
+	int ret = 0;
 	/* register vconf cbs */
 	ret = vconf_notify_key_changed(VCONFKEY_TELEPHONY_SVC_ROAM, _util_time_vconf_changed_cb, (void*)3);
 	ret_if(ret != 0);
 	ret = vconf_notify_key_changed(VCONFKEY_SETAPPL_TIMEZONE_INT, _util_time_vconf_changed_cb, (void*)4);
 	ret_if(ret != 0);
+#endif
 }
 
 static void _time_event_deattach(void)
 {
+	//FIXME
+#if 0
 	int ret = 0;
 
 	/* unregister vconf cbs */
@@ -526,6 +532,7 @@ static void _time_event_deattach(void)
 	ret_if(ret != 0);
 	ret = vconf_ignore_key_changed(VCONFKEY_SETAPPL_TIMEZONE_INT, _util_time_vconf_changed_cb);
 	ret_if(ret != 0);
+#endif
 }
 
 static Eina_Bool _timer_cb(void *data)

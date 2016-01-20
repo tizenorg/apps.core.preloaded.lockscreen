@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <vconf.h>
 
 #include "lockscreen.h"
 #include "log.h"
@@ -63,21 +62,14 @@ lock_error_e lock_property_get_string(property_type_e type, void *key, char **st
 		if (SYSTEM_INFO_ERROR_NONE != ret) {
 			ret = -1;
 		}
-		break;
 		_D("SYSTEM INFO : key(%s), val(%s)", (char *)key, *str);
+		break;
 	case PROPERTY_TYPE_RUNTIME_INFO :
 		ret = runtime_info_get_value_string((int)key, &(*str));
 		if (RUNTIME_INFO_ERROR_NONE != ret) {
 			ret = -1;
 		}
 		_D("RUNTIME INFO : key(%d), val(%s)", (int)key, *str);
-		break;
-	case PROPERTY_TYPE_VCONFKEY :
-		*str = vconf_get_str((char *)key);
-		if (!(*str)) {
-			ret = -1;
-		}
-		_D("vconfkey : key(%s), val(%s)", (char *)key, *str);
 		break;
 	default :
 		_E("Failed to get property. type error(%d)", type);
@@ -118,13 +110,6 @@ lock_error_e lock_property_get_bool(property_type_e type, void *key, void *val)
 		}
 		_D("RUNTIME INFO : key(%d), val(%d)", (int)key, *((bool *)val));
 		break;
-	case PROPERTY_TYPE_VCONFKEY :
-		ret = vconf_get_bool((char *)key, val);
-		if (ret < 0) {
-			ret = -1;
-		}
-		_D("vconfkey : key(%s), val(%d)", (char *)key, *((int *)val));
-		break;
 	default :
 		_E("Failed to get property. type error(%d)", type);
 		return LOCK_ERROR_FAIL;
@@ -163,13 +148,6 @@ lock_error_e lock_property_get_int(property_type_e type, void *key, int *val)
 			ret = -1;
 		}
 		_D("RUNTIME INFO : key(%d), val(%d)", (int)key, *val);
-		break;
-	case PROPERTY_TYPE_VCONFKEY :
-		ret = vconf_get_int((char *)key, &(*val));
-		if (ret < 0) {
-			ret = -1;
-		}
-		_D("vconfkey : key(%s), val(%d)", (char *)key, *val);
 		break;
 	default :
 		_E("Failed to get property. type error(%d)", type);

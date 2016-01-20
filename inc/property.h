@@ -23,7 +23,6 @@
 
 #include <app_preference.h>
 
-#include <vconf.h>
 
 typedef enum {
 	PROPERTY_TYPE_SYSTEM_SETTINGS = 0,
