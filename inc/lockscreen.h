@@ -22,8 +22,8 @@
 #include <Evas.h>
 #include <stdbool.h>
 
-#define EDJE_DIR "/usr/apps/org.tizen.lockscreen/res/edje/"
-#define IMAGE_DIR "/usr/apps/org.tizen.lockscreen/res/images/"
+#define EDJE_DIR "edje/"
+#define IMAGE_DIR "images/"
 
 #define LOCK_EDJE_FILE EDJE_DIR"lockscreen.edj"
 
