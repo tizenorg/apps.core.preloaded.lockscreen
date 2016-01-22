@@ -15,12 +15,7 @@
  */
 
 
-#include <unicode/utypes.h>
-#include <unicode/putil.h>
-#include <unicode/uiter.h>
-#include <unicode/udat.h>
-#include <unicode/udatpg.h>
-#include <unicode/ustring.h>
+#include <utils_i18n.h>
 
 #include "lockscreen.h"
 #include "log.h"
@@ -36,10 +31,10 @@ static struct _s_info {
 	int is_initialized;
 	Ecore_Timer *timer;
 	int is_timer_enabled;
-	UDateFormat *formatter_date;
-	UDateFormat *formatter_time;
-	UDateFormat *formatter_ampm;
-	UDateTimePatternGenerator *generator;
+	i18n_udate_format_h formatter_date;
+	i18n_udate_format_h formatter_time;
+	i18n_udate_format_h formatter_ampm;
+	i18n_udatepg_h generator;
 	Eina_Bool use12hformat;
 	char *timeregion_format;
 	char *timezone_id;
@@ -66,46 +61,42 @@ static struct _s_info {
 
 static void _timer_add(void);
 
-static UDateFormat *__util_time_ampm_formatter_get(void *data, const char *timezone_id)
+static i18n_udate_format_h __util_time_ampm_formatter_get(void *data, const char *timezone_id)
 {
-	UErrorCode status = U_ZERO_ERROR;
+	int status;
 
-	UChar u_best_pattern[64] = {0,};
-	UDateFormat *formatter = NULL;
+	i18n_uchar u_best_pattern[64] = {0,};
+	i18n_udate_format_h formatter = NULL;
 
-	u_uastrcpy(u_best_pattern, "a");
+	i18n_ustring_copy_ua(u_best_pattern, "a");
 
-	UChar u_timezone_id[64] = {0,};
+	i18n_uchar u_timezone_id[64] = {0,};
 	if (!timezone_id) {
-		u_uastrncpy(u_timezone_id, s_info.timezone_id, sizeof(u_timezone_id));
-		formatter = udat_open(UDAT_IGNORE, UDAT_IGNORE, s_info.timeregion_format, u_timezone_id, -1,
-				u_best_pattern, -1, &status);
+		i18n_ustring_copy_ua_n(u_timezone_id, s_info.timezone_id, sizeof(u_timezone_id));
 	} else {
-		u_uastrncpy(u_timezone_id, timezone_id, sizeof(u_timezone_id));
-		formatter = udat_open(UDAT_IGNORE, UDAT_IGNORE, s_info.timeregion_format, u_timezone_id, -1,
-				u_best_pattern, -1, &status);
+		i18n_ustring_copy_ua_n(u_timezone_id, timezone_id, sizeof(u_timezone_id));
 	}
-	if (U_FAILURE(status)) {
-		_E("udat_open() failed");
+	status = i18n_udate_create(I18N_UDATE_PATTERN, I18N_UDATE_PATTERN, s_info.timeregion_format, u_timezone_id, -1,
+			u_best_pattern, -1, &formatter);
+
+	if (status != I18N_ERROR_NONE) {
+		_E("i18n_udate_create() failed");
 		return NULL;
 	}
-
-	char a_best_pattern[64] = {0,};
-	u_austrcpy(a_best_pattern, u_best_pattern);
 
 	return formatter;
 }
 
-static UDateFormat *__util_time_time_formatter_get(void *data, Eina_Bool use12hformat, const char *timezone_id)
+static i18n_udate_format_h __util_time_time_formatter_get(void *data, Eina_Bool use12hformat, const char *timezone_id)
 {
 	char buf[64] = {0,};
-	UErrorCode status = U_ZERO_ERROR;
-	UChar u_pattern[64] = {0,};
-	UChar u_best_pattern[64] = {0,};
-	int32_t u_best_pattern_capacity;
-	char a_best_pattern[64] = {0,};
+	int status;
+	i18n_uchar u_pattern[64] = {0,};
+	i18n_uchar u_best_pattern[64] = {0,};
+	int32_t u_best_pattern_capacity, u_best_pattern_len;
+	char a_best_pattern[128] = {0,};
 
-	UDateFormat *formatter = NULL;
+	i18n_udate_format_h formatter = NULL;
 
 	retv_if(!s_info.generator, NULL);
 
@@ -116,22 +107,19 @@ static UDateFormat *__util_time_time_formatter_get(void *data, Eina_Bool use12hf
 		snprintf(buf, sizeof(buf)-1, "%s", "h:mm");
 	}
 
-	if (!u_uastrncpy(u_pattern, buf, sizeof(u_pattern))) {
-		_E("u_uastrncpy() is failed.");
-		return NULL;
-	}
+	i18n_ustring_copy_ua_n(u_pattern, buf, sizeof(u_pattern));
 
 	u_best_pattern_capacity =
 		(int32_t) (sizeof(u_best_pattern) / sizeof((u_best_pattern)[0]));
 
-	udatpg_getBestPattern(s_info.generator, u_pattern, u_strlen(u_pattern),
-			u_best_pattern, u_best_pattern_capacity, &status);
-	if (U_FAILURE(status)) {
-		_E("udatpg_getBestPattern() failed");
+	status = i18n_udatepg_get_best_pattern(s_info.generator, u_pattern, sizeof(u_pattern),
+			u_best_pattern, u_best_pattern_capacity, &u_best_pattern_len);
+	if (status != I18N_ERROR_NONE) {
+		_E("i18n_udatepg_get_best_pattern() failed");
 		return NULL;
 	}
 
-	u_austrcpy(a_best_pattern, u_best_pattern);
+	i18n_ustring_copy_au(a_best_pattern, u_best_pattern);
 
 	if (a_best_pattern[0] == 'a') {
 		s_info.is_pre_meridiem = EINA_TRUE;
@@ -142,95 +130,87 @@ static UDateFormat *__util_time_time_formatter_get(void *data, Eina_Bool use12hf
 	char *a_best_pattern_fixed = strtok(a_best_pattern, "a");
 	a_best_pattern_fixed = strtok(a_best_pattern_fixed, " ");
 	if (a_best_pattern_fixed) {
-		u_uastrcpy(u_best_pattern, a_best_pattern_fixed);
+		i18n_ustring_copy_ua(u_best_pattern, a_best_pattern_fixed);
 	}
 
-	UChar u_timezone_id[64] = {0,};
+	i18n_uchar u_timezone_id[64] = {0,};
 	if (!timezone_id) {
-		u_uastrncpy(u_timezone_id, s_info.timezone_id, sizeof(u_timezone_id));
-		formatter = udat_open(UDAT_IGNORE, UDAT_IGNORE, s_info.timeregion_format, u_timezone_id, -1,
-				u_best_pattern, -1, &status);
+		i18n_ustring_copy_ua_n(u_timezone_id, s_info.timezone_id, sizeof(u_timezone_id));
 	} else {
-		u_uastrncpy(u_timezone_id, timezone_id, sizeof(u_timezone_id));
-		formatter = udat_open(UDAT_IGNORE, UDAT_IGNORE, s_info.timeregion_format, u_timezone_id, -1,
-				u_best_pattern, -1, &status);
+		i18n_ustring_copy_ua_n(u_timezone_id, timezone_id, sizeof(u_timezone_id));
 	}
-	if (U_FAILURE(status)) {
-		_E("udat_open() failed");
+	status = i18n_udate_create(I18N_UDATE_PATTERN, I18N_UDATE_PATTERN, s_info.timeregion_format, u_timezone_id, -1,
+			u_best_pattern, -1, &formatter);
+	if (status != I18N_ERROR_NONE) {
+		_E("i18n_udate_create() failed");
 		return NULL;
 	}
 
 	return formatter;
 }
 
-static UDateFormat *__util_time_date_formatter_get(void *data, const char *timezone_id, const char *skeleton)
+static i18n_udate_format_h __util_time_date_formatter_get(void *data, const char *timezone_id, const char *skeleton)
 {
-	UErrorCode status = U_ZERO_ERROR;
+	int status;
+	i18n_uchar u_skeleton[64] = {0,};
+	int32_t skeleton_len = 0, pattern_len;
 
-	UChar u_skeleton[64] = {0,};
-	int skeleton_len = 0;
-
-	UChar u_best_pattern[64] = {0,};
+	i18n_uchar u_best_pattern[64] = {0,};
 	int32_t u_best_pattern_capacity;
-	UDateFormat *formatter = NULL;
+	i18n_udate_format_h formatter = NULL;
 
 	retv_if(!s_info.generator, NULL);
 
-	u_uastrncpy(u_skeleton, skeleton, strlen(skeleton));
-	skeleton_len = u_strlen(u_skeleton);
+	i18n_ustring_copy_ua_n(u_skeleton, skeleton, strlen(skeleton));
+	skeleton_len = i18n_ustring_get_length(u_skeleton);
 
 	u_best_pattern_capacity =
 		(int32_t) (sizeof(u_best_pattern) / sizeof((u_best_pattern)[0]));
 
-	udatpg_getBestPattern(s_info.generator, u_skeleton, skeleton_len,
-			u_best_pattern, u_best_pattern_capacity, &status);
-	if (U_FAILURE(status)) {
+	status = i18n_udatepg_get_best_pattern(s_info.generator, u_skeleton, skeleton_len,
+			u_best_pattern, u_best_pattern_capacity, &pattern_len);
+	if (status != I18N_ERROR_NONE) {
 		_E("udatpg_getBestPattern() failed");
 		return NULL;
 	}
 
-	UChar u_timezone_id[64] = {0,};
+	i18n_uchar u_timezone_id[64] = {0,};
 	if (!timezone_id) {
-		u_uastrncpy(u_timezone_id, s_info.timezone_id, sizeof(u_timezone_id));
-		formatter = udat_open(UDAT_IGNORE, UDAT_IGNORE, s_info.timeregion_format, u_timezone_id, -1,
-				u_best_pattern, -1, &status);
+		i18n_ustring_copy_ua_n(u_timezone_id, s_info.timezone_id, sizeof(u_timezone_id));
 	} else {
-		u_uastrncpy(u_timezone_id, timezone_id, sizeof(u_timezone_id));
-		formatter = udat_open(UDAT_IGNORE, UDAT_IGNORE, s_info.timeregion_format, u_timezone_id, -1,
-				u_best_pattern, -1, &status);
+		i18n_ustring_copy_ua_n(u_timezone_id, timezone_id, sizeof(u_timezone_id));
 	}
-	if (U_FAILURE(status)) {
-		_E("udat_open() failed");
+	status = i18n_udate_create(I18N_UDATE_PATTERN, I18N_UDATE_PATTERN, s_info.timeregion_format, u_timezone_id, -1,
+			u_best_pattern, -1, &formatter);
+	if (status != I18N_ERROR_NONE) {
+		_E("i18n_udate_create() failed");
 		return NULL;
 	}
-
-	char a_best_pattern[64] = {0,};
-	u_austrcpy(a_best_pattern, u_best_pattern);
 
 	return formatter;
 }
 
-static int __util_time_formatted_time_get(UDateFormat *formatter, time_t tt, char *buf, int buf_len)
+static int __util_time_formatted_time_get(i18n_udate_format_h formatter, time_t tt, char *buf, int buf_len)
 {
 	retv_if (!formatter, -1);
 
-	UDate u_time = (UDate)tt * 1000;
-	UChar u_formatted_str[64] = {0,};
-	int32_t u_formatted_str_capacity;
-	UErrorCode status = U_ZERO_ERROR;
+	i18n_udate u_time = (i18n_udate)tt * 1000;
+	i18n_uchar u_formatted_str[64] = {0,};
+	int32_t u_formatted_str_capacity, buf_needed;
+	int status;
 
 	u_formatted_str_capacity = (int32_t)(sizeof(u_formatted_str) / sizeof((u_formatted_str)[0]));
 
-	(void)udat_format(formatter, u_time, u_formatted_str, u_formatted_str_capacity, NULL, &status);
-	if (U_FAILURE(status)) {
-		_E("udat_format() failed");
+	status = i18n_udate_format_date(formatter, u_time, u_formatted_str, u_formatted_str_capacity, NULL, &buf_needed);
+	if (status != I18N_ERROR_NONE) {
+		_E("i18n_udate_format_date() failed");
 		return -1;
 	}
 
-	u_austrncpy(buf, u_formatted_str, buf_len-1);
+	i18n_ustring_copy_au_n(buf,u_formatted_str, buf_len - 1);
 	_D("time(%d) formatted(%s)", tt, buf);
 
-	return (int)u_strlen(u_formatted_str);
+	return (int)i18n_ustring_get_length(u_formatted_str);
 }
 
 static void _util_time_get(int is_current_time, time_t tt_a, char *timezone, char *skeleton, char **str_date, char **str_time, char **str_meridiem)
@@ -248,9 +228,9 @@ static void _util_time_get(int is_current_time, time_t tt_a, char *timezone, cha
 	}
 	localtime_r(&tt, &st);
 
-	UDateFormat *formatter_date = NULL;
-	UDateFormat *formatter_time = NULL;
-	UDateFormat *formatter_ampm = NULL;
+	i18n_udate_format_h formatter_date = NULL;
+	i18n_udate_format_h formatter_time = NULL;
+	i18n_udate_format_h formatter_ampm = NULL;
 
 	if (timezone != NULL) {
 		if (!skeleton) {
@@ -306,9 +286,9 @@ static void _util_time_get(int is_current_time, time_t tt_a, char *timezone, cha
 	}
 
 	if (timezone != NULL) {
-		if (formatter_date != NULL) udat_close(formatter_date);
-		if (formatter_time != NULL) udat_close(formatter_time);
-		if (formatter_ampm != NULL) udat_close(formatter_ampm);
+		if (formatter_date != NULL) i18n_udate_destroy(formatter_date);
+		if (formatter_time != NULL) i18n_udate_destroy(formatter_time);
+		if (formatter_ampm != NULL) i18n_udate_destroy(formatter_ampm);
 	}
 }
 
@@ -375,17 +355,17 @@ lock_error_e lock_time_update(void)
 	return LOCK_ERROR_OK;
 }
 
-static UDateTimePatternGenerator *__util_time_generator_get(void *data)
+static i18n_udatepg_h __util_time_generator_get(void *data)
 {
-	UErrorCode status = U_ZERO_ERROR;
-	UDateTimePatternGenerator *generator = NULL;
+	int status;
+	i18n_udatepg_h generator = NULL;
 
 	retv_if(!s_info.timeregion_format, NULL);
 
-	generator = udatpg_open(s_info.timeregion_format, &status);
-	if (U_FAILURE(status)) {
-		_E("udatpg_open() failed");
-		generator = NULL;
+	//generator = udatpg_open(s_info.timeregion_format, &status);
+	status = i18n_udatepg_create(s_info.timeregion_format, &generator);
+	if (status != I18N_ERROR_NONE) {
+		_E("i18n_udatepg_create() failed");
 		return NULL;
 	}
 	return generator;
@@ -460,19 +440,19 @@ static void _formatter_create(void)
 static void _util_time_formatters_destroy(void)
 {
 	if (s_info.generator) {
-		udat_close(s_info.generator);
+		i18n_udate_destroy(s_info.generator);
 		s_info.generator = NULL;
 	}
 	if (s_info.formatter_date) {
-		udat_close(s_info.formatter_date);
+		i18n_udate_destroy(s_info.formatter_date);
 		s_info.formatter_date = NULL;
 	}
 	if (s_info.formatter_time) {
-		udat_close(s_info.formatter_time);
+		i18n_udate_destroy(s_info.formatter_time);
 		s_info.formatter_time = NULL;
 	}
 	if (s_info.formatter_ampm) {
-		udat_close(s_info.formatter_ampm);
+		i18n_udate_destroy(s_info.formatter_ampm);
 		s_info.formatter_ampm = NULL;
 	}
 }
@@ -593,13 +573,13 @@ char *lock_time_formatted_noti_time_get(time_t ts)
 	char *curr_date = NULL;
 	char *noti_date = NULL;
 
-	_util_time_get(0, time(NULL), NULL, UDAT_YEAR_NUM_MONTH_DAY, &curr_date, NULL, NULL);
-	_util_time_get(0, ts, NULL, UDAT_YEAR_NUM_MONTH_DAY, &noti_date, NULL, NULL);
+	_util_time_get(0, time(NULL), NULL, "yMd", &curr_date, NULL, NULL);
+	_util_time_get(0, ts, NULL, "yMd", &noti_date, NULL, NULL);
 
 	if (curr_date != NULL && noti_date != NULL) {
 		if (strcmp(curr_date, noti_date)) {
 			char *date = NULL;
-			_util_time_get(0, ts, NULL, UDAT_ABBR_MONTH_DAY, &date, NULL, NULL);
+			_util_time_get(0, ts, NULL, "MMMd", &date, NULL, NULL);
 			free(curr_date);
 			free(noti_date);
 			return date;
@@ -607,14 +587,14 @@ char *lock_time_formatted_noti_time_get(time_t ts)
 	}
 
 	if (!s_info.use12hformat) {
-		_util_time_get(0, ts, NULL, UDAT_HOUR_MINUTE , NULL, &time_str, NULL);
+		_util_time_get(0, ts, NULL, "jm" , NULL, &time_str, NULL);
 		if (time_str) {
 			return time_str;
 		}
 	} else {
 		struct tm st;
 		localtime_r(&ts, &st);
-		_util_time_get(0, ts, NULL, UDAT_HOUR_MINUTE , NULL, &time_str, NULL);
+		_util_time_get(0, ts, NULL, "jm" , NULL, &time_str, NULL);
 
 		char buf_ampm[512] = {0,};
 		int ampm_len = __util_time_formatted_time_get(s_info.formatter_ampm, ts, buf_ampm, sizeof(buf_ampm) - 1);
@@ -671,7 +651,6 @@ void lock_time_init(void)
 	if (LOCK_ERROR_OK != lock_time_update()) {
 		_E("Failed to update time & date");
 	}
-
 	lock_time_timer_enable_set(1);
 }
 
