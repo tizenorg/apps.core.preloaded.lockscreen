@@ -29,6 +29,7 @@
 #include "battery.h"
 #include "lock_time.h"
 #include "sim_state.h"
+#include "util.h"
 
 #define INDICATOR_HEIGHT 38
 #define UNLOCK_DISTANCE 140
@@ -224,7 +225,7 @@ static Evas_Object *_swipe_layout_create(Evas_Object *parent)
 	swipe_layout = elm_layout_add(parent);
 	retv_if(!swipe_layout, NULL);
 
-	if (!elm_layout_file_set(swipe_layout, LOCK_EDJE_FILE, "swipe-lock")) {
+	if (!elm_layout_file_set(swipe_layout, util_get_res_file_path(LOCK_EDJE_FILE), "swipe-lock")) {
 		_E("Failed to set edje file for swipe lock");
 		goto ERROR;
 	}
@@ -277,7 +278,7 @@ static Evas_Object *_layout_create(void)
 
 	evas_object_show(layout);
 
-	if (!elm_layout_file_set(layout, LOCK_EDJE_FILE, "lockscreen")) {
+	if (!elm_layout_file_set(layout, util_get_res_file_path(LOCK_EDJE_FILE), "lockscreen")) {
 		_E("Failed to set edje file");
 		goto ERROR;
 	}
