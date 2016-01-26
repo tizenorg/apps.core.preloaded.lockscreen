@@ -22,4 +22,7 @@
         <icon>lockscreen.png</icon>
         <category name="http://tizen.org/category/lockapp"/>
     </ui-application>
+    <privileges>
+        <privilege>http://tizen.org/privilege/display</privilege>
+    </privileges>
 </manifest>
