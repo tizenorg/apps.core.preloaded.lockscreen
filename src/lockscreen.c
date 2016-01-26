@@ -32,6 +32,7 @@
 #include "background_view.h"
 #include "default_lock.h"
 #include "dbus.h"
+#include <device/display.h>
 
 #define LOCK_CONTROL_TYPE_KEY "lock_type"
 #define LOCK_CONTROL_TYPE_VALUE_RECOVERY "recovery_lock"
@@ -84,16 +85,14 @@ void lockscreen_feedback_tap_play(void)
 
 static Eina_Bool _lcd_off_timer_cb(void *data)
 {
-	//int ret = 0;
+	int ret = 0;
 
-	// FIXME
-	/* ret = display_change_state(LCD_OFF);
-	if (ret != 0) {
-		_E("Failed to change LCD state : LCD_OFF(%d)", ret);
+	ret = device_display_change_state(DISPLAY_STATE_SCREEN_OFF);
+	if (ret != DEVICE_ERROR_NONE) {
+		_E("Failed to change display state : %d", ret);
 	} else {
-		_I("lcd off : %dsec", LOCK_LCD_OFF_TIMEOUT_TIME);
+		_I("Display off : %dsec", LOCK_LCD_OFF_TIMEOUT_TIME);
 	}
-	*/
 
 	return ECORE_CALLBACK_CANCEL;
 }
