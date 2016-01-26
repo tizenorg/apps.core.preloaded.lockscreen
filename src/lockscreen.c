@@ -31,8 +31,9 @@
 #include "window.h"
 #include "background_view.h"
 #include "default_lock.h"
-#include "dbus.h"
+#include "lock_time.h"
 #include <device/display.h>
+#include <device/callback.h>
 
 #define LOCK_CONTROL_TYPE_KEY "lock_type"
 #define LOCK_CONTROL_TYPE_VALUE_RECOVERY "recovery_lock"
@@ -164,12 +165,6 @@ static Eina_Bool _lock_idler_cb(void *data)
 	/* register callback func. : key sound, touch sound, rotation */
 	lock_property_register(NULL);
 
-	//FIXME
-#if 0
-	/* initialize dbus */
-	lock_dbus_init(NULL);
-#endif
-
 	feedback_initialize();
 
 	lockscreen_lcd_off_timer_set();
@@ -190,6 +185,29 @@ static void _back_key_cb(void *data, Evas_Object *obj, void *event_info)
 	_D("%s", __func__);
 
 	lockscreen_feedback_tap_play();
+}
+
+static void _display_status_changed(device_callback_e type, void *value, void *user_data)
+{
+	display_state_e state;
+
+	int ret = device_display_get_state(&state);
+	if (ret != DEVICE_ERROR_NONE) {
+		_E("Unable to get display state.");
+		return;
+	}
+
+	if (state == DISPLAY_STATE_NORMAL) {
+		_I("Display on");
+		lock_time_resume();
+		lockscreen_lcd_off_timer_set();
+	}
+	else if (state == DISPLAY_STATE_SCREEN_OFF) {
+		_I("Display off");
+		lock_time_pause();
+		lockscreen_lcd_off_timer_unset();
+		lockscreen_lcd_off_count_reset();
+	}
 }
 
 bool _create_app(void *data)
@@ -227,6 +245,12 @@ bool _create_app(void *data)
 		_E("Failed to create BG");
 	}
 
+	/* Register on display on/off events */
+	int ret = device_add_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed, NULL);
+	if (ret != DEVICE_ERROR_NONE) {
+		_E("Failed to register display state changed callback.");
+	}
+
 	evas_object_show(win);
 
 	ecore_idler_add(_lock_idler_cb, NULL);
@@ -257,10 +281,6 @@ void _terminate_app(void *data)
 
 	lock_property_unregister();
 	feedback_deinitialize();
-#if 0
-	//FIXME
-	lock_dbus_fini(NULL);
-#endif
 
 	_fini_theme();
 }
