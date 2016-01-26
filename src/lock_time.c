@@ -471,46 +471,38 @@ static void _formatter_destroy(void)
 	s_info.is_initialized = 0;
 }
 
-#if 0
-static void _util_time_vconf_changed_cb(keynode_t *key, void *data)
+static void _util_time_runtimeinfo_changed_cb(runtime_info_key_e key, void *data)
 {
-	int index = (int)data;
-
 	_formatter_destroy();
 	_formatter_create();
-
-	if (index == 1) {
-		s_info.need_sync = 1;
-	}
 }
-#endif
+
+static void _util_time_systemsetting_changed_cb(system_settings_key_e key, void *data)
+{
+	_formatter_destroy();
+	_formatter_create();
+}
 
 static void _time_event_attach(void)
 {
-	//FIXME
-	#if 0
+	int ret;
 
-	int ret = 0;
-	/* register vconf cbs */
-	ret = vconf_notify_key_changed(VCONFKEY_TELEPHONY_SVC_ROAM, _util_time_vconf_changed_cb, (void*)3);
-	ret_if(ret != 0);
-	ret = vconf_notify_key_changed(VCONFKEY_SETAPPL_TIMEZONE_INT, _util_time_vconf_changed_cb, (void*)4);
-	ret_if(ret != 0);
-#endif
+	ret = runtime_info_set_changed_cb(RUNTIME_INFO_KEY_DATA_ROAMING_ENABLED, _util_time_runtimeinfo_changed_cb, NULL);
+	ret_if(ret != RUNTIME_INFO_ERROR_NONE);
+
+	ret = system_settings_set_changed_cb(SYSTEM_SETTINGS_KEY_LOCALE_TIMEZONE, _util_time_systemsetting_changed_cb, NULL);
+	ret_if(ret != SYSTEM_SETTINGS_ERROR_NONE);
 }
 
 static void _time_event_deattach(void)
 {
-	//FIXME
-#if 0
-	int ret = 0;
+	int ret;
 
-	/* unregister vconf cbs */
-	ret = vconf_ignore_key_changed(VCONFKEY_TELEPHONY_SVC_ROAM, _util_time_vconf_changed_cb);
-	ret_if(ret != 0);
-	ret = vconf_ignore_key_changed(VCONFKEY_SETAPPL_TIMEZONE_INT, _util_time_vconf_changed_cb);
-	ret_if(ret != 0);
-#endif
+	ret = runtime_info_unset_changed_cb(RUNTIME_INFO_KEY_DATA_ROAMING_ENABLED);
+	ret_if(ret != RUNTIME_INFO_ERROR_NONE);
+
+	ret = system_settings_unset_changed_cb(SYSTEM_SETTINGS_KEY_LOCALE_TIMEZONE);
+	ret_if(ret != SYSTEM_SETTINGS_ERROR_NONE);
 }
 
 static Eina_Bool _timer_cb(void *data)
