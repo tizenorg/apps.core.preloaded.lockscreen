@@ -264,22 +264,20 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="org.tizen.nativecore.config.sbi.gcc45.app.debug.1615635030.1238953649" name="swipe_lock.edc" rcbsApplicability="disable" resourcePath="res/edje/swipe_lock.edc" toolsToInvoke="org.tizen.nativecore.tool.sbi.edc.compiler.521148008.2025050619">
-						<tool id="org.tizen.nativecore.tool.sbi.edc.compiler.521148008.2025050619" name="EDC Resource Compiler" superClass="org.tizen.nativecore.tool.sbi.edc.compiler.521148008"/>
-						<tool customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.566819827" name="Resource Custom Build Step">
-							<inputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype.511690767" name="Resource Custom Build Step Input Type">
+					<fileInfo id="org.tizen.nativecore.config.sbi.gcc45.app.debug.1615635030.72317702" name="dbus.h" rcbsApplicability="disable" resourcePath="inc/dbus.h" toolsToInvoke=""/>
+					<fileInfo id="org.tizen.nativecore.config.sbi.gcc45.app.debug.1615635030.671394666" name="sim_state.h" rcbsApplicability="disable" resourcePath="inc/sim_state.h" toolsToInvoke="">
+						<tool customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.543549147" name="Resource Custom Build Step">
+							<inputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype.1874888824" name="Resource Custom Build Step Input Type">
 								<additionalInput kind="additionalinputdependency" paths=""/>
 							</inputType>
-							<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.1099686638" name="Resource Custom Build Step Output Type"/>
+							<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.575154393" name="Resource Custom Build Step Output Type"/>
 						</tool>
 					</fileInfo>
-					<fileInfo id="org.tizen.nativecore.config.sbi.gcc45.app.debug.1615635030.72317702" name="dbus.h" rcbsApplicability="disable" resourcePath="inc/dbus.h" toolsToInvoke=""/>
-					<fileInfo id="org.tizen.nativecore.config.sbi.gcc45.app.debug.1615635030.671394666" name="sim_state.h" rcbsApplicability="disable" resourcePath="inc/sim_state.h" toolsToInvoke=""/>
 					<sourceEntries>
-						<entry excluding="sim_state.h|dbus.h" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="inc"/>
+						<entry excluding="dbus.h" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="inc"/>
 						<entry excluding="edje/swipe_lock.edc|edje/missed_event_item.edc|edje/camera.edc|edje/contextual_event.edc|edje/color_classes.edc" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="res"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="shared"/>
-						<entry excluding="sim_state.c|dbus.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="dbus.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
