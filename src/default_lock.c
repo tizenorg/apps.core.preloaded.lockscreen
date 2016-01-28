@@ -243,13 +243,10 @@ static Evas_Object *_swipe_layout_create(Evas_Object *parent)
 	if (LOCK_ERROR_OK != lock_battery_init()) {
 		_E("Failed to initialize battery information");
 	}
-#if 0
-	//FIXME
 	/* initialize PLMN-SPN information */
 	if (LOCK_ERROR_OK != lock_sim_state_init()) {
 		_E("Failed to initialize sim state");
 	}
-#endif
 
 	return swipe_layout;
 
@@ -389,11 +386,8 @@ ERROR:
 
 void lock_default_lock_fini(void)
 {
-#if 0
-	//FIXME
 	/* delete network status */
 	lock_sim_state_deinit();
-#endif
 
 	/* delete batteyr information */
 	lock_battery_fini();
