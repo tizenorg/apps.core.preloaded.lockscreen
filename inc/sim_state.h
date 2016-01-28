@@ -18,8 +18,6 @@
 #define __SIM_STATE_H__
 
 lock_error_e lock_sim_state_init(void);
-void lock_sim_state_resume(void);
 void lock_sim_state_deinit(void);
-void lock_sim_state_language_change(void);
 
 #endif
