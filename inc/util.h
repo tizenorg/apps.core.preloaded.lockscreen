@@ -58,4 +58,9 @@ const char *util_get_file_path(enum app_subdir dir, const char *relative);
 #define util_get_external_cache_file_path(x) util_get_file_path(APP_DIR_EXTERNAL_CACHE, (x))
 #define util_get_external_shared_data_file_path(x) util_get_file_path(APP_DIR_EXTERNAL_SHARED_DATA, (x))
 
+/**
+ * @brief utility macro to enumerate
+ */
+#define SIZE(x) sizeof(x)/sizeof(x[0])
+
 #endif /* __HOME_SCREEN_UTIL_H__ */
