@@ -56,7 +56,7 @@ static void _sim_state_view_slide_mode_set(Evas_Object *label)
 	elm_label_slide_go(label);
 }
 
-static void _sim_state_view_sliding_label_create(Evas_Object *layout, char *text)
+static void _sim_state_view_sliding_label_create(Evas_Object *layout, const char *text)
 {
 	Evas_Object *label = NULL;
 	char buf[512] = { 0, };
@@ -199,27 +199,35 @@ static void _sim_state_view_update()
 {
 	Evas_Object *swipe_layout = lock_default_swipe_layout_get();
 	ret_if(!swipe_layout);
-	char *sim1 = NULL, *sim2 = NULL;
-	char buf[1024];
+	telephony_sim_state_e state;
+	Eina_Strbuf *buf;
+	int i;
 
-	switch (s_handle_list.count) {
-		case 1:
-			sim1 = _sim_state_text_for_sim_get(s_handle_list.handle[0]);
-			_sim_state_view_sliding_label_create(swipe_layout, sim1);
-			break;
-		case 2:
-			sim1 = _sim_state_text_for_sim_get(s_handle_list.handle[0]);
-			sim2 = _sim_state_text_for_sim_get(s_handle_list.handle[1]);
-			snprintf(buf, sizeof(buf), "%s / %s", sim1, sim2);
-			_sim_state_view_sliding_label_create(swipe_layout, buf);
-			break;
-		default:
-			_E("Unsupported sim card number (!= 1 && != 2).");
-			return;
+	buf = eina_strbuf_new();
+	if (!buf) return;
+
+	/* Append information only for available SIMs */
+	for (i = 0; i < s_handle_list.count; i++) {
+		int ret = telephony_sim_get_state(s_handle_list.handle[i], &state);
+		if (ret != TELEPHONY_ERROR_NONE)
+			continue;
+		if (state == TELEPHONY_SIM_STATE_UNAVAILABLE)
+			continue;
+
+		char *txt = _sim_state_text_for_sim_get(s_handle_list.handle[i]);
+		if (!txt)
+			continue;
+
+		if (!eina_strbuf_length_get(buf))
+			eina_strbuf_append_printf(buf, "%s", txt);
+		else
+			eina_strbuf_append_printf(buf, " / %s", txt);
+
+		free(txt);
 	}
 
-	free(sim1);
-	free(sim2);
+	_sim_state_view_sliding_label_create(swipe_layout, eina_strbuf_string_get(buf));
+	eina_strbuf_free(buf);
 }
 
 static void _on_sim_card_info_changed_cb(telephony_h handle, telephony_noti_e noti_id, void *data, void *user_data)
@@ -266,7 +274,7 @@ static void _sim_init(void)
 {
 	/* Get available sim cards handles */
 	int i, ret = telephony_init(&s_handle_list);
-	if (ret == TELEPHONY_ERROR_NONE) {
+	if (ret != TELEPHONY_ERROR_NONE) {
 		_E("Unable to initialize telephony");
 		return;
 	}
