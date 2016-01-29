@@ -266,7 +266,7 @@ static void _sim_init(void)
 {
 	/* Get available sim cards handles */
 	int i, ret = telephony_init(&s_handle_list);
-	if (ret == TELEPHONY_ERROR_NONE) {
+	if (ret != TELEPHONY_ERROR_NONE) {
 		_E("Unable to initialize telephony");
 		return;
 	}
