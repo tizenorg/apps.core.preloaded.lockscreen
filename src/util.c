@@ -23,6 +23,7 @@ const char *util_get_file_path(enum app_subdir dir, const char *relative)
 {
 	static char buf[PATH_MAX];
 	char *prefix;
+	int aaaaaa
 
 	switch (dir) {
 	case APP_DIR_DATA:
