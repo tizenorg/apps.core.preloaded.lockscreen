@@ -31,41 +31,19 @@
 #include "sim_state.h"
 #include "util.h"
 
-#define INDICATOR_HEIGHT 38
-#define UNLOCK_DISTANCE 140
-
-#define MINICONTROL_BUNDLE_KEY_WIDTH "width"
-#define MINICONTROL_BUNDLE_KEY_HEIGHT "height"
-
 static struct _s_info {
 	Evas_Object *conformant;
 	Evas_Object *layout;
 	Evas_Object *swipe_layout;
-
-	Ecore_Event_Handler *mouse_down_handler;
-	Ecore_Event_Handler *mouse_move_handler;
-	Ecore_Event_Handler *mouse_up_handler;
-
-	Eina_Bool is_mouse_down;
+	Evas_Object *gesture_layer;
 
 	int lcd_off_count;
-
-	int clicked_x;
-	int clicked_y;
 
 	lock_exit_state_e exit_state;
 } s_info = {
 	.conformant = NULL,
 	.layout= NULL,
 	.swipe_layout = NULL,
-
-	.mouse_down_handler = NULL,
-	.mouse_move_handler = NULL,
-	.mouse_up_handler = NULL,
-
-	.is_mouse_down = EINA_FALSE,
-	.clicked_x = 0,
-	.clicked_y = 0,
 
 	.exit_state = LOCK_EXIT_STATE_NORMAL,
 };
@@ -90,101 +68,6 @@ void _default_lock_hw_back_cb(void *data, Evas_Object *obj, void *event_info)
 	_I("%s", __func__);
 }
 
-static Eina_Bool _default_lock_mouse_down_cb(void *data, int type, void *event)
-{
-	_D("%s", __func__);
-
-	Ecore_Event_Mouse_Button *m = event;
-
-	int touch_upper_y = 0;
-
-	retv_if(!m, ECORE_CALLBACK_CANCEL);
-	retv_if(!s_info.swipe_layout, ECORE_CALLBACK_CANCEL);
-
-	/* (Up to 3 times, 30 seconds) is extended by 10 seconds Control panel area when tap */
-	lockscreen_lcd_off_count_raise();
-
-	s_info.clicked_x = m->root.x;
-	s_info.clicked_y = m->root.y;
-	_D("clicked x(%d), y(%d)", s_info.clicked_x, s_info.clicked_y);
-
-	touch_upper_y = INDICATOR_HEIGHT;
-	_D("touch upper y : %d", touch_upper_y);
-
-	if (m->root.y <= touch_upper_y) {
-		_D("ignore touch event(%d > %d)", m->root.y, touch_upper_y);
-		s_info.is_mouse_down = EINA_FALSE;
-	} else {
-		elm_object_signal_emit(s_info.swipe_layout, "vi_effect_start", "padding.top");
-		s_info.is_mouse_down = EINA_TRUE;
-	}
-
-	return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool _default_lock_mouse_move_cb(void *data, int type, void *event)
-{
-	Ecore_Event_Mouse_Move *m = event;
-	retv_if(!m, ECORE_CALLBACK_CANCEL);
-	retv_if(m->multi.device != 0, ECORE_CALLBACK_CANCEL);
-
-	int const dx = m->x - s_info.clicked_x;
-	int const dy = s_info.clicked_y - m->y;
-	int scaled_unlock_distance = _X(UNLOCK_DISTANCE);
-	int distance = sqrt(dx*dx + dy*dy) + _X(20);
-
-	if (distance >= scaled_unlock_distance) {
-		s_info.exit_state = LOCK_EXIT_STATE_EXIT;
-	} else {
-		s_info.exit_state = LOCK_EXIT_STATE_NORMAL;
-	}
-
-	return ECORE_CALLBACK_DONE;
-}
-
-static Eina_Bool _default_lock_mouse_up_cb(void *data, int type, void *event)
-{
-	_D("%s", __func__);
-
-	Ecore_Event_Mouse_Button *m = event;
-
-	retv_if(!m, ECORE_CALLBACK_CANCEL);
-	retv_if(m->multi.device != 0, ECORE_CALLBACK_CANCEL);
-	retv_if(!s_info.layout, ECORE_CALLBACK_CANCEL);
-	retv_if(!s_info.swipe_layout, ECORE_CALLBACK_CANCEL);
-
-
-	if (s_info.is_mouse_down == EINA_FALSE) {
-		_I("ignore touch event");
-		return ECORE_CALLBACK_CANCEL;
-	}
-
-	s_info.is_mouse_down = EINA_FALSE;
-
-	switch(s_info.exit_state) {
-	case LOCK_EXIT_STATE_NORMAL :
-		_D("cancel unlock");
-		break;
-	case LOCK_EXIT_STATE_EXIT :
-		_D("exit lockscreen");
-
-		elm_object_signal_emit(s_info.swipe_layout, "vi_effect", "padding.top");
-		elm_object_signal_emit(s_info.layout, "vi_effect", "vi_clipper");
-		return ECORE_CALLBACK_CANCEL;
-	default :
-		_E("type error : %d", s_info.exit_state);
-		break;
-	}
-
-	s_info.exit_state = LOCK_EXIT_STATE_NORMAL;
-
-	elm_object_signal_emit(s_info.swipe_layout, "vi_effect_stop", "padding.top");
-	elm_object_signal_emit(s_info.layout, "vi_effect_stop", "vi_clipper");
-	elm_object_signal_emit(s_info.swipe_layout, "show,txt,plmn", "txt.plmn");
-
-	return ECORE_CALLBACK_PASS_ON;
-}
-
 static void _vi_effect_end_cb(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
 	_D("%s", __func__);
@@ -196,29 +79,44 @@ static lock_error_e _unlock_panel_create(void)
 {
 	retv_if(!s_info.swipe_layout, LOCK_ERROR_FAIL);
 
-	s_info.mouse_down_handler = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, _default_lock_mouse_down_cb, NULL);
-	if (!s_info.mouse_down_handler) {
-		_E("Failed to add mouse down handler");
-	}
-
-	s_info.mouse_move_handler = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, _default_lock_mouse_move_cb, NULL);
-	if (!s_info.mouse_move_handler) {
-		_E("Failed to add mouse move handler");
-	}
-
-	s_info.mouse_up_handler = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, _default_lock_mouse_up_cb, NULL);
-	if (!s_info.mouse_up_handler) {
-		_E("Failed to add mouse up handler");
-	}
-
 	elm_object_signal_callback_add(s_info.swipe_layout, "vi_effect_end", "vi_clipper", _vi_effect_end_cb, NULL);
 
 	return LOCK_ERROR_OK;
 }
 
+static Evas_Event_Flags _swipe_state_start(void *data, void *event_info)
+{
+	_E("Swipe gesture start");
+
+	/* (Up to 3 times, 30 seconds) is extended by 10 seconds Control panel area when tap */
+	lockscreen_lcd_off_count_raise();
+
+	return EVAS_EVENT_FLAG_NONE;
+}
+
+static Evas_Event_Flags _swipe_state_end(void *data, void *event_info)
+{
+	_E("Swipe gesture end");
+	s_info.exit_state = LOCK_EXIT_STATE_EXIT;
+	elm_object_signal_emit(s_info.swipe_layout, "vi_effect", "padding.top");
+	elm_object_signal_emit(s_info.layout, "vi_effect", "vi_clipper");
+	return EVAS_EVENT_FLAG_NONE;
+}
+
+static Evas_Event_Flags _swipe_state_abort(void *data, void *event_info)
+{
+	_E("Swipe gesture abort");
+	s_info.exit_state = LOCK_EXIT_STATE_NORMAL;
+	elm_object_signal_emit(s_info.swipe_layout, "vi_effect_stop", "padding.top");
+	elm_object_signal_emit(s_info.layout, "vi_effect_stop", "vi_clipper");
+	elm_object_signal_emit(s_info.swipe_layout, "show,txt,plmn", "txt.plmn");
+	return EVAS_EVENT_FLAG_NONE;
+}
+
 static Evas_Object *_swipe_layout_create(Evas_Object *parent)
 {
 	Evas_Object *swipe_layout = NULL;
+	Evas_Object *layer = NULL;
 
 	retv_if(!parent, NULL);
 
@@ -247,6 +145,16 @@ static Evas_Object *_swipe_layout_create(Evas_Object *parent)
 	if (LOCK_ERROR_OK != lock_sim_state_init()) {
 		_E("Failed to initialize sim state");
 	}
+	/* intialize gesture layer */
+	layer = elm_gesture_layer_add(lock_window_win_get());
+	elm_gesture_layer_cb_set(layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_START, _swipe_state_start, NULL);
+	elm_gesture_layer_cb_set(layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_END, _swipe_state_end, NULL);
+	elm_gesture_layer_cb_set(layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_ABORT, _swipe_state_abort, NULL);
+	elm_gesture_layer_hold_events_set(layer, EINA_TRUE);
+	elm_gesture_layer_attach(layer, parent);
+	evas_object_show(layer);
+
+	s_info.gesture_layer = layer;
 
 	return swipe_layout;
 
@@ -398,21 +306,6 @@ void lock_default_lock_fini(void)
 	/* delete wallpaper */
 	lock_background_view_bg_del();
 
-	if (s_info.mouse_down_handler) {
-		ecore_event_handler_del(s_info.mouse_down_handler);
-		s_info.mouse_down_handler = NULL;
-	}
-
-	if (s_info.mouse_move_handler) {
-		ecore_event_handler_del(s_info.mouse_move_handler);
-		s_info.mouse_move_handler = NULL;
-	}
-
-	if (s_info.mouse_up_handler) {
-		ecore_event_handler_del(s_info.mouse_up_handler);
-		s_info.mouse_up_handler = NULL;
-	}
-
 	if (s_info.swipe_layout) {
 		evas_object_del(s_info.swipe_layout);
 		s_info.swipe_layout = NULL;
@@ -427,5 +320,10 @@ void lock_default_lock_fini(void)
 		eext_object_event_callback_del(s_info.layout, EEXT_CALLBACK_BACK, _default_lock_hw_back_cb);
 		evas_object_del(s_info.layout);
 		s_info.layout = NULL;
+	}
+
+	if (s_info.gesture_layer) {
+		evas_object_del(s_info.gesture_layer);
+		s_info.gesture_layer = NULL;
 	}
 }
