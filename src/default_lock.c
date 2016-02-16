@@ -30,6 +30,7 @@
 #include "lock_time.h"
 #include "sim_state.h"
 #include "util.h"
+#include "camera.h"
 
 static struct _s_info {
 	Evas_Object *conformant;
@@ -113,10 +114,17 @@ static Evas_Event_Flags _swipe_state_abort(void *data, void *event_info)
 	return EVAS_EVENT_FLAG_NONE;
 }
 
+static void _camera_icon_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+	if (lock_camera_run() != LOCK_ERROR_OK) {
+		_E("Unable to launch camera application.");
+	}
+}
+
 static Evas_Object *_swipe_layout_create(Evas_Object *parent)
 {
 	Evas_Object *swipe_layout = NULL;
-	Evas_Object *layer = NULL;
+	Evas_Object *edje;
 
 	retv_if(!parent, NULL);
 
@@ -134,6 +142,15 @@ static Evas_Object *_swipe_layout_create(Evas_Object *parent)
 	evas_object_show(swipe_layout);
 	s_info.swipe_layout = swipe_layout;
 
+	edje = elm_layout_add(swipe_layout);
+	if (!edje) _E("Unable to get edje file from elm_layout");
+
+	if (!elm_layout_file_set(edje, util_get_res_file_path(LOCK_EDJE_FILE), "camera-layout"))
+		_E("Unable to set camara view layout");
+
+	elm_object_signal_callback_add(edje, "camera,icon,clicked", "img.camera", _camera_icon_clicked, NULL);
+	elm_object_part_content_set(swipe_layout, "sw.camera", edje);
+
 	/* initialize time & date information */
 	lock_time_init();
 
@@ -145,16 +162,10 @@ static Evas_Object *_swipe_layout_create(Evas_Object *parent)
 	if (LOCK_ERROR_OK != lock_sim_state_init()) {
 		_E("Failed to initialize sim state");
 	}
-	/* intialize gesture layer */
-	layer = elm_gesture_layer_add(lock_window_win_get());
-	elm_gesture_layer_cb_set(layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_START, _swipe_state_start, NULL);
-	elm_gesture_layer_cb_set(layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_END, _swipe_state_end, NULL);
-	elm_gesture_layer_cb_set(layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_ABORT, _swipe_state_abort, NULL);
-	elm_gesture_layer_hold_events_set(layer, EINA_TRUE);
-	elm_gesture_layer_attach(layer, parent);
-	evas_object_show(layer);
-
-	s_info.gesture_layer = layer;
+	/* initialize camera */
+	if (LOCK_ERROR_OK != lock_camera_init()) {
+		_E("Failed to initialize sim state");
+	}
 
 	return swipe_layout;
 
@@ -174,6 +185,7 @@ static Evas_Object *_layout_create(void)
 	Evas_Object *layout = NULL;
 	Evas_Object *swipe_layout = NULL;
 	Evas_Object *win = NULL;
+	Evas_Object *layer;
 
 	win = lock_window_win_get();
 	retv_if(!win, NULL);
@@ -196,6 +208,16 @@ static Evas_Object *_layout_create(void)
 		_E("Failed to create swipe layout");
 		goto ERROR;
 	}
+
+	/* intialize gesture layer */
+	layer = elm_gesture_layer_add(win);
+	elm_gesture_layer_cb_set(layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_START, _swipe_state_start, NULL);
+	elm_gesture_layer_cb_set(layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_END, _swipe_state_end, NULL);
+	elm_gesture_layer_cb_set(layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_ABORT, _swipe_state_abort, NULL);
+	elm_gesture_layer_hold_events_set(layer, EINA_TRUE);
+	elm_gesture_layer_attach(layer, layout);
+	evas_object_show(layer);
+	s_info.gesture_layer = layer;
 
 	elm_object_part_content_set(layout, "sw.swipe_layout", swipe_layout);
 	if (!elm_object_part_content_get(layout, "sw.swipe_layout")) {
@@ -294,17 +316,11 @@ ERROR:
 
 void lock_default_lock_fini(void)
 {
-	/* delete network status */
 	lock_sim_state_deinit();
-
-	/* delete batteyr information */
 	lock_battery_fini();
-
-	/* delete data&time information */
 	lock_time_fini();
-
-	/* delete wallpaper */
 	lock_background_view_bg_del();
+	lock_camera_fini();
 
 	if (s_info.swipe_layout) {
 		evas_object_del(s_info.swipe_layout);
