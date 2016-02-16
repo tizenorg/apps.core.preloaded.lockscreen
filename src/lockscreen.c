@@ -189,13 +189,10 @@ static void _back_key_cb(void *data, Evas_Object *obj, void *event_info)
 
 static void _display_status_changed(device_callback_e type, void *value, void *user_data)
 {
-	display_state_e state;
-
-	int ret = device_display_get_state(&state);
-	if (ret != DEVICE_ERROR_NONE) {
-		_E("Unable to get display state.");
+	if (type != DEVICE_CALLBACK_DISPLAY_STATE)
 		return;
-	}
+
+	display_state_e state = (display_state_e)value;
 
 	if (state == DISPLAY_STATE_NORMAL) {
 		_I("Display on");
