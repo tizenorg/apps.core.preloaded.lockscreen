@@ -69,26 +69,19 @@ group {
 		program {
 			signal: "mouse,down,1";
 			source: "img.camera";
-			action: SIGNAL_EMIT "camera,icon,mouse,down" "img.camera";
-		}
-		program {
-			name: "camera,icon,press";
-			signal: "camera,icon,press";
-			source: "img.camera";
 			action: STATE_SET "press" 0.0;
 			target: "img.camera";
 		}
 		program {
 			signal: "mouse,up,1";
 			source: "img.camera";
-			action: SIGNAL_EMIT "camera,icon,mouse,up" "img.camera";
-		}
-		program {
-			name: "camera,icon,release";
-			signal: "camera,icon,release";
-			source: "img.camera";
 			action: STATE_SET "release" 0.0;
 			target: "img.camera";
+		}
+		program {
+			signal: "mouse,clicked,1";
+			source: "img.camera";
+			action: SIGNAL_EMIT "camera,icon,clicked" "img.camera";
 		}
 	}
 }
