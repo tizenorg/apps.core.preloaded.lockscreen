@@ -71,6 +71,7 @@ ADD_EXECUTABLE(${PROJECT_NAME}
 	${PROJECT_ROOT_DIR}/src/sim_state.c
 	${PROJECT_ROOT_DIR}/src/util.c
 	${PROJECT_ROOT_DIR}/src/window.c
+	${PROJECT_ROOT_DIR}/src/music_player.c
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${pkgs_LDFLAGS} -lm)
