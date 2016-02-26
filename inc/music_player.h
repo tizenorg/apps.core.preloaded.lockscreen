@@ -14,10 +14,37 @@
  * limitations under the License.
  */
 
-#ifndef __BATTERY_H__
-#define __BATTERY_H__
+#ifndef __MUSIC_PLAYER_H__
+#define __MUSIC_PLAYER_H__
 
-lock_error_e lock_battery_ctrl_init(void);
-void lock_battery_ctrl_fini(void);
+typedef enum {
+	MUSIC_PLAYER_VIEW_TYPE_MUSIC,
+	MUSIC_PLAYER_VIEW_TYPE_SOUND,
+} music_player_view_type_e;
+
+/**
+ *
+ */
+typedef void (*player_state_cb)(music_player_view_type_e type, bool on, void *data);
+
+/**
+ *
+ */
+int lock_music_player_init(void);
+
+/**
+ *
+ */
+int lock_music_player_state_changed_cb(player_state_cb cb, void *data);
+
+/**
+ *
+ */
+void lock_music_player_shutdown(void);
+
+/**
+ *
+ */
+Evas_Object *lock_music_player_view_create(music_player_view_type_e type, Evas_Object *parent);
 
 #endif

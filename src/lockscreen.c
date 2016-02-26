@@ -32,6 +32,7 @@
 #include "background_view.h"
 #include "default_lock.h"
 #include "lock_time.h"
+#include "data_model.h"
 #include <device/display.h>
 #include <device/callback.h>
 
@@ -231,6 +232,8 @@ bool _create_app(void *data)
 	s_info.lock_type = locktype;
 #endif
 	s_info.lock_type = 1;
+
+	lockscreen_data_model_init();
 
 	/* Create lockscreen window */
 	win = lock_window_create(locktype);

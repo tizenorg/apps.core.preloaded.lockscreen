@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef __BATTERY_H__
-#define __BATTERY_H__
+#ifndef _LOCKSCREEN_DATA_MODEL_MISSED_EVENTS_H_
+#define _LOCKSCREEN_DATA_MODEL_MISSED_EVENTS_H_
 
-lock_error_e lock_battery_ctrl_init(void);
-void lock_battery_ctrl_fini(void);
+#include "data_model.h"
+
+
+int lockscreen_data_model_missed_events_init(lockscreen_data_model_t *model);
+
+void lockscreen_data_model_missed_events_shutdown(void);
 
 #endif

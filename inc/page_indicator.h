@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-#ifndef __BATTERY_H__
-#define __BATTERY_H__
+#ifndef __PAGE_INDICATOR_H__
+#define __PAGE_INDICATOR_H__
 
-lock_error_e lock_battery_ctrl_init(void);
-void lock_battery_ctrl_fini(void);
+Evas_Object *lock_page_indicator_index_get(void);
+
+void lock_page_indicator_bring_in_page(int current_page);
+void lock_page_indicator_update(void);
+
+Evas_Object *lock_page_indicator_create(void);
+void lock_page_indicator_del(void);
 
 #endif

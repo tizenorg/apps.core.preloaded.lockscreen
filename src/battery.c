@@ -20,27 +20,15 @@
 #include "lockscreen.h"
 #include "log.h"
 #include "battery.h"
-#include "property.h"
 #include "default_lock.h"
+#include "data_model.h"
 
-static struct _s_info {
-	bool is_connected;
-	bool is_charging;
-} s_info = {
-	.is_connected = false,
-	.is_charging = false,
-};
+#include <Ecore.h>
 
-bool lock_battery_is_charging_get(void)
-{
-	return s_info.is_charging;
-}
+static Ecore_Event_Handler *handler;
 
-bool lock_battery_is_connected_get(void)
-{
-	return s_info.is_connected;
-}
 
+// FIXME why this is needed?
 static char *_replaceString(char *strInput, const char *strTarget, const char *strChange)
 {
 	char* strResult;
@@ -76,7 +64,6 @@ static char *_replaceString(char *strInput, const char *strTarget, const char *s
 		return NULL;
 	}
 
-
 	strTemp = strResult;
 	while (*strInput) {
 		if (memcmp(strInput, strTarget, nTargetLength) == 0) {
@@ -93,203 +80,80 @@ static char *_replaceString(char *strInput, const char *strTarget, const char *s
 	return strResult;
 }
 
+static char *_text_from_percentage(int capacity)
+{
+	char buff[64];
+	char *newString = NULL;
+	newString = _replaceString(_("IDS_LCKSCN_BODY_CHARGING_C_PDP"), "%d%", "%d%%");
+
+	if (newString != NULL) {
+		snprintf(buff, sizeof(buff), newString , capacity);
+		free(newString) ;
+	} else {
+		snprintf(buff, sizeof(buff), _("IDS_LCKSCN_BODY_CHARGING_C_PDP") , capacity);
+	}
+	return strdup(buff);
+}
+
 lock_error_e lock_battery_update(void)
 {
+	_E("Battery status update");
 	Evas_Object *swipe_layout = NULL;
+	lockscreen_data_model_t *model = lockscreen_data_model_get_model();
 
-	bool status = false;
-	int capacity = 0;
-	device_battery_level_e battery_level = 0;
-	bool charger = false;
-	int ret = 0;
+	if (!model) {
+		_E("Lockscreen data model not available");
+		elm_object_signal_emit(swipe_layout, "hide,txt,battery", "txt.battery");
+		return LOCK_ERROR_FAIL;
+	}
 
 	swipe_layout = lock_default_swipe_layout_get();
 	retv_if(!swipe_layout, LOCK_ERROR_FAIL);
 
-	ret = lock_property_get_bool(PROPERTY_TYPE_RUNTIME_INFO, (void *)RUNTIME_INFO_KEY_BATTERY_IS_CHARGING, &status);
-	if (ret != LOCK_ERROR_OK) {
-		_E("Failed to get runtime info : RUNTIME_INFO_KEY_BATTERY_IS_CHARGING");
-		elm_object_part_text_set(swipe_layout, "txt.battery", "");
-		return LOCK_ERROR_FAIL;
-	} else {
+	if (model->battery.is_connected) {
 		elm_object_signal_emit(swipe_layout, "show,txt,battery", "txt.battery");
+	} else {
+		elm_object_signal_emit(swipe_layout, "hide,txt,battery", "txt.battery");
+	}
 
-		if (status == true) {
-			ret = device_battery_get_percent(&capacity);
-			if (ret != DEVICE_ERROR_NONE) {
-				_E("Failed to get battery percent(%d)", ret);
-			}
-
-			ret = device_battery_get_level_status(&battery_level);
-			if (ret != DEVICE_ERROR_NONE) {
-				_E("Failed to get battery level status(%d)", ret);
-			}
-
-			if (capacity == 100) {
-				_D("Fully charged");
-				elm_object_part_text_set(swipe_layout, "txt.battery", _("IDS_SM_POP_FULLY_CHARGED"));
-			} else {
-				char buff[64];
-				char *newString = NULL;
-				newString = _replaceString(_("IDS_LCKSCN_BODY_CHARGING_C_PDP"), "%d%", "%d%%");
-
-				if (newString != NULL) {
-					snprintf(buff, sizeof(buff), newString , capacity);
-					free(newString) ;
-				} else {
-					snprintf(buff, sizeof(buff), _("IDS_LCKSCN_BODY_CHARGING_C_PDP") , capacity);
-				}
-
-				elm_object_part_text_set(swipe_layout, "txt.battery", buff);
-			}
+	if (model->battery.is_charging) {
+		if (model->battery.level == 100) {
+			elm_object_part_text_set(swipe_layout, "txt.battery", _("IDS_SM_POP_FULLY_CHARGED"));
+		} else {
+			char *buff = _text_from_percentage(model->battery.level);
+			elm_object_part_text_set(swipe_layout, "txt.battery", buff);
+			free(buff);
+		}
+	} else {
+		if (model->battery.level == 100 && model->battery.is_connected) {
+			elm_object_part_text_set(swipe_layout, "txt.battery", _("IDS_SM_POP_FULLY_CHARGED"));
 		} else {
 			elm_object_part_text_set(swipe_layout, "txt.battery", "");
-
-			ret = lock_property_get_bool(PROPERTY_TYPE_RUNTIME_INFO, (void *)RUNTIME_INFO_KEY_CHARGER_CONNECTED , &charger);
-			if (ret != LOCK_ERROR_OK) {
-				_E("Failed to get runtime info : RUNTIME_INFO_KEY_CHARGER_CONNECTED");
-			} else {
-				ret = device_battery_get_percent(&capacity);
-				if (ret != DEVICE_ERROR_NONE) {
-					_E("Failed to get battery percent(%d)", ret);
-				}
-
-				ret = device_battery_get_level_status(&battery_level);
-				if (ret != DEVICE_ERROR_NONE) {
-					_E("Failed to get battery level status(%d)", ret);
-				}
-
-				if (capacity == 100 && charger == true) {
-					elm_object_part_text_set(swipe_layout, "txt.battery", _("IDS_SM_POP_FULLY_CHARGED"));
-				} else {
-					elm_object_part_text_set(swipe_layout, "txt.battery", "");
-				}
-			}
 		}
 	}
-
 	return LOCK_ERROR_OK;
 }
 
-static void _battery_changed_cb(device_callback_e type, void *value, void *user_data)
+static Eina_Bool _battery_update(void *data, int event, void *event_info)
 {
-	_D("%s", __func__);
-
-	if (LOCK_ERROR_OK != lock_battery_update()) {
-		_E("Failed to update battery information");
-	}
+	_E("Ecore event handler");
+	lock_battery_update();
+	return EINA_TRUE;
 }
 
-lock_error_e lock_battery_show(void)
+lock_error_e lock_battery_ctrl_init(void)
 {
-	Evas_Object *swipe_layout = NULL;
+	lock_battery_update();
 
-	int ret = 0;
-
-	swipe_layout = lock_default_swipe_layout_get();
-	retv_if(!swipe_layout, LOCK_ERROR_FAIL);
-
-	elm_object_signal_emit(swipe_layout, "show,txt,battery", "txt.battery");
-
-	ret = device_add_callback(DEVICE_CALLBACK_BATTERY_CAPACITY, _battery_changed_cb, NULL);
-	if (ret != DEVICE_ERROR_NONE) {
-		_E("Failed to add device callback : DEVICE_CALLBACK_BATTERY_CAPACITY(%d)", ret);
-	}
-
-	ret = device_add_callback(DEVICE_CALLBACK_BATTERY_LEVEL, _battery_changed_cb, NULL);
-	if (ret != DEVICE_ERROR_NONE) {
-		_E("Failed to add device callback : DEVICE_CALLBACK_BATTERY_LEVEL(%d)", ret);
-	}
-
+	handler = ecore_event_handler_add(LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED, _battery_update, NULL);
+	if (handler)
+		_E("Handler insalled");
+	else
+		_E("Handler insalled failed! %d", LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED);
 	return LOCK_ERROR_OK;
 }
 
-lock_error_e lock_battery_hide(void)
+void lock_battery_ctrl_fini(void)
 {
-	Evas_Object *swipe_layout = NULL;
-
-	int ret = 0;
-
-	swipe_layout = lock_default_swipe_layout_get();
-	retv_if(!swipe_layout, LOCK_ERROR_FAIL);
-
-	elm_object_signal_emit(swipe_layout, "hide,txt,battery", "txt.battery");
-
-	ret = device_remove_callback(DEVICE_CALLBACK_BATTERY_CAPACITY, _battery_changed_cb);
-	if (ret != DEVICE_ERROR_NONE) {
-		_E("Failed to remove device callback : DEVICE_CALLBCK_BATTERY_CAPACITY(%d)", ret);
-	}
-
-	ret = device_remove_callback(DEVICE_CALLBACK_BATTERY_LEVEL, _battery_changed_cb);
-	if (ret != DEVICE_ERROR_NONE) {
-		_E("Failed to remove device callback : DEVICE_CALLBCK_BATTERY_LEVEL(%d)", ret);
-	}
-
-	return LOCK_ERROR_OK;
-}
-
-static void _battery_charger_changed_cb(runtime_info_key_e key, void *data)
-{
-	_D("%s", __func__);
-
-	int ret = 0;
-	bool is_connected = 0;
-
-	ret = lock_property_get_bool(PROPERTY_TYPE_RUNTIME_INFO, (void *)RUNTIME_INFO_KEY_CHARGER_CONNECTED , &is_connected);
-	if (ret != LOCK_ERROR_OK) {
-		_E("Failed to get runtime info : RUNTIME_INFO_KEY_CHARGER_CONNECTED");
-	}
-
-	_D("charger connected : %d", is_connected);
-	s_info.is_connected = is_connected;
-
-	if (is_connected) {
-		_D("show battery information");
-		if (LOCK_ERROR_OK != lock_battery_show()) {
-			_E("Failed to show battery infomation");
-		}
-
-		if (LOCK_ERROR_OK != lock_battery_update()) {
-			_E("Failed to update battery information");
-		}
-	} else {
-		_D("hide battery inforamtion");
-		if (LOCK_ERROR_OK != lock_battery_hide()) {
-			_E("Failed to hide battery information");
-		}
-	}
-}
-
-lock_error_e lock_battery_init(void)
-{
-	int ret = 0;
-
-	ret = runtime_info_set_changed_cb(RUNTIME_INFO_KEY_CHARGER_CONNECTED, _battery_charger_changed_cb, NULL);
-	if (ret != RUNTIME_INFO_ERROR_NONE) {
-		_E("Failed to set changed cb : RUNTIME_INFO_KEY_CHANGER_CONNECTED(%d)", ret);
-	}
-
-	ret = runtime_info_set_changed_cb(RUNTIME_INFO_KEY_BATTERY_IS_CHARGING, _battery_charger_changed_cb, NULL);
-	if (ret != RUNTIME_INFO_ERROR_NONE) {
-		_E("Failed to set changed cb : RUNTIME_INFO_KEY_BATTERY_IS_CHARGING(%d)", ret);
-	}
-
-	_battery_charger_changed_cb(RUNTIME_INFO_KEY_CHARGER_CONNECTED, NULL);
-
-	return LOCK_ERROR_OK;
-}
-
-void lock_battery_fini(void)
-{
-	int ret = 0;
-
-	ret = runtime_info_unset_changed_cb(RUNTIME_INFO_KEY_CHARGER_CONNECTED);
-	if (ret != RUNTIME_INFO_ERROR_NONE) {
-		_E("Failed to set changed cb : RUNTIME_INFO_KEY_CHANGER_CONNECTED(%d)", ret);
-	}
-
-	ret = runtime_info_unset_changed_cb(RUNTIME_INFO_KEY_BATTERY_IS_CHARGING);
-	if (ret != RUNTIME_INFO_ERROR_NONE) {
-		_E("Failed to set changed cb : RUNTIME_INFO_KEY_BATTERY_IS_CHARGING(%d)", ret);
-	}
+	ecore_event_handler_del(handler);
 }
