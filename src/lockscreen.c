@@ -32,6 +32,7 @@
 #include "background_view.h"
 #include "default_lock.h"
 #include "lock_time.h"
+#include "data_model.h"
 #include <device/display.h>
 #include <device/callback.h>
 
@@ -156,6 +157,7 @@ static void _fini_theme(void)
 static Eina_Bool _lock_idler_cb(void *data)
 {
 	_init_theme();
+	lockscreen_data_model_init();
 
 	if (LOCK_ERROR_OK != lock_default_lock_init()) {
 		_E("Failed to initialize default lockscreen");

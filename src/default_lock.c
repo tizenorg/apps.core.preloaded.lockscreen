@@ -26,11 +26,12 @@
 #include "property.h"
 #include "window.h"
 #include "background_view.h"
-#include "battery.h"
+#include "battery_ctrl.h"
 #include "lock_time.h"
 #include "sim_state.h"
 #include "util.h"
 #include "camera.h"
+#include "contextual_view.h"
 
 static struct _s_info {
 	Evas_Object *conformant;
@@ -156,7 +157,7 @@ static Evas_Object *_swipe_layout_create(Evas_Object *parent)
 	lock_time_init();
 
 	/* initialize battery information */
-	if (LOCK_ERROR_OK != lock_battery_init()) {
+	if (LOCK_ERROR_OK != lock_battery_ctrl_init()) {
 		_E("Failed to initialize battery information");
 	}
 	/* initialize PLMN-SPN information */
@@ -264,6 +265,27 @@ static Evas_Object *_comformant_create(void)
 	return conformant;
 }
 
+static void _context_changed(bool enabled)
+{
+	_D("Context chagned");
+
+	Evas_Object *swipe_layout = lock_default_swipe_layout_get();
+	retv_if(!swipe_layout, LOCK_ERROR_FAIL);
+
+	if (!enabled) return;
+
+	/*
+	Evas_Object *contextual_event_layout = elm_object_part_content_get(swipe_layout, "sw.contextual_event");
+	if (!contextual_event_layout) {
+		_D("create contextual event layout");
+		contextual_event_layout = lock_contextual_view_layout_create(swipe_layout);
+		retv_if(!contextual_event_layout, LOCK_ERROR_FAIL);
+
+		elm_object_part_content_set(swipe_layout, "sw.contextual_event", contextual_event_layout);
+	}
+	*/
+}
+
 lock_error_e lock_default_lock_init(void)
 {
 	Evas_Object *conformant = NULL;
@@ -293,6 +315,9 @@ lock_error_e lock_default_lock_init(void)
 	ret = _unlock_panel_create();
 	goto_if(LOCK_ERROR_OK != ret, ERROR);
 
+	//lock_contextual_view_init();
+	//lock_contextual_view_state_changed_cb_set(_context_changed, NULL);
+
 	return LOCK_ERROR_OK;
 
 ERROR:
@@ -314,7 +339,7 @@ ERROR:
 void lock_default_lock_fini(void)
 {
 	lock_sim_state_deinit();
-	lock_battery_fini();
+	lock_battery_ctrl_fini();
 	lock_time_fini();
 	lock_background_view_bg_del();
 
@@ -338,4 +363,6 @@ void lock_default_lock_fini(void)
 		evas_object_del(s_info.gesture_layer);
 		s_info.gesture_layer = NULL;
 	}
+
+	lock_contextual_view_shutdown();
 }
