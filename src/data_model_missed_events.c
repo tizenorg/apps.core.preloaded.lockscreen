@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,37 +14,15 @@
  * limitations under the License.
  */
 
-#include <Evas.h>
-#include <Ecore.h>
-#include <Elementary.h>
-
-#include "lockscreen.h"
 #include "log.h"
-#include "window.h"
+#include "data_model_missed_events.h"
 
-#define STR_ATOM_PANEL_SCROLLABLE_STATE "_E_MOVE_PANEL_SCROLLABLE_STATE"
-
-static struct _s_info {
-	Evas_Object *win;
-	int win_w;
-	int win_h;
-} s_info = {
-	.win = NULL,
-	.win_w = 0,
-	.win_h = 0,
-};
-
-Evas_Object *lock_window_win_get(void)
+int lockscreen_data_model_missed_events_init(lockscreen_data_model_t *model)
 {
-	return s_info.win;
+	return 0;
 }
 
-int lock_window_width_get(void)
+void lockscreen_data_model_missed_events_shutdown(void)
 {
-	return s_info.win_w;
 }
 
-int lock_window_height_get(void)
-{
-	return s_info.win_h;
-}

@@ -14,37 +14,37 @@
  * limitations under the License.
  */
 
-#include <Evas.h>
-#include <Ecore.h>
-#include <Elementary.h>
+#ifndef __MUSIC_PLAYER_H__
+#define __MUSIC_PLAYER_H__
 
-#include "lockscreen.h"
-#include "log.h"
-#include "window.h"
+typedef enum {
+	MUSIC_PLAYER_VIEW_TYPE_MUSIC,
+	MUSIC_PLAYER_VIEW_TYPE_SOUND,
+} music_player_view_type_e;
 
-#define STR_ATOM_PANEL_SCROLLABLE_STATE "_E_MOVE_PANEL_SCROLLABLE_STATE"
+/**
+ *
+ */
+typedef void (*player_state_cb)(music_player_view_type_e type, bool on, void *data);
 
-static struct _s_info {
-	Evas_Object *win;
-	int win_w;
-	int win_h;
-} s_info = {
-	.win = NULL,
-	.win_w = 0,
-	.win_h = 0,
-};
+/**
+ *
+ */
+int lock_music_player_init(void);
 
-Evas_Object *lock_window_win_get(void)
-{
-	return s_info.win;
-}
+/**
+ *
+ */
+int lock_music_player_state_changed_cb(player_state_cb cb, void *data);
 
-int lock_window_width_get(void)
-{
-	return s_info.win_w;
-}
+/**
+ *
+ */
+void lock_music_player_shutdown(void);
 
-int lock_window_height_get(void)
-{
-	return s_info.win_h;
-}
+/**
+ *
+ */
+Evas_Object *lock_music_player_view_create(music_player_view_type_e type, Evas_Object *parent);
+
+#endif

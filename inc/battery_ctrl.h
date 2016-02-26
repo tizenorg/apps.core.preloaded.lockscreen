@@ -14,37 +14,10 @@
  * limitations under the License.
  */
 
-#include <Evas.h>
-#include <Ecore.h>
-#include <Elementary.h>
+#ifndef __BATTERY_CTRL_H__
+#define __BATTERY_CTRL_H__
 
-#include "lockscreen.h"
-#include "log.h"
-#include "window.h"
+lock_error_e lock_battery_ctrl_init(void);
+void lock_battery_ctrl_fini(void);
 
-#define STR_ATOM_PANEL_SCROLLABLE_STATE "_E_MOVE_PANEL_SCROLLABLE_STATE"
-
-static struct _s_info {
-	Evas_Object *win;
-	int win_w;
-	int win_h;
-} s_info = {
-	.win = NULL,
-	.win_w = 0,
-	.win_h = 0,
-};
-
-Evas_Object *lock_window_win_get(void)
-{
-	return s_info.win;
-}
-
-int lock_window_width_get(void)
-{
-	return s_info.win_w;
-}
-
-int lock_window_height_get(void)
-{
-	return s_info.win_h;
-}
+#endif
