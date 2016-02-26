@@ -9,7 +9,7 @@ type = app
 profile = mobile-3.0
 
 # C Sources
-USER_SRCS = src/lockscreen.c src/camera.c src/util.c src/default_lock.c src/background_view.c src/battery.c src/window.c src/lock_time.c src/property.c src/sim_state.c 
+USER_SRCS = src/lockscreen.c src/camera.c src/util.c src/default_lock.c src/background_view.c src/battery.c src/window.c src/lock_time.c src/property.c src/sim_state.c src/contextual_event.c src/music_player.c src/missed_event.c
 
 # EDC Sources
 USER_EDCS =  
