@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2009-2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef __MUSIC_PLAYER_H__
+#define __MUSIC_PLAYER_H__
+
+typedef enum {
+	MUSIC_PLAYER_VIEW_TYPE_MUSIC,
+	MUSIC_PLAYER_VIEW_TYPE_SOUND,
+} music_player_view_type_e;
+
+/**
+ *
+ */
+typedef void (*player_state_cb)(music_player_view_type_e type, bool on, void *data);
+
+/**
+ *
+ */
+int lock_music_player_init(void);
+
+/**
+ *
+ */
+int lock_music_player_state_changed_cb(player_state_cb cb, void *data);
+
+/**
+ *
+ */
+void lock_music_player_shutdown(void);
+
+/**
+ *
+ */
+Evas_Object *lock_music_player_view_create(music_player_view_type_e type, Evas_Object *parent);
+
+#endif
