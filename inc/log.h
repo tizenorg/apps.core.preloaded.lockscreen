@@ -44,6 +44,10 @@
 #define _I(fmt, arg...) dlog_print(DLOG_INFO, LOG_TAG, "%s: %s[%d]\t " #fmt "\n", __FILENAME__, __func__, __LINE__, ##arg)
 #endif
 
+#if !defined(FATAL)
+#define FATAL(fmt, arg...) dlog_print(DLOG_FATAL, LOG_TAG, "%s: %s[%d]\t " #fmt "\n", __FILENAME__, __func__, __LINE__, ##arg);
+#endif
+
 #undef _
 #define _(str) i18n_get_text(str)
 

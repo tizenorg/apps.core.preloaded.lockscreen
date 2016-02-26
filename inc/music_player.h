@@ -14,17 +14,37 @@
  * limitations under the License.
  */
 
-#ifndef __WINDOW_H__
-#define __WINDOW_H__
+#ifndef __MUSIC_PLAYER_H__
+#define __MUSIC_PLAYER_H__
 
-#include <stdbool.h>
+typedef enum {
+	MUSIC_PLAYER_VIEW_TYPE_MUSIC,
+	MUSIC_PLAYER_VIEW_TYPE_SOUND,
+} music_player_view_type_e;
 
-Evas_Object *lock_window_win_get(void);
-int lock_window_width_get(void);
-int lock_window_height_get(void);
+/**
+ *
+ */
+typedef void (*player_state_cb)(music_player_view_type_e type, bool on, void *data);
 
-Evas_Object *lockscreen_window_create(void);
-void lockscreen_window_content_set(Evas_Object *content);
-bool lockscreen_window_background_image_set(const char *file);
+/**
+ *
+ */
+int lock_music_player_init(void);
+
+/**
+ *
+ */
+int lock_music_player_state_changed_cb(player_state_cb cb, void *data);
+
+/**
+ *
+ */
+void lock_music_player_shutdown(void);
+
+/**
+ *
+ */
+Evas_Object *lock_music_player_view_create(music_player_view_type_e type, Evas_Object *parent);
 
 #endif

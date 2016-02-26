@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-#ifndef __WINDOW_H__
-#define __WINDOW_H__
+#ifndef __BATTERY_CTRL_H__
+#define __BATTERY_CTRL_H__
 
-#include <stdbool.h>
-
-Evas_Object *lock_window_win_get(void);
-int lock_window_width_get(void);
-int lock_window_height_get(void);
-
-Evas_Object *lockscreen_window_create(void);
-void lockscreen_window_content_set(Evas_Object *content);
-bool lockscreen_window_background_image_set(const char *file);
+lock_error_e lock_battery_ctrl_init(void);
+void lock_battery_ctrl_fini(void);
 
 #endif

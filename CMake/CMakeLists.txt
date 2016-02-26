@@ -62,7 +62,7 @@ INCLUDE_DIRECTORIES(${PROJECT_ROOT_DIR}/inc)
 
 ADD_EXECUTABLE(${PROJECT_NAME}
 	${PROJECT_ROOT_DIR}/src/background_view.c
-	${PROJECT_ROOT_DIR}/src/battery.c
+	${PROJECT_ROOT_DIR}/src/battery_ctrl.c
 	${PROJECT_ROOT_DIR}/src/camera.c
 	${PROJECT_ROOT_DIR}/src/default_lock.c
 	${PROJECT_ROOT_DIR}/src/lock_time.c
@@ -71,6 +71,16 @@ ADD_EXECUTABLE(${PROJECT_NAME}
 	${PROJECT_ROOT_DIR}/src/sim_state.c
 	${PROJECT_ROOT_DIR}/src/util.c
 	${PROJECT_ROOT_DIR}/src/window.c
+	${PROJECT_ROOT_DIR}/src/music_player.c
+	${PROJECT_ROOT_DIR}/src/contextual_view.c
+	${PROJECT_ROOT_DIR}/src/data_model.c
+	${PROJECT_ROOT_DIR}/src/data_model_background.c
+	${PROJECT_ROOT_DIR}/src/data_model_battery.c
+	${PROJECT_ROOT_DIR}/src/data_model_missed_events.c
+	${PROJECT_ROOT_DIR}/src/data_model_music_player.c
+	${PROJECT_ROOT_DIR}/src/data_model_sim.c
+	${PROJECT_ROOT_DIR}/src/main_view.c
+	${PROJECT_ROOT_DIR}/src/main_ctrl.c
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${pkgs_LDFLAGS} -lm)

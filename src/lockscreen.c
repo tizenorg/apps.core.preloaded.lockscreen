@@ -32,6 +32,7 @@
 #include "background_view.h"
 #include "default_lock.h"
 #include "lock_time.h"
+#include "data_model.h"
 #include <device/display.h>
 #include <device/callback.h>
 
@@ -157,13 +158,17 @@ static Eina_Bool _lock_idler_cb(void *data)
 {
 	_init_theme();
 
+	lockscreen_main_ctrl_init();
+
+	/*
 	if (LOCK_ERROR_OK != lock_default_lock_init()) {
 		_E("Failed to initialize default lockscreen");
 		return ECORE_CALLBACK_CANCEL;
 	}
+	*/
 
 	/* register callback func. : key sound, touch sound, rotation */
-	lock_property_register(NULL);
+	//lock_property_register(NULL);
 
 	feedback_initialize();
 
@@ -213,10 +218,6 @@ bool _create_app(void *data)
 
 	elm_config_accel_preference_set("opengl");
 
-	Evas_Object *win = NULL;
-	Evas_Object *bg = NULL;
-	int locktype = 0;
-
 	_D("base scale : %f", elm_app_base_scale_get());
 
 // FIXME
@@ -233,14 +234,14 @@ bool _create_app(void *data)
 	s_info.lock_type = 1;
 
 	/* Create lockscreen window */
-	win = lock_window_create(locktype);
-	retv_if(!win, false);
+	//win = lock_window_create(locktype);
+	//retv_if(!win, false);
 
 	/* Create lockscreen BG */
-	bg = lock_background_view_bg_create(win);
-	if (!bg) {
-		_E("Failed to create BG");
-	}
+	//bg = lock_background_view_bg_create(win);
+	//if (!bg) {
+	//	_E("Failed to create BG");
+	//}
 
 	/* Register on display on/off events */
 	int ret = device_add_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed, NULL);
@@ -248,26 +249,13 @@ bool _create_app(void *data)
 		_E("Failed to register display state changed callback.");
 	}
 
-	evas_object_show(win);
+	//evas_object_show(win);
 
 	ecore_idler_add(_lock_idler_cb, NULL);
 
-	eext_object_event_callback_add(win, EEXT_CALLBACK_BACK, _back_key_cb, NULL);
+	//eext_object_event_callback_add(win, EEXT_CALLBACK_BACK, _back_key_cb, NULL);
 
 	return true;
-}
-
-static void _app_control(app_control_h control, void *data)
-{
-	char *control_val = NULL;
-
-	app_control_get_extra_data(control, LOCK_CONTROL_TYPE_KEY, &control_val);
-	_I("control value : %s", control_val);
-
-	if (control_val) {
-		free(control_val);
-		control_val = NULL;
-	}
 }
 
 void _terminate_app(void *data)
@@ -276,25 +264,10 @@ void _terminate_app(void *data)
 
 	lock_default_lock_fini();
 
-	lock_property_unregister();
+	//lock_property_unregister();
 	feedback_deinitialize();
 
 	_fini_theme();
-}
-
-void _pause_app(void *user_data)
-{
-	_D("%s", __func__);
-}
-
-void _resume_app(void *user_data)
-{
-	_D("%s", __func__);
-}
-
-static void _language_changed(void *data)
-{
-	_D("%s", __func__);
 }
 
 int main(int argc, char *argv[])
@@ -302,23 +275,13 @@ int main(int argc, char *argv[])
 	int ret = 0;
 
 	ui_app_lifecycle_callback_s lifecycle_callback = {0,};
-	app_event_handler_h handlers[5] = {NULL, };
 
 	lifecycle_callback.create = _create_app;
 	lifecycle_callback.terminate = _terminate_app;
-	lifecycle_callback.pause = _pause_app;
-	lifecycle_callback.resume = _resume_app;
-	lifecycle_callback.app_control = _app_control;
-
-	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_BATTERY], APP_EVENT_LOW_BATTERY, NULL, NULL);
-	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_MEMORY], APP_EVENT_LOW_MEMORY, NULL, NULL);
-	ui_app_add_event_handler(&handlers[APP_EVENT_DEVICE_ORIENTATION_CHANGED], APP_EVENT_DEVICE_ORIENTATION_CHANGED, NULL, NULL);
-	ui_app_add_event_handler(&handlers[APP_EVENT_LANGUAGE_CHANGED], APP_EVENT_LANGUAGE_CHANGED, (void *)_language_changed, NULL);
-	ui_app_add_event_handler(&handlers[APP_EVENT_REGION_FORMAT_CHANGED], APP_EVENT_REGION_FORMAT_CHANGED, NULL, NULL);
 
 	ret = ui_app_main(argc, argv, &lifecycle_callback, NULL);
 	if (ret != APP_ERROR_NONE) {
-		_E("app_main() is failed. err = %d", ret);
+		_E("ui_app_main failed: %s", get_error_message(ret));
 	}
 
 	return ret;

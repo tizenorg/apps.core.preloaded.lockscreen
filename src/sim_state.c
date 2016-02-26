@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-#include <telephony/telephony.h>
-
 #include "lockscreen.h"
 #include "log.h"
 #include "sim_state.h"
 #include "default_lock.h"
+#include "data_model.h"
+
+static Ecore_Event_Handler *handler;
 
 #define EMG_BUTTON_WIDTH 322
 
 #define PLMN_LABEL_STYLE_START "<style=far_shadow,bottom><shadow_color=#00000033><font_size=24><align=left><color=#FFFFFF><text_class=ATO007><color_class=ATO007><wrap=none>"
 #define PLMN_LABEL_STYLE_END "</wrap></color_class></text_class></color></align></font_size></shadow_color></style>"
-
-static telephony_handle_list_s s_handle_list;
-
-static void _sim_init(void);
-static void _sim_deinit(void);
 
 static void _sim_state_view_slide_mode_set(Evas_Object *label)
 {
@@ -81,248 +77,40 @@ static void _sim_state_view_sliding_label_create(Evas_Object *layout, const char
 	evas_object_show(label);
 }
 
-static char *_sim_plmn_get(telephony_h handle)
-{
-	int ret = 0;
-	char *network_name = NULL;
-
-	/* Reading Network (PLMN) name - ‘string’ type Property */
-	ret = telephony_network_get_network_name(handle, &network_name);
-	if (ret == TELEPHONY_ERROR_NONE) {
-		/* ‘network_name’ contains valid Network name based on Display condition */
-		return network_name;
-	} else {
-		_E("Sim = %p PLMN = ERROR[%d]", handle, ret);
-		/* get property failed */
-	}
-
-	return NULL;
-}
-
-static char *_sim_spn_get(telephony_h handle)
-{
-	int ret = 0;
-	char *spn_name = NULL;
-
-	/* Reading SPN name - ‘string’ type Property */
-	telephony_sim_get_spn(handle, &spn_name);
-	if (ret == TELEPHONY_ERROR_NONE) {
-		/* ‘spn_name’ contains valid Service provider name */
-		return spn_name;
-	} else {
-		_E("Sim = %p SPN = ERROR[%d]", handle, ret);
-		/* get property failed */
-		return NULL;
-	}
-}
-
-static char *_sim_state_text_for_sim_get(telephony_h handle)
-{
-	int ret;
-	telephony_network_service_state_e service_state;
-	telephony_network_name_option_e name_option;
-
-	char *plmn = NULL;
-	char *spn = NULL;
-	char buf[1024] = { 0, };
-
-	/* get service state */
-	ret = telephony_network_get_service_state(handle, &service_state);
-	if (ret != TELEPHONY_ERROR_NONE) {
-		_E("Failed to get service state [%d]", ret);
-		return NULL;
-	}
-
-	switch (service_state) {
-	case TELEPHONY_NETWORK_SERVICE_STATE_IN_SERVICE:
-		/* get network name option */
-		ret = telephony_network_get_network_name_option(handle, &name_option);
-		if (ret != TELEPHONY_ERROR_NONE) {
-			_E("Failed to get telephony network name option [%d]", ret);
-			return NULL;
-		}
-
-		switch (name_option) {
-		case TELEPHONY_NETWORK_NAME_OPTION_SPN:
-			spn = _sim_spn_get(handle);
-			if (spn != NULL && spn[0] != 0) {
-				_I("PLMN/SPN - Sim %p using SPN: %s", handle, spn);
-				snprintf(buf, sizeof(buf), "%s", spn);
-			}
-			break;
-		case TELEPHONY_NETWORK_NAME_OPTION_NETWORK:
-			plmn = _sim_plmn_get(handle);
-			if (plmn != NULL && plmn[0] != 0) {
-				_I("PLMN/SPN - Sim %p using PLMN: %s", handle, plmn);
-				snprintf(buf, sizeof(buf), "%s", plmn);
-			}
-			break;
-		case TELEPHONY_NETWORK_NAME_OPTION_ANY:
-			spn = _sim_spn_get(handle);
-			plmn = _sim_plmn_get(handle);
-			if (spn != NULL && spn[0] != 0 && plmn != NULL && plmn[0] != 0) {
-				_I("PLMN/SPN - Sim %p using SPN: %s, PLMN: %s", handle, spn, plmn);
-				snprintf(buf, sizeof(buf), "%s - %s", plmn, spn);
-			} else if (spn != NULL && spn[0] != 0) {
-				_I("PLMN/SPN - Sim %p using SPN: %s", handle, spn);
-				snprintf(buf, sizeof(buf), "%s", spn);
-			} else if (plmn != NULL && plmn[0] != 0) {
-				_I("PLMN/SPN - Sim %p using PLMN: %s", handle, plmn);
-				snprintf(buf, sizeof(buf), "%s", plmn);
-			}
-			break;
-		default:
-			_E("Invalid name option[%d]", name_option);
-			plmn = _sim_plmn_get(handle);
-			if (plmn != NULL && plmn[0] != 0) {
-				_I("PLMN/SPN - Sim %p using PLMN: %s", handle, plmn);
-				snprintf(buf, sizeof(buf), "%s", plmn);
-			}
-			break;
-		}
-		break;
-	case TELEPHONY_NETWORK_SERVICE_STATE_OUT_OF_SERVICE:
-		snprintf(buf, sizeof(buf), "%s", _("IDS_COM_BODY_NO_SERVICE"));
-		break;
-	case TELEPHONY_NETWORK_SERVICE_STATE_EMERGENCY_ONLY:
-		snprintf(buf, sizeof(buf), "%s", _("IDS_IDLE_MBODY_EMERGENCY_CALLS_ONLY"));
-		break;
-	default:
-		snprintf(buf, sizeof(buf), "%s", _("IDS_COM_BODY_NO_SERVICE"));
-		break;
-	}
-
-	return strdup(buf);
-}
-
 static void _sim_state_view_update()
 {
 	Evas_Object *swipe_layout = lock_default_swipe_layout_get();
 	ret_if(!swipe_layout);
-	telephony_sim_state_e state;
-	Eina_Strbuf *buf;
-	int i;
+	char buf[128];
 
-	buf = eina_strbuf_new();
-	if (!buf) return;
-
-	/* Append information only for available SIMs */
-	for (i = 0; i < s_handle_list.count; i++) {
-		int ret = telephony_sim_get_state(s_handle_list.handle[i], &state);
-		if (ret != TELEPHONY_ERROR_NONE)
-			continue;
-		if (state == TELEPHONY_SIM_STATE_UNAVAILABLE)
-			continue;
-
-		char *txt = _sim_state_text_for_sim_get(s_handle_list.handle[i]);
-		if (!txt)
-			continue;
-
-		if (!eina_strbuf_length_get(buf))
-			eina_strbuf_append_printf(buf, "%s", txt);
-		else
-			eina_strbuf_append_printf(buf, " / %s", txt);
-
-		free(txt);
+	const lockscreen_data_model_t *model = lockscreen_data_model_get_model();
+	if (!model) {
+		_E("lockscreen_data_model_get_model failed");
+		return;
 	}
 
-	_sim_state_view_sliding_label_create(swipe_layout, eina_strbuf_string_get(buf));
-	eina_strbuf_free(buf);
+	if (model->sim[0].text && model->sim[1].text) {
+		snprintf(buf, sizeof(buf), "%s / %s", model->sim[0].text, model->sim[1].text);
+	} else if (model->sim[0].text) {
+		snprintf(buf, sizeof(buf), "%s", model->sim[0].text);
+	} else if (model->sim[1].text) {
+		snprintf(buf, sizeof(buf), "%s", model->sim[1].text);
+	} else {
+		snprintf(buf, sizeof(buf), "");
+	}
+
+	_sim_state_view_sliding_label_create(swipe_layout, buf);
 }
 
-static void _on_sim_card_info_changed_cb(telephony_h handle, telephony_noti_e noti_id, void *data, void *user_data)
+static Eina_Bool _sim_status_changed(void *data, int type, void *event_info)
 {
 	_sim_state_view_update();
-}
-
-static void _sim_callbacks_register(telephony_h handle)
-{
-	int ret = 0;
-
-	ret = telephony_set_noti_cb(handle, TELEPHONY_NOTI_SIM_STATUS, _on_sim_card_info_changed_cb, NULL);
-	if (ret != TELEPHONY_ERROR_NONE) {
-		_E("Failed to register callback on event TELEPHONY_NOTI_SIM_STATUS [%d]", ret);
-	}
-
-	ret = telephony_set_noti_cb(handle, TELEPHONY_NOTI_NETWORK_NETWORK_NAME, _on_sim_card_info_changed_cb, NULL);
-	if (ret != TELEPHONY_ERROR_NONE) {
-		_E("Failed to register callback on event TELEPHONY_NOTI_NETWORK_NETWORK_NAME [%d]", ret);
-	}
-
-	ret = telephony_set_noti_cb(handle, TELEPHONY_NOTI_NETWORK_SERVICE_STATE, _on_sim_card_info_changed_cb, NULL);
-	if (ret != TELEPHONY_ERROR_NONE) {
-		_E("Failed to register callback on event TELEPHONY_NOTI_NETWORK_SERVICE_STATE [%d]", ret);
-	}
-}
-
-static void _on_telephony_state_changed_cb(telephony_state_e state, void *user_data)
-{
-	_D("tel status[%d]", state);
-
-	if (state == TELEPHONY_STATE_READY) {
-		_sim_init();
-		_sim_state_view_update();
-	} else if (state == TELEPHONY_STATE_NOT_READY) {
-		_sim_deinit();
-	}
-}
-
-/**
- * @brief Initializes SIM card handlers
- */
-static void _sim_init(void)
-{
-	/* Get available sim cards handles */
-	int i, ret = telephony_init(&s_handle_list);
-	if (ret != TELEPHONY_ERROR_NONE) {
-		_E("Unable to initialize telephony");
-		return;
-	}
-
-	if (s_handle_list.count <= 0) {
-		_D("No available sim cards");
-		return;
-	}
-
-	/* Register for Telephony call state changes */
-	for (i = 0; i < s_handle_list.count; i++) {
-		_sim_callbacks_register(s_handle_list.handle[i]);
-	}
-}
-
-static void _sim_deinit(void)
-{
-	int ret = telephony_deinit(&s_handle_list);
-	if (ret != TELEPHONY_ERROR_NONE) {
-		_E("Unable to deinit telephony list");
-	}
-	s_handle_list.count = 0;
+	return EINA_TRUE;
 }
 
 lock_error_e lock_sim_state_init(void)
 {
-	int ret;
-	telephony_state_e state;
-
-	/* Check if Telephony state == READY */
-	ret = telephony_get_state(&state);
-	if (ret == TELEPHONY_ERROR_NONE) {
-		if (state == TELEPHONY_STATE_READY) {
-			_D("Telephony Ready : %d", state);
-			_sim_init();
-			_sim_state_view_update();
-		} else if (state == TELEPHONY_STATE_NOT_READY) {
-			_D("Telephony state: [NOT Ready]");
-		}
-	} else {
-		_E("Unable to get telephony state: %d", ret);
-	}
-
-	/* Register for Telephony state change */
-	ret = telephony_set_state_changed_cb(_on_telephony_state_changed_cb, NULL);
-	if (ret != TELEPHONY_ERROR_NONE) {
-		_E("Failed to register on telephony state changed callback");
-	}
+	handler = ecore_event_handler_add(LOCKSCREEN_DATA_MODEL_EVENT_SIM_STATUS_CHANGED, _sim_status_changed, NULL);
 
 	return LOCK_ERROR_OK;
 }
@@ -330,7 +118,5 @@ lock_error_e lock_sim_state_init(void)
 void lock_sim_state_deinit(void)
 {
 	_D("De-initialization");
-	_sim_deinit();
-
-	telephony_unset_state_changed_cb(_on_telephony_state_changed_cb);
+	ecore_event_handler_del(handler);
 }
