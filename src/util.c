@@ -32,7 +32,11 @@ const char *util_get_file_path(enum app_subdir dir, const char *relative)
 		prefix = app_get_cache_path();
 		break;
 	case APP_DIR_RESOURCE:
+#ifdef INSTALL_RESDIR
+		prefix = strdup(INSTALL_RESDIR);
+#else
 		prefix = app_get_resource_path();
+#endif
 		break;
 	case APP_DIR_SHARED_DATA:
 		prefix = app_get_shared_data_path();
@@ -53,13 +57,13 @@ const char *util_get_file_path(enum app_subdir dir, const char *relative)
 		prefix = app_get_external_shared_data_path();
 		break;
 	default:
-		LOGE("Not handled directory type.");
+		_E("Not handled directory type.");
 		return NULL;
 	}
 	size_t res = eina_file_path_join(buf, sizeof(buf), prefix, relative);
 	free(prefix);
 	if (res > sizeof(buf)) {
-		LOGE("Path exceeded PATH_MAX");
+		_E("Path exceeded PATH_MAX");
 		return NULL;
 	}
 
