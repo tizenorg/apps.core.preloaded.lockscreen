@@ -25,26 +25,23 @@
 #endif
 
 #define LOG_TAG "LOCKSCREEN"
-#define ENABLE_LOG_SYSTEM
 
-#ifdef ENABLE_LOG_SYSTEM
-	#define _E(fmt, arg...)  LOGE("[%s:%d:E] "fmt,  __func__, __LINE__, ##arg)
-	#define _D(fmt, arg...)  LOGD("[%s:%d:D] "fmt,  __func__, __LINE__, ##arg)
-	#define _W(fmt, arg...) LOGW("[%s:%d:W] "fmt,  __func__, __LINE__, ##arg)
-	#define _I(fmt, arg...) LOGI("[%s:%d:I] "fmt,  __func__, __LINE__, ##arg)
-	#define _SECURE_E(fmt, arg...)  SECURE_LOGE("["LOG_TAG"%s:%d:E] : %s "fmt, __FILE__, __LINE__, __func__, ##arg)
-	#define _SECURE_D(fmt, arg...)  SECURE_LOGD("["LOG_TAG"%s:%d:D] : %s "fmt, __FILE__, __LINE__, __func__, ##arg)
-	#define _SECURE_W(fmt, arg...) SECURE_LOGW("["LOG_TAG"%s:%d:W] : %s "fmt, __FILE__, __LINE__, __func__, ##arg)
-	#define _SECURE_I(fmt, arg...) SECURE_LOGI("["LOG_TAG"%s:%d:I] : %s "fmt, __FILE__, __LINE__, __func__, ##arg)
-#else
-	#define _E(fmt, arg...)
-	#define _D(fmt, arg...)
-	#define _W(fmt, arg...)
-	#define _I(fmt, arg...)
-	#define _SECURE_E(fmt, arg...)
-	#define _SECURE_D(fmt, arg...)
-	#define _SECURE_W(fmt, arg...)
-	#define _SECURE_I(fmt, arg...)
+#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+
+#if !defined(_D)
+#define _D(fmt, arg...) dlog_print(DLOG_DEBUG, LOG_TAG, "%s: %s[%d]\t " #fmt "\n", __FILENAME__, __func__, __LINE__, ##arg)
+#endif
+
+#if !defined(_W)
+#define _W(fmt, arg...) dlog_print(DLOG_WARN, LOG_TAG, "%s: %s[%d]\t " #fmt "\n", __FILENAME__, __func__, __LINE__, ##arg)
+#endif
+
+#if !defined(_E)
+#define _E(fmt, arg...) dlog_print(DLOG_ERROR, LOG_TAG, "%s: %s[%d]\t " #fmt "\n", __FILENAME__, __func__, __LINE__, ##arg)
+#endif
+
+#if !defined(_I)
+#define _I(fmt, arg...) dlog_print(DLOG_INFO, LOG_TAG, "%s: %s[%d]\t " #fmt "\n", __FILENAME__, __func__, __LINE__, ##arg)
 #endif
 
 #undef _
