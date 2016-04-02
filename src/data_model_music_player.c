@@ -15,7 +15,7 @@
  */
 
 #include "log.h"
-#include "data_model_music_player.h"
+#include "data_model.h"
 
 int lockscreen_data_model_music_player_init(lockscreen_data_model_t *model)
 {

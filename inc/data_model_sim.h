@@ -17,8 +17,6 @@
 #ifndef _LOCKSCREEN_DATA_MODEL_SIM_H_
 #define _LOCKSCREEN_DATA_MODEL_SIM_H_
 
-#include "data_model.h"
-
 int lockscreen_data_model_sim_init(lockscreen_data_model_t *model);
 
 void lockscreen_data_model_sim_shutdown(void);

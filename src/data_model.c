@@ -33,6 +33,7 @@ int LOCKSCREEN_DATA_MODEL_EVENT_LCD_STATUS_CHANGED;
 int LOCKSCREEN_DATA_MODEL_EVENT_LOCK_TYPE_CHANGED;
 int LOCKSCREEN_DATA_MODEL_EVENT_SIM_STATUS_CHANGED;
 int LOCKSCREEN_DATA_MODEL_EVENT_MISSED_EVENTS_CHANGED;
+int LOCKSCREEN_DATA_MODEL_EVENT_CAMERA_STATUS_CHANGED;
 
 
 static void _events_init()
@@ -44,6 +45,7 @@ static void _events_init()
 	LOCKSCREEN_DATA_MODEL_EVENT_LOCK_TYPE_CHANGED = ecore_event_type_new();
 	LOCKSCREEN_DATA_MODEL_EVENT_SIM_STATUS_CHANGED = ecore_event_type_new();
 	LOCKSCREEN_DATA_MODEL_EVENT_MISSED_EVENTS_CHANGED = ecore_event_type_new();
+	LOCKSCREEN_DATA_MODEL_EVENT_CAMERA_STATUS_CHANGED = ecore_event_type_new();
 }
 
 int lockscreen_data_model_init()
@@ -71,9 +73,13 @@ int lockscreen_data_model_init()
 	if (ret) goto sim_shutdown;
 	ret = lockscreen_data_model_music_player_init(&model);
 	if (ret) goto missed_shutdown;
+	ret = lockscreen_data_model_camera_init(&model);
+	if (ret) goto music_shutdown;
 
 	return 0;
 
+music_shutdown:
+	lockscreen_data_model_music_player_shutdown();
 missed_shutdown:
 	lockscreen_data_model_missed_events_shutdown();
 sim_shutdown:
@@ -92,20 +98,6 @@ battery_shutdown:
 const lockscreen_data_model_t *lockscreen_data_model_get_model(void)
 {
 	return &model;
-}
-
-int lockscreen_data_model_camera_activate()
-{
-	if (!_init_count)
-		return -1;
-	return lockscreen_data_model_camera_activate();
-}
-
-int lockscreen_data_model_background_set(const char *path)
-{
-	if (!_init_count)
-		return -1;
-	return lockscreen_data_model_background_file_set(path);
 }
 
 int lockscreen_data_model_shutdown()

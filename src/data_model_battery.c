@@ -15,7 +15,7 @@
  */
 
 #include "log.h"
-#include "data_model_battery.h"
+#include "data_model.h"
 
 #include <device/battery.h>
 #include <device/callback.h>

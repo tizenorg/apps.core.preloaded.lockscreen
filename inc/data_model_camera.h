@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#ifndef __LOCK_CAMERA_H__
-#define __LOCK_CAMERA_H__
+#ifndef _LOCKSCREEN_DATA_MODEL_CAMERA_H__
+#define _LOCKSCREEN_DATA_MODEL_CAMERA_H__
 
-#include "lockscreen.h"
-
-lock_error_e lock_camera_run(void);
+int lockscreen_data_model_camera_init(lockscreen_data_model_t *model);
+int lockscreen_data_model_camera_activate();
+void lockscreen_data_model_camera_shutdown(void);
 
 #endif
 

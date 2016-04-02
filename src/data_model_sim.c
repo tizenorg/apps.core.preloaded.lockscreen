@@ -16,7 +16,7 @@
 
 #include "log.h"
 #include "util.h"
-#include "data_model_sim.h"
+#include "data_model.h"
 
 #include <telephony/telephony.h>
 

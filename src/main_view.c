@@ -66,6 +66,7 @@ bool lockscreen_main_view_camera_show(void)
 	evas_object_show(cam_ly);
 	view.cam_layout = cam_ly;
 
+	_D("Camera showed");
 	return true;
 }
 
@@ -73,6 +74,8 @@ void lockscreen_main_view_camera_hide()
 {
 	elm_object_part_content_set(view.swipe_layout, "sw.camera", NULL);
 	view.cam_layout = NULL;
+
+	_D("Camera hidden");
 }
 
 void lockscreen_main_view_camera_clicked_signal_add(Edje_Signal_Cb cb, void *data)

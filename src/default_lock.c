@@ -30,7 +30,6 @@
 #include "lock_time.h"
 #include "sim_state.h"
 #include "util.h"
-#include "camera.h"
 #include "contextual_view.h"
 
 static struct _s_info {
@@ -116,10 +115,12 @@ static Evas_Event_Flags _swipe_state_abort(void *data, void *event_info)
 
 static void _camera_icon_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
+#if 0
 	if (lock_camera_run() != LOCK_ERROR_OK) {
 		_E("Unable to launch camera application.");
 		return;
 	}
+#endif
 }
 
 static Evas_Object *_swipe_layout_create(Evas_Object *parent)

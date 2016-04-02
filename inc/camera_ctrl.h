@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2009-2014 Samsung Electronics Co., Ltd All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#ifndef _LOCKSCREEN_DATA_MODEL_BATTERY_H_
-#define _LOCKSCREEN_DATA_MODEL_BATTERY_H_
+#ifndef __CAMERA_CTRL_H__
+#define __CAMERA_CTRL_H__
 
-int lockscreen_data_model_battery_init(lockscreen_data_model_t *model);
-
-void lockscreen_data_model_battery_shutdown(void);
+void lockscreen_camera_ctrl_init(void);
+void lockscreen_camera_ctrl_fini(void);
 
 #endif
+

@@ -20,6 +20,7 @@
 #include "window.h"
 #include "data_model.h"
 #include "battery_ctrl.h"
+#include "camera_ctrl.h"
 
 #include <Elementary.h>
 
@@ -50,6 +51,7 @@ void lockscreen_main_ctrl_init(void)
 
 	// init subcontrollers
 	lock_battery_ctrl_init();
+	lockscreen_camera_ctrl_init();
 }
 
 void lockscreen_main_ctrl_shutdown(void)

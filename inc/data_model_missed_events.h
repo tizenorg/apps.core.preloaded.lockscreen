@@ -17,8 +17,6 @@
 #ifndef _LOCKSCREEN_DATA_MODEL_MISSED_EVENTS_H_
 #define _LOCKSCREEN_DATA_MODEL_MISSED_EVENTS_H_
 
-#include "data_model.h"
-
 int lockscreen_data_model_missed_events_init(lockscreen_data_model_t *model);
 
 void lockscreen_data_model_missed_events_shutdown(void);

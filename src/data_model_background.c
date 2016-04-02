@@ -15,7 +15,7 @@
  */
 
 #include "log.h"
-#include "data_model_background.h"
+#include "data_model.h"
 
 #include <system_settings.h>
 #include <Ecore_File.h>

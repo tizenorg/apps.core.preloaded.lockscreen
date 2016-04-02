@@ -17,8 +17,6 @@
 #ifndef _LOCKSCREEN_DATA_MODEL_BACKGROUND_H_
 #define _LOCKSCREEN_DATA_MODEL_BACKGROUND_H_
 
-#include "data_model.h"
-
 int lockscreen_data_model_background_init(lockscreen_data_model_t *model);
 
 int lockscreen_data_model_background_file_set(const char *path);
