@@ -19,6 +19,7 @@
 #include "main_view.h"
 #include "window.h"
 #include "data_model.h"
+#include "battery_ctrl.h"
 
 #include <Elementary.h>
 
@@ -46,6 +47,9 @@ void lockscreen_main_ctrl_init(void)
 		FATAL("lockscreen_main_view_background_image_set failed");
 
 	lockscreen_window_content_set(view);
+
+	// init subcontrollers
+	lock_battery_ctrl_init();
 }
 
 void lockscreen_main_ctrl_shutdown(void)

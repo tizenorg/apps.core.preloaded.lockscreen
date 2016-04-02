@@ -20,8 +20,8 @@
 #include "lockscreen.h"
 #include "log.h"
 #include "battery_ctrl.h"
-#include "default_lock.h"
 #include "data_model.h"
+#include "main_view.h"
 
 #include <Ecore.h>
 
@@ -97,37 +97,24 @@ static char *_text_from_percentage(int capacity)
 
 lock_error_e lock_battery_update(void)
 {
-	Evas_Object *swipe_layout = NULL;
 	const lockscreen_data_model_t *model = lockscreen_data_model_get_model();
 
-	if (!model) {
-		_E("Lockscreen data model not available");
-		elm_object_signal_emit(swipe_layout, "hide,txt,battery", "txt.battery");
-		return LOCK_ERROR_FAIL;
-	}
-
-	swipe_layout = lock_default_swipe_layout_get();
-	retv_if(!swipe_layout, LOCK_ERROR_FAIL);
-
-	if (model->battery.is_connected) {
-		elm_object_signal_emit(swipe_layout, "show,txt,battery", "txt.battery");
-	} else {
-		elm_object_signal_emit(swipe_layout, "hide,txt,battery", "txt.battery");
-	}
+	if (!model)
+		FATAL("lockscreen_data_model_get_model failed");
 
 	if (model->battery.is_charging) {
 		if (model->battery.level == 100) {
-			elm_object_part_text_set(swipe_layout, "txt.battery", _("IDS_SM_POP_FULLY_CHARGED"));
+			lockscreen_main_view_battery_status_text_set(_("IDS_SM_POP_FULLY_CHARGED"));
 		} else {
 			char *buff = _text_from_percentage(model->battery.level);
-			elm_object_part_text_set(swipe_layout, "txt.battery", buff);
+			lockscreen_main_view_battery_status_text_set(buff);
 			free(buff);
 		}
 	} else {
 		if (model->battery.level == 100 && model->battery.is_connected) {
-			elm_object_part_text_set(swipe_layout, "txt.battery", _("IDS_SM_POP_FULLY_CHARGED"));
+			lockscreen_main_view_battery_status_text_set(_("IDS_SM_POP_FULLY_CHARGED"));
 		} else {
-			elm_object_part_text_set(swipe_layout, "txt.battery", "");
+			lockscreen_main_view_battery_status_text_set(NULL);
 		}
 	}
 	return LOCK_ERROR_OK;
@@ -139,17 +126,14 @@ static Eina_Bool _battery_update(void *data, int event, void *event_info)
 	return EINA_TRUE;
 }
 
-lock_error_e lock_battery_ctrl_init(void)
+void lock_battery_ctrl_init(void)
 {
 	handler = ecore_event_handler_add(LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED, _battery_update, NULL);
 	if (!handler)
-	{
-		_E("Failed to register on EVENT_BATTERY_CHAGNED event");
-		return LOCK_ERROR_FAIL;
-	}
+		FATAL("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED event");
 	lock_battery_update();
 
-	return LOCK_ERROR_OK;
+	return 0;
 }
 
 void lock_battery_ctrl_fini(void)

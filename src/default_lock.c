@@ -156,10 +156,6 @@ static Evas_Object *_swipe_layout_create(Evas_Object *parent)
 	/* initialize time & date information */
 	lock_time_init();
 
-	/* initialize battery information */
-	if (LOCK_ERROR_OK != lock_battery_ctrl_init()) {
-		_E("Failed to initialize battery information");
-	}
 	/* initialize PLMN-SPN information */
 	if (LOCK_ERROR_OK != lock_sim_state_init()) {
 		_E("Failed to initialize sim state");
@@ -341,7 +337,6 @@ ERROR:
 void lock_default_lock_fini(void)
 {
 	lock_sim_state_deinit();
-	lock_battery_ctrl_fini();
 	lock_time_fini();
 	lock_background_view_bg_del();
 

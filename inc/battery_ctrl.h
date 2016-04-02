@@ -17,7 +17,7 @@
 #ifndef __BATTERY_CTRL_H__
 #define __BATTERY_CTRL_H__
 
-lock_error_e lock_battery_ctrl_init(void);
+void lock_battery_ctrl_init(void);
 void lock_battery_ctrl_fini(void);
 
 #endif
