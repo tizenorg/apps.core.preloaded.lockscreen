@@ -32,9 +32,10 @@
 #include "background_view.h"
 #include "default_lock.h"
 #include "lock_time.h"
-#include "data_model.h"
 #include <device/display.h>
 #include <device/callback.h>
+
+#include "main_ctrl.h"
 
 #define LOCK_CONTROL_TYPE_KEY "lock_type"
 #define LOCK_CONTROL_TYPE_VALUE_RECOVERY "recovery_lock"

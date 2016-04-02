@@ -31,6 +31,8 @@ void lockscreen_main_view_destroy();
 
 void lockscreen_main_view_camera_clicked_signal_add(Edje_Signal_Cb cb, void *data);
 
+void lockscreen_main_view_camera_clicked_signal_del(Edje_Signal_Cb cb);
+
 bool lockscreen_main_view_camera_show(void);
 
 void lockscreen_main_view_camera_hide();

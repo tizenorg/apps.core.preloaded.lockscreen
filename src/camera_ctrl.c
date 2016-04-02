@@ -19,6 +19,7 @@
 #include "log.h"
 #include "camera_ctrl.h"
 #include "data_model.h"
+#include "main_view.h"
 
 static Ecore_Event_Handler *handler;
 
@@ -38,15 +39,23 @@ static Eina_Bool _cam_status_changed(void *data, int event, void *event_info)
 	return EINA_TRUE;
 }
 
+static void _camera_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+	lockscreen_data_model_camera_activate();
+}
+
 void lockscreen_camera_ctrl_init(void)
 {
 	handler = ecore_event_handler_add(LOCKSCREEN_DATA_MODEL_EVENT_CAMERA_STATUS_CHANGED, _cam_status_changed, NULL);
 	if (!handler)
 		FATAL("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED event");
 	_camera_view_update();
+
+	lockscreen_main_view_camera_clicked_signal_add(_camera_clicked, NULL);
 }
 
 void lockscreen_camera_ctrl_fini(void)
 {
 	ecore_event_handler_del(handler);
+	lockscreen_main_view_camera_clicked_signal_del(_camera_clicked);
 }

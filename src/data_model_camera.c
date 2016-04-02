@@ -84,7 +84,7 @@ int lockscreen_data_model_camera_activate()
 
 	_D("Launch request send for %s", APP_CONTROL_OPERATION_CREATE_CONTENT);
 	app_control_destroy(app_ctr);
-	lockscreen_lcd_off_timer_unset();
+	//lockscreen_lcd_off_timer_unset();
 
 	return 0;
 }

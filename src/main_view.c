@@ -83,6 +83,11 @@ void lockscreen_main_view_camera_clicked_signal_add(Edje_Signal_Cb cb, void *dat
 	elm_object_signal_callback_add(view.cam_layout, "camera,icon,clicked", "img.camera", cb, data);
 }
 
+void lockscreen_main_view_camera_clicked_signal_del(Edje_Signal_Cb cb)
+{
+	elm_object_signal_callback_del(view.cam_layout, "camera,icon,clicked", "img.camera", cb);
+}
+
 static Evas_Event_Flags _swipe_state_start(void *data, void *event_info)
 {
 	_D("Swipe gesture start");
