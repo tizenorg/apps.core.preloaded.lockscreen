@@ -17,6 +17,8 @@
 #ifndef __LOCK_SCREEN_UTIL_H__
 #define __LOCK_SCREEN_UTIL_H__
 
+#include <Elementary.h>
+
 /*
  * @brief Application sub-directories type.
  */
@@ -62,5 +64,11 @@ const char *util_get_file_path(enum app_subdir dir, const char *relative);
  * @brief utility macro to enumerate
  */
 #define SIZE(x) sizeof(x)/sizeof(x[0])
+
+
+/**
+ * @brief Get default lockscreen elementary theme extension.
+ */
+const Elm_Theme *util_lockscreen_theme_get(void);
 
 #endif /* __HOME_SCREEN_UTIL_H__ */

@@ -44,22 +44,15 @@
 #define LOCK_LCD_OFF_TIMEOUT_TIME 10
 
 static struct _s_info {
-	Elm_Theme *theme;
 	Ecore_Timer *lcd_off_timer;
 	int lock_type;
 	int lcd_off_count;
 
 } s_info = {
-	.theme = NULL,
 	.lcd_off_timer = NULL,
 	.lock_type = 0,
 	.lcd_off_count = 0,
 };
-
-Elm_Theme *lockscreen_theme_get(void)
-{
-	return s_info.theme;
-}
 
 int lockscreen_setting_lock_type_get(void)
 {
@@ -140,24 +133,8 @@ void lockscreen_lcd_off_count_reset(void)
 	s_info.lcd_off_count = 0;
 }
 
-static void _init_theme(void)
-{
-	s_info.theme = elm_theme_new();
-	elm_theme_ref_set(s_info.theme, NULL);
-	elm_theme_extension_add(s_info.theme, EDJE_DIR"index.edj");
-}
-
-static void _fini_theme(void)
-{
-	elm_theme_extension_del(s_info.theme, EDJE_DIR"index.edj");
-	elm_theme_free(s_info.theme);
-	s_info.theme = NULL;
-}
-
 static Eina_Bool _lock_idler_cb(void *data)
 {
-	_init_theme();
-
 	lockscreen_main_ctrl_init();
 
 	/*
@@ -266,8 +243,6 @@ void _terminate_app(void *data)
 
 	//lock_property_unregister();
 	feedback_deinitialize();
-
-	_fini_theme();
 }
 
 int main(int argc, char *argv[])

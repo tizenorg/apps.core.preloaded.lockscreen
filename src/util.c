@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-#include <Elementary.h>
-#include <util.h>
-#include <log.h>
 #include <app_common.h>
+
+#include "log.h"
+#include "util.h"
+#include "lockscreen.h"
 
 const char *util_get_file_path(enum app_subdir dir, const char *relative)
 {
@@ -53,7 +54,7 @@ const char *util_get_file_path(enum app_subdir dir, const char *relative)
 		prefix = app_get_external_shared_data_path();
 		break;
 	default:
-		_E("Not handled directory type.");
+		FATAL("Not handled directory type.");
 		return NULL;
 	}
 	size_t res = eina_file_path_join(buf, sizeof(buf), prefix, relative);
@@ -64,4 +65,16 @@ const char *util_get_file_path(enum app_subdir dir, const char *relative)
 	}
 
 	return &buf[0];
+}
+
+const Elm_Theme *util_lockscreen_theme_get(void)
+{
+	static Elm_Theme *theme;
+	if (!theme)
+	{
+		theme = elm_theme_new();
+		elm_theme_ref_set(theme, NULL);
+		elm_theme_extension_add(theme, util_get_res_file_path(EDJE_DIR"index.edj"));
+	}
+	return theme;
 }
