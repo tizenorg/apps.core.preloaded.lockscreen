@@ -158,7 +158,7 @@ void lockscreen_main_view_destroy()
 	evas_object_del(view.layout);
 }
 
-void lockscreen_main_view_musin_status_set(bool enabled)
+void lockscreen_main_view_music_status_set(bool enabled)
 {
 	if (enabled)
 		elm_layout_signal_emit(view.layout, "music_on", "bg");

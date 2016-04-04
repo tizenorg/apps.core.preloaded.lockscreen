@@ -41,4 +41,6 @@ bool lockscreen_main_view_background_image_set(lockscreen_main_view_background_t
 
 void lockscreen_main_view_battery_status_text_set(const char *battery);
 
+void lockscreen_main_view_music_status_set(bool enabled);
+
 #endif
