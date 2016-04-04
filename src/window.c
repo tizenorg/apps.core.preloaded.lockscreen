@@ -23,7 +23,6 @@
 static struct {
 	Evas_Object *win;
 	Evas_Object *conformant;
-	Evas_Object *bg;
 	int win_w;
 	int win_h;
 } view;
@@ -57,26 +56,17 @@ Evas_Object *lockscreen_window_create(void)
 	elm_win_indicator_mode_set(win, ELM_WIN_INDICATOR_SHOW);
 	elm_win_screen_size_get(win, NULL, NULL, &view.win_w, &view.win_h);
 
-	Evas_Object *bg = elm_bg_add(win);
-	elm_bg_option_set(bg, ELM_BG_OPTION_SCALE);
-	evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(bg, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
 	Evas_Object *conformant = elm_conformant_add(win);
 	evas_object_size_hint_weight_set(conformant, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(conformant, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_win_resize_object_add(win, conformant);
 
 	elm_object_signal_emit(conformant, "elm,state,indicator,overlap", "elm");
 
-	elm_win_resize_object_add(win, bg);
-	elm_win_resize_object_add(win, conformant);
-
 	evas_object_show(win);
-	evas_object_show(bg);
 	evas_object_show(conformant);
 
 	view.win = win;
-	view.bg = bg;
 	view.conformant = conformant;
 
 	return win;
@@ -85,14 +75,4 @@ Evas_Object *lockscreen_window_create(void)
 void lockscreen_window_content_set(Evas_Object *content)
 {
 	elm_object_part_content_set(view.conformant, NULL, content);
-}
-
-bool lockscreen_window_background_image_set(const char *file)
-{
-	if (!elm_bg_file_set(view.bg, file, NULL)) {
-		_E("elm_bg_file_set failed: %s", file);
-		return false;
-	}
-
-	return true;
 }

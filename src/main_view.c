@@ -121,7 +121,6 @@ Evas_Object *_gesture_layer_create(Evas_Object *parent)
 	elm_gesture_layer_cb_set(layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_END, _swipe_state_end, NULL);
 	elm_gesture_layer_cb_set(layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_ABORT, _swipe_state_abort, NULL);
 	elm_gesture_layer_hold_events_set(layer, EINA_TRUE);
-	elm_gesture_layer_attach(layer, parent);
 
 	evas_object_show(layer);
 	return layer;
@@ -145,12 +144,31 @@ Evas_Object *lockscreen_main_view_create(Evas_Object *win)
 		return NULL;
 	}
 
-	view.gesture_layer = _gesture_layer_create(view.layout);
-
+	view.gesture_layer = _gesture_layer_create(win);
 	elm_object_part_content_set(view.layout, "sw.swipe_layout", view.swipe_layout);
-	elm_win_resize_object_add(win, view.bg);
+
+	view.bg = elm_bg_add(view.layout);
+	elm_bg_option_set(view.bg, ELM_BG_OPTION_SCALE);
+	evas_object_size_hint_weight_set(view.bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(view.bg, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+	elm_object_part_content_set(view.layout, "sw.bg", view.bg);
+
+	elm_gesture_layer_attach(view.gesture_layer, view.layout);
+	elm_gesture_layer_attach(view.gesture_layer, view.swipe_layout);
+	elm_gesture_layer_attach(view.gesture_layer, view.bg);
 
 	return view.layout;
+}
+
+void lockscreen_main_view_unlock_signal_add(Edje_Signal_Cb cb, void *data)
+{
+	elm_object_signal_callback_add(view.swipe_layout, "vi_effect_end", "vi_clipper", cb, data);
+}
+
+void lockscreen_main_view_unlock_signal_del(Edje_Signal_Cb cb)
+{
+	elm_object_signal_callback_del(view.swipe_layout, "vi_effect_end", "vi_clipper", cb);
 }
 
 void lockscreen_main_view_destroy()
@@ -158,12 +176,23 @@ void lockscreen_main_view_destroy()
 	evas_object_del(view.layout);
 }
 
-void lockscreen_main_view_music_status_set(bool enabled)
+bool lockscreen_main_view_background_set(lockscreen_main_view_background_type type, const char *file)
 {
-	if (enabled)
-		elm_layout_signal_emit(view.layout, "music_on", "bg");
-	else
-		elm_layout_signal_emit(view.layout, "music_off", "bg");
+	if (!elm_bg_file_set(view.bg, file, NULL)) {
+		_E("elm_bg_file_set failed: %s", file);
+		return false;
+	}
+
+	switch (type) {
+		case LOCKSCREEN_BACKGROUND_TYPE_DEFAULT:
+			elm_layout_signal_emit(view.layout, "music_off", "bg");
+			break;
+		case LOCKSCREEN_BACKGROUND_TYPE_ALBUM_ART:
+			elm_layout_signal_emit(view.layout, "music_on", "bg");
+			break;
+	}
+
+	return true;
 }
 
 void lockscreen_main_view_battery_status_text_set(const char *battery)

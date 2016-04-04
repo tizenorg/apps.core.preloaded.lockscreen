@@ -43,4 +43,10 @@ void lockscreen_main_view_battery_status_text_set(const char *battery);
 
 void lockscreen_main_view_music_status_set(bool enabled);
 
+void lockscreen_main_view_unlock_signal_add(Edje_Signal_Cb cb, void *data);
+
+void lockscreen_main_view_unlock_signal_del(Edje_Signal_Cb cb);
+
+bool lockscreen_main_view_background_set(lockscreen_main_view_background_type type, const char *file);
+
 #endif
