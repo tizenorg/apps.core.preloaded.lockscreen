@@ -20,8 +20,6 @@
 #include <Eina.h>
 #include <stdbool.h>
 
-typedef struct missed_event missed_event_t;
-
 typedef struct {
 	struct {
 		bool is_connected; /* true if charger is conencted */
@@ -68,5 +66,6 @@ int lockscreen_data_model_event_emit(int event);
 #include "data_model_music_player.h"
 #include "data_model_sim.h"
 #include "data_model_display.h"
+#include "data_model_missed_events.h"
 
 #endif

@@ -7,8 +7,7 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
+ * Unless required by applicable law or agreed to in writing, software * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -17,8 +16,15 @@
 #ifndef _LOCKSCREEN_DATA_MODEL_MISSED_EVENTS_H_
 #define _LOCKSCREEN_DATA_MODEL_MISSED_EVENTS_H_
 
+typedef struct missed_event missed_event_t;
+
 int lockscreen_data_model_missed_events_init(lockscreen_data_model_t *model);
 
 void lockscreen_data_model_missed_events_shutdown(void);
 
+const char *lockscreen_data_model_missed_event_icon_get(missed_event_t *event);
+
+const char *lockscreen_data_model_missed_event_sub_icon_get(missed_event_t *event);
+
+bool lockscreen_data_model_missed_event_launch(missed_event_t *event);
 #endif
