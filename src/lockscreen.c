@@ -20,10 +20,8 @@
 #include <Evas.h>
 #include <Elementary.h>
 #include <Eina.h>
-#include <efl_extension.h>
 
 #include <app.h>
-#include <feedback.h>
 
 #include "lockscreen.h"
 #include "log.h"
@@ -68,15 +66,6 @@ Ecore_Timer *lockscreen_lcd_off_timer_get(void)
 int lockscreen_lcd_off_count_get(void)
 {
 	return s_info.lcd_off_count;
-}
-
-void lockscreen_feedback_tap_play(void)
-{
-	if (!lock_property_sound_touch_get()) {
-		return;
-	}
-
-	feedback_play_type(FEEDBACK_TYPE_SOUND, FEEDBACK_PATTERN_TAP);
 }
 
 static Eina_Bool _lcd_off_timer_cb(void *data)
@@ -148,7 +137,6 @@ static Eina_Bool _lock_idler_cb(void *data)
 	/* register callback func. : key sound, touch sound, rotation */
 	//lock_property_register(NULL);
 
-	feedback_initialize();
 
 	lockscreen_lcd_off_timer_set();
 
@@ -161,13 +149,6 @@ static Eina_Bool _lock_idler_cb(void *data)
 #endif
 
 	return ECORE_CALLBACK_CANCEL;
-}
-
-static void _back_key_cb(void *data, Evas_Object *obj, void *event_info)
-{
-	_D("%s", __func__);
-
-	lockscreen_feedback_tap_play();
 }
 
 static void _display_status_changed(device_callback_e type, void *value, void *user_data)
@@ -243,7 +224,6 @@ void _terminate_app(void *data)
 	lock_default_lock_fini();
 
 	//lock_property_unregister();
-	feedback_deinitialize();
 }
 
 int main(int argc, char *argv[])

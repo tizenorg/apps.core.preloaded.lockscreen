@@ -15,6 +15,7 @@
  */
 
 #include <app_common.h>
+#include <feedback.h>
 
 #include "log.h"
 #include "util.h"
@@ -77,4 +78,16 @@ const Elm_Theme *util_lockscreen_theme_get(void)
 		elm_theme_extension_add(theme, util_get_res_file_path(EDJE_DIR"index.edj"));
 	}
 	return theme;
+}
+
+void util_feedback_tap_play(void)
+{
+	static int init;
+	if (!init) {
+		int ret = feedback_initialize();
+		if (ret != FEEDBACK_ERROR_NONE) {
+			FATAL("feedback_initialize failed.");
+		}
+	}
+	feedback_play_type(FEEDBACK_TYPE_SOUND, FEEDBACK_PATTERN_TAP);
 }

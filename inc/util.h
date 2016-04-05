@@ -71,4 +71,9 @@ const char *util_get_file_path(enum app_subdir dir, const char *relative);
  */
 const Elm_Theme *util_lockscreen_theme_get(void);
 
+/**
+ * @brief Plays default tap signal
+ */
+void util_feedback_tap_play(void);
+
 #endif /* __HOME_SCREEN_UTIL_H__ */

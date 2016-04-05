@@ -21,8 +21,10 @@
 #include "data_model.h"
 #include "battery_ctrl.h"
 #include "camera_ctrl.h"
+#include "util.h"
 
 #include <Elementary.h>
+#include <efl_extension.h>
 
 static Evas_Object *win;
 static Evas_Object *view;
@@ -30,6 +32,11 @@ static Evas_Object *view;
 static void _layout_unlocked(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
 	ui_app_exit();
+}
+
+static void _back_key_cb(void *data, Evas_Object *obj, void *event_info)
+{
+	util_feedback_tap_play();
 }
 
 void lockscreen_main_ctrl_init(void)
@@ -53,8 +60,8 @@ void lockscreen_main_ctrl_init(void)
 		FATAL("lockscreen_main_view_background_image_set failed");
 
 	lockscreen_window_content_set(view);
-
 	lockscreen_main_view_unlock_signal_add(_layout_unlocked, NULL);
+	eext_object_event_callback_add(win, EEXT_CALLBACK_BACK, _back_key_cb, NULL);
 
 	// init subcontrollers
 	lock_battery_ctrl_init();
