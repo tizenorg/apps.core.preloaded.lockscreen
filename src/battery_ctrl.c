@@ -95,7 +95,7 @@ static char *_text_from_percentage(int capacity)
 	return strdup(buff);
 }
 
-lock_error_e lock_battery_update(void)
+static int _battery_update(void)
 {
 	const lockscreen_data_model_t *model = lockscreen_data_model_get_model();
 
@@ -120,20 +120,18 @@ lock_error_e lock_battery_update(void)
 	return LOCK_ERROR_OK;
 }
 
-static Eina_Bool _battery_update(void *data, int event, void *event_info)
+static Eina_Bool _data_battery_update(void *data, int event, void *event_info)
 {
-	lock_battery_update();
+	_battery_update();
 	return EINA_TRUE;
 }
 
 void lock_battery_ctrl_init(void)
 {
-	handler = ecore_event_handler_add(LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED, _battery_update, NULL);
+	handler = ecore_event_handler_add(LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED, _data_battery_update, NULL);
 	if (!handler)
 		FATAL("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED event");
-	lock_battery_update();
-
-	return 0;
+	_battery_update();
 }
 
 void lock_battery_ctrl_fini(void)

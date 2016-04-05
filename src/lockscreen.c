@@ -30,8 +30,6 @@
 #include "background_view.h"
 #include "default_lock.h"
 #include "lock_time.h"
-#include <device/display.h>
-#include <device/callback.h>
 
 #include "main_ctrl.h"
 
@@ -43,84 +41,45 @@
 #define LOCK_LCD_OFF_TIMEOUT_TIME 10
 
 static struct _s_info {
-	Ecore_Timer *lcd_off_timer;
 	int lock_type;
-	int lcd_off_count;
 
 } s_info = {
-	.lcd_off_timer = NULL,
 	.lock_type = 0,
-	.lcd_off_count = 0,
 };
 
 int lockscreen_setting_lock_type_get(void)
 {
-	return s_info.lock_type;
+	return 0;
 }
 
 Ecore_Timer *lockscreen_lcd_off_timer_get(void)
 {
-	return s_info.lcd_off_timer;
+	return NULL;
 }
 
 int lockscreen_lcd_off_count_get(void)
 {
-	return s_info.lcd_off_count;
-}
-
-static Eina_Bool _lcd_off_timer_cb(void *data)
-{
-	int ret = 0;
-
-	ret = device_display_change_state(DISPLAY_STATE_SCREEN_OFF);
-	if (ret != DEVICE_ERROR_NONE) {
-		_E("Failed to change display state : %d", ret);
-	} else {
-		_I("Display off : %dsec", LOCK_LCD_OFF_TIMEOUT_TIME);
-	}
-
-	return ECORE_CALLBACK_CANCEL;
+	return 0;
 }
 
 void lockscreen_lcd_off_timer_set(void)
 {
-	if (s_info.lcd_off_timer) {
-		ecore_timer_del(s_info.lcd_off_timer);
-		s_info.lcd_off_timer = NULL;
-	}
-
-	s_info.lcd_off_timer = ecore_timer_add(LOCK_LCD_OFF_TIMEOUT_TIME, _lcd_off_timer_cb, NULL);
 }
 
 void lockscreen_lcd_off_timer_reset(void)
 {
-	if (s_info.lcd_off_timer) {
-		ecore_timer_reset(s_info.lcd_off_timer);
-	}
 }
 
 void lockscreen_lcd_off_timer_unset(void)
 {
-	if (s_info.lcd_off_timer) {
-		ecore_timer_del(s_info.lcd_off_timer);
-		s_info.lcd_off_timer = NULL;
-		_I("unset lcd off timer");
-	}
 }
 
 void lockscreen_lcd_off_count_raise(void)
 {
-	if (s_info.lcd_off_count < 3) {
-		_D("count for lcd off timer : %d", s_info.lcd_off_count);
-		lockscreen_lcd_off_timer_reset();
-		s_info.lcd_off_count++;
-	}
 }
 
 void lockscreen_lcd_off_count_reset(void)
 {
-	_D("lcd off count reset : %d -> 0", s_info.lcd_off_count);
-	s_info.lcd_off_count = 0;
 }
 
 static Eina_Bool _lock_idler_cb(void *data)
@@ -149,26 +108,6 @@ static Eina_Bool _lock_idler_cb(void *data)
 #endif
 
 	return ECORE_CALLBACK_CANCEL;
-}
-
-static void _display_status_changed(device_callback_e type, void *value, void *user_data)
-{
-	if (type != DEVICE_CALLBACK_DISPLAY_STATE)
-		return;
-
-	display_state_e state = (display_state_e)value;
-
-	if (state == DISPLAY_STATE_NORMAL) {
-		_I("Display on");
-		lock_time_resume();
-		lockscreen_lcd_off_timer_set();
-	}
-	else if (state == DISPLAY_STATE_SCREEN_OFF) {
-		_I("Display off");
-		lock_time_pause();
-		lockscreen_lcd_off_timer_unset();
-		lockscreen_lcd_off_count_reset();
-	}
 }
 
 bool _create_app(void *data)
@@ -201,12 +140,6 @@ bool _create_app(void *data)
 	//if (!bg) {
 	//	_E("Failed to create BG");
 	//}
-
-	/* Register on display on/off events */
-	int ret = device_add_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed, NULL);
-	if (ret != DEVICE_ERROR_NONE) {
-		_E("Failed to register display state changed callback.");
-	}
 
 	//evas_object_show(win);
 
