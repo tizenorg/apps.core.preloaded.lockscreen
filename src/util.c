@@ -88,6 +88,7 @@ void util_feedback_tap_play(void)
 		if (ret != FEEDBACK_ERROR_NONE) {
 			FATAL("feedback_initialize failed.");
 		}
+		init = 1;
 	}
 	feedback_play_type(FEEDBACK_TYPE_SOUND, FEEDBACK_PATTERN_TAP);
 }

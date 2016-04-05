@@ -25,6 +25,7 @@
 
 #include <Elementary.h>
 #include <efl_extension.h>
+#include <app.h>
 
 static Evas_Object *win;
 static Evas_Object *view;

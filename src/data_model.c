@@ -75,9 +75,13 @@ int lockscreen_data_model_init()
 	if (ret) goto missed_shutdown;
 	ret = lockscreen_data_model_camera_init(&model);
 	if (ret) goto music_shutdown;
+	ret = lockscreen_data_model_display_init(&model);
+	if (ret) goto camera_shutdown;
 
 	return 0;
 
+camera_shutdown:
+	lockscreen_data_model_camera_shutdown();
 music_shutdown:
 	lockscreen_data_model_music_player_shutdown();
 missed_shutdown:
@@ -111,6 +115,7 @@ int lockscreen_data_model_shutdown()
 		lockscreen_data_model_sim_shutdown();
 		lockscreen_data_model_missed_events_shutdown();
 		lockscreen_data_model_music_player_shutdown();
+		lockscreen_data_model_display_shutdown();
 
 		ecore_shutdown();
 	}

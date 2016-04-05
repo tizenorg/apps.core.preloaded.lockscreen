@@ -67,5 +67,6 @@ int lockscreen_data_model_event_emit(int event);
 #include "data_model_missed_events.h"
 #include "data_model_music_player.h"
 #include "data_model_sim.h"
+#include "data_model_display.h"
 
 #endif
