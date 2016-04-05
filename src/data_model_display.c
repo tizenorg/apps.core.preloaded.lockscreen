@@ -1,0 +1,108 @@
+/*
+ * Copyright (c) 2016 Samsung Electronics Co., Ltd All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#include <device/display.h>
+#include <device/callback.h>
+#include <Ecore.h>
+
+#include "data_model_display.h"
+#include "log.h"
+
+#define LOCK_LCD_OFF_TIMEOUT_TIME 10
+
+static lockscreen_data_model_t *current;
+static Ecore_Timer *lcd_off_timer;
+
+static Eina_Bool _time_elapsed(void *data)
+{
+	int ret = device_display_change_state(DISPLAY_STATE_SCREEN_OFF);
+	if (ret != DEVICE_ERROR_NONE) {
+		_E("device_display_change_state failed: %s", get_error_message(ret));
+	}
+
+	lcd_off_timer = NULL;
+	return ECORE_CALLBACK_CANCEL;
+}
+
+static void _timer_reset(void)
+{
+	if (lcd_off_timer) {
+		ecore_timer_reset(lcd_off_timer);
+	} else {
+		lcd_off_timer = ecore_timer_add(LOCK_LCD_OFF_TIMEOUT_TIME, _time_elapsed, NULL);
+	}
+}
+
+static void _display_status_changed(device_callback_e type, void *value, void *user_data)
+{
+	if (type != DEVICE_CALLBACK_DISPLAY_STATE)
+		return;
+
+	display_state_e state = (display_state_e)value;
+
+	switch (state) {
+		case DISPLAY_STATE_NORMAL:
+		case DISPLAY_STATE_SCREEN_DIM:
+			_I("Display on");
+			_timer_reset();
+			current->lcd_off = false;
+		break;
+		case DISPLAY_STATE_SCREEN_OFF:
+			_I("Display off");
+			current->lcd_off = true;
+		break;
+	}
+
+	lockscreen_data_model_event_emit(LOCKSCREEN_DATA_MODEL_EVENT_LCD_STATUS_CHANGED);
+}
+
+int lockscreen_data_model_display_init(lockscreen_data_model_t *model)
+{
+	display_state_e state;
+
+	int ret = device_add_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed, NULL);
+	if (ret != DEVICE_ERROR_NONE) {
+		_E("device_add_callback failed: %s", get_error_message(ret));
+		return 1;
+	}
+	ret = device_display_get_state(&state);
+	if (ret != DEVICE_ERROR_NONE) {
+		_E("device_display_get_state failed: %s", get_error_message(ret));
+		device_remove_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed);
+		return 1;
+	}
+
+	switch (state) {
+		case DISPLAY_STATE_NORMAL:
+		case DISPLAY_STATE_SCREEN_DIM:
+			model->lcd_off = false;
+			break;
+		case DISPLAY_STATE_SCREEN_OFF:
+			model->lcd_off = true;
+			break;
+	}
+
+	current = model;
+	_timer_reset();
+
+	return 0;
+}
+
+void lockscreen_data_model_display_shutdown(void)
+{
+	if (lcd_off_timer) ecore_timer_del(lcd_off_timer);
+	device_remove_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed);
+}
