@@ -27,7 +27,7 @@ typedef struct {
 		int level; /* Battery level 0-100 */
 	} battery;
 	char *background_file;
-	char *active_minicontroller;
+	const char *active_minicontroller;
 	bool lcd_off;
 	int lock_type;
 	struct {
