@@ -29,7 +29,6 @@ struct missed_event {
 	char *icon_sub_path;
 	char *title;
 	char *content;
-	int count;
 	bundle *service_handle;
 	time_t time;
 	char *package;
@@ -61,7 +60,6 @@ static void _missed_event_destroy(missed_event_t *event)
 static missed_event_t *_missed_event_create(notification_h noti)
 {
 	int ret;
-	char *str_count;
 	missed_event_t *event = calloc(1, sizeof(missed_event_t));
 	if (!event) return NULL;
 
@@ -85,22 +83,6 @@ static missed_event_t *_missed_event_create(notification_h noti)
 		_missed_event_destroy(event);
 		return NULL;
 	}
-
-	// Get number of events as string.
-	ret = notification_get_text(noti, NOTIFICATION_TEXT_TYPE_EVENT_COUNT, &str_count);
-	if (ret != NOTIFICATION_ERROR_NONE) {
-		_E("notification_get_text failed: %s", get_error_message(ret));
-		_missed_event_destroy(event);
-		return NULL;
-	}
-
-	if (!str_count) {
-		event->count = 1;
-	} else {
-		//FIXME check conversion result
-		event->count = atoi(str_count);
-	}
-	free(str_count);
 
 	ret = notification_get_image(noti, NOTIFICATION_IMAGE_TYPE_ICON, &event->icon_path);
 	if (ret != NOTIFICATION_ERROR_NONE) {
