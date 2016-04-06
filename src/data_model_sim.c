@@ -31,37 +31,27 @@ static const telephony_noti_e notis[] = {
 
 static char *_sim_plmn_get(telephony_h handle)
 {
-	int ret = 0;
-	char *network_name = NULL;
+	char *network_name;
 
-	/* Reading Network (PLMN) name - ‘string’ type Property */
-	ret = telephony_network_get_network_name(handle, &network_name);
-	if (ret == TELEPHONY_ERROR_NONE) {
-		/* ‘network_name’ contains valid Network name based on Display condition */
-		return network_name;
-	} else {
-		_E("Sim = %p PLMN = ERROR[%d]", handle, ret);
-		/* get property failed */
+	int ret = telephony_network_get_network_name(handle, &network_name);
+	if (ret != TELEPHONY_ERROR_NONE) {
+		_E("telephony_network_get_network_name failed: %s", get_error_message(ret));
+		return NULL;
 	}
 
-	return NULL;
+	return network_name;
 }
 
 static char *_sim_spn_get(telephony_h handle)
 {
-	int ret = 0;
-	char *spn_name = NULL;
+	char *spn_name;
 
-	/* Reading SPN name - ‘string’ type Property */
-	telephony_sim_get_spn(handle, &spn_name);
-	if (ret == TELEPHONY_ERROR_NONE) {
-		/* ‘spn_name’ contains valid Service provider name */
-		return spn_name;
-	} else {
-		_E("Sim = %p SPN = ERROR[%d]", handle, ret);
-		/* get property failed */
+	int ret = telephony_sim_get_spn(handle, &spn_name);
+	if (ret != TELEPHONY_ERROR_NONE) {
+		_E("telephony_sim_get_spn failed: %s", get_error_message(ret));
 		return NULL;
 	}
+	return spn_name;
 }
 
 static char *_sim_state_text_for_sim_get(telephony_h handle)
@@ -77,7 +67,7 @@ static char *_sim_state_text_for_sim_get(telephony_h handle)
 	/* get service state */
 	ret = telephony_network_get_service_state(handle, &service_state);
 	if (ret != TELEPHONY_ERROR_NONE) {
-		_E("Failed to get service state [%d]", ret);
+		_E("telephony_network_get_service_state failed: %s", get_error_message(ret));
 		return NULL;
 	}
 
@@ -86,7 +76,7 @@ static char *_sim_state_text_for_sim_get(telephony_h handle)
 		/* get network name option */
 		ret = telephony_network_get_network_name_option(handle, &name_option);
 		if (ret != TELEPHONY_ERROR_NONE) {
-			_E("Failed to get telephony network name option [%d]", ret);
+			_E("telephony_network_get_network_name_option failed: %s", get_error_message(ret));
 			return NULL;
 		}
 
@@ -198,7 +188,7 @@ int lockscreen_data_model_sim_init(lockscreen_data_model_t *model)
 	ret = telephony_set_state_changed_cb(_on_telephony_state_changed_cb, NULL);
 	if (ret != TELEPHONY_ERROR_NONE) {
 		telephony_deinit(&handle_list);
-		_E("telephony_set_state_changed_cb: %s", get_error_message(ret));
+		_E("telephony_set_state_changed_cb failed: %s", get_error_message(ret));
 		return -1;
 	}
 
