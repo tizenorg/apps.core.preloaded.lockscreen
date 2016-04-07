@@ -122,7 +122,7 @@ static missed_event_t *_missed_event_create(notification_h noti)
 static int load_notifications()
 {
 	notification_list_h noti_list;
-	notification_list_h noti_list_head;
+	notification_list_h noti_list_head = NULL;
 	notification_h noti = NULL;
 
 	int ret = notification_get_list(NOTIFICATION_TYPE_NOTI, -1, &noti_list_head);

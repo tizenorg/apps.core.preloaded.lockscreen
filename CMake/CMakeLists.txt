@@ -36,7 +36,6 @@ pkg_check_modules(MENU_PKGS REQUIRED
 	ail
 	notification
 	minicontrol-viewer
-	security-server
 	minicontrol-monitor
 	ui-gadget-1
 	feedback
