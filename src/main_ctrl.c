@@ -30,9 +30,15 @@
 static Evas_Object *win;
 static Evas_Object *view;
 
-static void _layout_unlocked(void *data, Evas_Object *obj, const char *emission, const char *source)
+static void _view_unlocked(void)
 {
 	ui_app_exit();
+}
+
+static void _swipe_finished(void)
+{
+	/* When swipe finished play unlock animation and exit */
+	lockscreen_main_view_unlock(_view_unlocked);
 }
 
 static void _back_key_cb(void *data, Evas_Object *obj, void *event_info)
@@ -61,7 +67,7 @@ void lockscreen_main_ctrl_init(void)
 		FATAL("lockscreen_main_view_background_image_set failed");
 
 	lockscreen_window_content_set(view);
-	lockscreen_main_view_unlock_signal_add(_layout_unlocked, NULL);
+	lockscreen_main_view_swipe_signal_add(_swipe_finished);
 	eext_object_event_callback_add(win, EEXT_CALLBACK_BACK, _back_key_cb, NULL);
 
 	// init subcontrollers
@@ -71,5 +77,5 @@ void lockscreen_main_ctrl_init(void)
 
 void lockscreen_main_ctrl_shutdown(void)
 {
-	lockscreen_main_view_unlock_signal_del(_layout_unlocked);
+	lockscreen_main_view_swipe_signal_del(_swipe_finished);
 }

@@ -88,8 +88,8 @@ void lockscreen_main_view_camera_clicked_signal_del(Edje_Signal_Cb cb)
 static Evas_Event_Flags _swipe_state_end(void *data, void *event_info)
 {
 	_D("Swipe gesture end");
-	elm_object_signal_emit(view.swipe_layout, "unlock,anim,start", "task-mgr");
-	elm_object_signal_emit(view.layout, "bg,hide", "task-mgr");
+	View_Event_Cb cb = (View_Event_Cb)data;
+	if (cb) cb();
 	return EVAS_EVENT_FLAG_NONE;
 }
 
@@ -97,7 +97,6 @@ Evas_Object *_gesture_layer_create(Evas_Object *parent)
 {
 	/* intialize gesture layer */
 	Evas_Object *layer = elm_gesture_layer_add(parent);
-	elm_gesture_layer_cb_set(layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_END, _swipe_state_end, NULL);
 	elm_gesture_layer_hold_events_set(layer, EINA_TRUE);
 
 	evas_object_show(layer);
@@ -222,4 +221,28 @@ void lockscreen_main_view_sim_status_text_set(const char *text)
 
 	elm_object_part_content_set(view.layout, "txt.plmn", label);
 	evas_object_show(label);
+}
+
+void lockscreen_main_view_swipe_signal_add(View_Event_Cb cb)
+{
+	elm_gesture_layer_cb_set(view.gesture_layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_END, _swipe_state_end, cb);
+}
+
+void lockscreen_main_view_swipe_signal_del(View_Event_Cb cb)
+{
+	elm_gesture_layer_cb_del(view.gesture_layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_END, _swipe_state_end, cb);
+}
+
+static void _layout_unlocked(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+	View_Event_Cb cb = (View_Event_Cb)data;
+	elm_object_signal_callback_del(view.swipe_layout, "unlock,anim,end", "swipe-layout", _layout_unlocked);
+	if (cb) cb();
+}
+
+void lockscreen_main_view_unlock(View_Event_Cb animation_end_cb)
+{
+	elm_object_signal_callback_add(view.swipe_layout, "unlock,anim,end", "swipe-layout", _layout_unlocked, animation_end_cb);
+	elm_object_signal_emit(view.swipe_layout, "unlock,anim,start", "task-mgr");
+	elm_object_signal_emit(view.layout, "bg,hide", "task-mgr");
 }
