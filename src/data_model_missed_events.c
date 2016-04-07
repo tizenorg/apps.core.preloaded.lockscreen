@@ -151,7 +151,7 @@ static void unload_notifications()
 {
 	missed_event_t *event;
 
-	if (current->missed_events)
+	if (!current->missed_events)
 		return;
 
 	EINA_LIST_FREE(current->missed_events, event)
@@ -174,11 +174,11 @@ int lockscreen_data_model_missed_events_init(lockscreen_data_model_t *model)
 		_E("notification_register_detailed_changed_cb failed: %d", get_error_message(ret));
 		return 1;
 	}
+	current = model;
 	if (load_notifications()) {
 		_E("load_notifications failed");
 		return 1;
 	}
-	current = model;
 	return 0;
 }
 

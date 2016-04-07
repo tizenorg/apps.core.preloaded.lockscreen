@@ -85,31 +85,11 @@ void lockscreen_main_view_camera_clicked_signal_del(Edje_Signal_Cb cb)
 	elm_object_signal_callback_del(view.cam_layout, "camera,icon,clicked", "img.camera", cb);
 }
 
-static Evas_Event_Flags _swipe_state_start(void *data, void *event_info)
-{
-	_D("Swipe gesture start");
-
-	//lockscreen_lcd_off_count_raise();
-
-	return EVAS_EVENT_FLAG_NONE;
-}
-
 static Evas_Event_Flags _swipe_state_end(void *data, void *event_info)
 {
 	_D("Swipe gesture end");
-	//s_info.exit_state = LOCK_EXIT_STATE_EXIT;
 	elm_object_signal_emit(view.swipe_layout, "vi_effect", "padding.top");
-	elm_object_signal_emit(view.layout, "vi_effect", "vi_clipper");
-	return EVAS_EVENT_FLAG_NONE;
-}
-
-static Evas_Event_Flags _swipe_state_abort(void *data, void *event_info)
-{
-	_D("Swipe gesture abort");
-	//s_info.exit_state = LOCK_EXIT_STATE_NORMAL;
-	elm_object_signal_emit(view.swipe_layout, "vi_effect_stop", "padding.top");
-	elm_object_signal_emit(view.layout, "vi_effect_stop", "vi_clipper");
-	elm_object_signal_emit(view.swipe_layout, "show,txt,plmn", "txt.plmn");
+	elm_object_signal_emit(view.layout, "bg,hide", "task-mgr");
 	return EVAS_EVENT_FLAG_NONE;
 }
 
@@ -117,9 +97,7 @@ Evas_Object *_gesture_layer_create(Evas_Object *parent)
 {
 	/* intialize gesture layer */
 	Evas_Object *layer = elm_gesture_layer_add(parent);
-	elm_gesture_layer_cb_set(layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_START, _swipe_state_start, NULL);
 	elm_gesture_layer_cb_set(layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_END, _swipe_state_end, NULL);
-	elm_gesture_layer_cb_set(layer, ELM_GESTURE_N_FLICKS, ELM_GESTURE_STATE_ABORT, _swipe_state_abort, NULL);
 	elm_gesture_layer_hold_events_set(layer, EINA_TRUE);
 
 	evas_object_show(layer);

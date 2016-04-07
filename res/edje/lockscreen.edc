@@ -68,7 +68,7 @@ collections {
 				}
 			}
 			part {
-				name: "vi_clipper";
+				name: "bg_clipper";
 				type: RECT;
 				description {
 					state: "default" 0.0;
@@ -82,7 +82,7 @@ collections {
 			part {
 				name: "sw.bg";
 				type: SWALLOW;
-				clip_to: "vi_clipper";
+				clip_to: "bg_clipper";
 				description {
 					state: "default" 0.0;
 					fixed: 1 1;
@@ -124,19 +124,19 @@ collections {
 		}
 		programs {
 			program {
-				name: "vi_effect";
-				signal: "vi_effect";
-				source: "vi_clipper";
+				name: "bg,hide";
+				signal: "bg,hide";
+				source: "task-mgr";
 				action: STATE_SET "effect" 0.0;
-				target: "vi_clipper";
+				target: "bg_clipper";
 				transition: SIN_FAC 0.5 1.7;
 			}
 			program {
-				name: "vi_effect_stop";
-				signal: "vi_effect_stop";
-				source: "vi_clipper";
+				name: "bg,show";
+				signal: "bg,show";
+				source: "task-mgr";
 				action: STATE_SET "default" 0.0;
-				target: "vi_clipper";
+				target: "bg_clipper";
 				transition: SIN_FAC 0.5 1.7;
 			}
 			program {
