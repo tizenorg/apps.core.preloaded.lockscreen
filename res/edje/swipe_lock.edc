@@ -292,6 +292,10 @@ group {
 				rel1.relative: 0.0 0.0;
 				rel2.relative: 1.0 1.0;
 			}
+			description {
+				state: "blocked" 1.0;
+				inherit : "default";
+			}
 		}
 	}
 	programs {
@@ -320,10 +324,15 @@ group {
 			target: "padding.bottom";
 		}
 		program {
-			name: "vi_effect";
-			in: 0.01 0.0;
-			signal: "vi_effect";
-			source: "padding.top";
+			name: "unlock,anim,start";
+			signal: "unlock,anim,start";
+			source: "task-mgr";
+			action: STATE_SET "blocked" 1.0;
+			target: "event";
+			after: "vi_effect_anim";
+		}
+		program {
+			name: "vi_effect_anim";
 			action: STATE_SET "effect" 0.0;
 			target: "padding.top";
 			target: "sw.contextual_event";
@@ -336,7 +345,7 @@ group {
 			name: "vi_effect_end";
 			signal: "vi_effect_end";
 			source: "vi_clipper";
-			action: SIGNAL_EMIT "vi_effect_end" "vi_clipper";
+			action: SIGNAL_EMIT "unlock,anim,end" "swipe-layout";
 		}
 		program {
 			name: "hide,txt,battery";
@@ -377,6 +386,7 @@ group {
 			name: "bounce,start";
 			signal: "mouse,down,1";
 			source: "event";
+			filter: "event" "default";
 			action: STATE_SET "effect_start" 0.0;
 			target: "padding.top";
 			target: "sw.contextual_event";
@@ -388,6 +398,7 @@ group {
 			name: "bounce,end";
 			signal: "mouse,up,1";
 			source: "event";
+			filter: "event" "default";
 			action: STATE_SET "default" 0.0;
 			target: "padding.top";
 			target: "sw.contextual_event";

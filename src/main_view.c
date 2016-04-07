@@ -88,7 +88,7 @@ void lockscreen_main_view_camera_clicked_signal_del(Edje_Signal_Cb cb)
 static Evas_Event_Flags _swipe_state_end(void *data, void *event_info)
 {
 	_D("Swipe gesture end");
-	elm_object_signal_emit(view.swipe_layout, "vi_effect", "padding.top");
+	elm_object_signal_emit(view.swipe_layout, "unlock,anim,start", "task-mgr");
 	elm_object_signal_emit(view.layout, "bg,hide", "task-mgr");
 	return EVAS_EVENT_FLAG_NONE;
 }
@@ -141,12 +141,12 @@ Evas_Object *lockscreen_main_view_create(Evas_Object *win)
 
 void lockscreen_main_view_unlock_signal_add(Edje_Signal_Cb cb, void *data)
 {
-	elm_object_signal_callback_add(view.swipe_layout, "vi_effect_end", "vi_clipper", cb, data);
+	elm_object_signal_callback_add(view.swipe_layout, "unlock,anim,end", "swipe-layout", cb, data);
 }
 
 void lockscreen_main_view_unlock_signal_del(Edje_Signal_Cb cb)
 {
-	elm_object_signal_callback_del(view.swipe_layout, "vi_effect_end", "vi_clipper", cb);
+	elm_object_signal_callback_del(view.swipe_layout, "unlock,anim,end", "swipe-layout", cb);
 }
 
 void lockscreen_main_view_destroy()
