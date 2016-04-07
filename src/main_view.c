@@ -99,16 +99,6 @@ static Evas_Event_Flags _swipe_state_end(void *data, void *event_info)
 	return EVAS_EVENT_FLAG_NONE;
 }
 
-Evas_Object *_gesture_layer_create(Evas_Object *parent)
-{
-	/* intialize gesture layer */
-	Evas_Object *layer = elm_gesture_layer_add(parent);
-	elm_gesture_layer_hold_events_set(layer, EINA_TRUE);
-
-	evas_object_show(layer);
-	return layer;
-}
-
 Evas_Object *lockscreen_main_view_create(Evas_Object *win)
 {
 	view.layout = elm_layout_add(win);
@@ -126,8 +116,6 @@ Evas_Object *lockscreen_main_view_create(Evas_Object *win)
 		evas_object_del(view.layout);
 		return NULL;
 	}
-
-	view.gesture_layer = _gesture_layer_create(win);
 	elm_object_part_content_set(view.layout, "sw.swipe_layout", view.swipe_layout);
 
 	view.bg = elm_bg_add(view.layout);
@@ -137,9 +125,12 @@ Evas_Object *lockscreen_main_view_create(Evas_Object *win)
 
 	elm_object_part_content_set(view.layout, "sw.bg", view.bg);
 
+	view.gesture_layer = elm_gesture_layer_add(win);
+	elm_gesture_layer_hold_events_set(view.gesture_layer, EINA_TRUE);
 	elm_gesture_layer_attach(view.gesture_layer, view.layout);
 	elm_gesture_layer_attach(view.gesture_layer, view.swipe_layout);
 	elm_gesture_layer_attach(view.gesture_layer, view.bg);
+	evas_object_show(view.gesture_layer);
 
 	return view.layout;
 }
