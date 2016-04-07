@@ -34,9 +34,18 @@ Evas_Object *lockscreen_main_view_create(Evas_Object *parent);
 
 void lockscreen_main_view_destroy();
 
-void lockscreen_main_view_camera_clicked_signal_add(Edje_Signal_Cb cb, void *data);
+/**
+ * @brief Registers callback function which will be called when
+ * camera button is being clicked.
+ *
+ * @note Only single callback can be registered.
+ */
+void lockscreen_main_view_camera_clicked_signal_add(View_Event_Cb cb);
 
-void lockscreen_main_view_camera_clicked_signal_del(Edje_Signal_Cb cb);
+/**
+ * @brief Deregisters callback function.
+ */
+void lockscreen_main_view_camera_clicked_signal_del(void);
 
 bool lockscreen_main_view_camera_show(void);
 
@@ -45,8 +54,6 @@ void lockscreen_main_view_camera_hide();
 bool lockscreen_main_view_background_image_set(lockscreen_main_view_background_type type, const char *file);
 
 void lockscreen_main_view_battery_status_text_set(const char *battery);
-
-void lockscreen_main_view_music_status_set(bool enabled);
 
 /**
  * @brief Registers callback function which will be called when

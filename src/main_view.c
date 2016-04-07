@@ -75,14 +75,20 @@ void lockscreen_main_view_camera_hide()
 	view.cam_layout = NULL;
 }
 
-void lockscreen_main_view_camera_clicked_signal_add(Edje_Signal_Cb cb, void *data)
+static void _camera_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
-	elm_object_signal_callback_add(view.cam_layout, "camera,icon,clicked", "img.camera", cb, data);
+	View_Event_Cb cb = (View_Event_Cb)data;
+	if (cb) cb();
 }
 
-void lockscreen_main_view_camera_clicked_signal_del(Edje_Signal_Cb cb)
+void lockscreen_main_view_camera_clicked_signal_add(View_Event_Cb cb)
 {
-	elm_object_signal_callback_del(view.cam_layout, "camera,icon,clicked", "img.camera", cb);
+	elm_object_signal_callback_add(view.cam_layout, "camera,icon,clicked", "img.camera", _camera_clicked, cb);
+}
+
+void lockscreen_main_view_camera_clicked_signal_del()
+{
+	elm_object_signal_callback_del(view.cam_layout, "camera,icon,clicked", "img.camera", _camera_clicked);
 }
 
 static Evas_Event_Flags _swipe_state_end(void *data, void *event_info)
