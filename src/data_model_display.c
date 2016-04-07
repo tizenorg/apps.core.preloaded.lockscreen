@@ -106,3 +106,18 @@ void lockscreen_data_model_display_shutdown(void)
 	if (lcd_off_timer) ecore_timer_del(lcd_off_timer);
 	device_remove_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed);
 }
+
+void lockscreen_data_model_display_timer_freeze(void)
+{
+	if (lcd_off_timer) {
+		ecore_timer_freeze(lcd_off_timer);
+	}
+}
+
+void lockscreen_data_model_display_timer_renew(void)
+{
+	if (lcd_off_timer) {
+		ecore_timer_thaw(lcd_off_timer);
+		ecore_timer_reset(lcd_off_timer);
+	}
+}

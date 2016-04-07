@@ -23,4 +23,22 @@ int lockscreen_data_model_display_init(lockscreen_data_model_t *model);
 
 void lockscreen_data_model_display_shutdown(void);
 
+/**
+ * @brief
+ * Freeze auto disabling device screen after predefined number of seconds.
+ *
+ * @note if device display in already in "off" state this function has no effect.
+ */
+void lockscreen_data_model_display_timer_freeze(void);
+
+/**
+ * @brief
+ * Resumes auto disabling device screen after predefined number of seconds.
+ *
+ * @note if device display in already in "off" state this function has no effect.
+ * @note if lockscreen_data_model_display_timer_freeze function was not called
+ * beforehead, this function resets time estimated to turn off display.
+ */
+void lockscreen_data_model_display_timer_renew(void);
+
 #endif
