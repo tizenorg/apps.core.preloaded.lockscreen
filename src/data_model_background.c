@@ -16,9 +16,12 @@
 
 #include "log.h"
 #include "data_model.h"
+#include "util.h"
 
 #include <system_settings.h>
 #include <Ecore_File.h>
+
+#define DEFAULT_BG "images/Default.jpg"
 
 static lockscreen_data_model_t *current;
 
@@ -36,23 +39,27 @@ int lockscreen_data_model_background_init(lockscreen_data_model_t *model)
 	}
 
 	current = model;
-	current->background_file = bg;
+	lockscreen_data_model_background_file_set(bg);
 
 	return 0;
 }
 
 int lockscreen_data_model_background_file_set(const char *path)
 {
-	if (!current || !path)
+	if (!current)
 		return -1;
 
-	if (!strcmp(current->background_file, path)) {
+	if (!path) {
+		return lockscreen_data_model_background_file_set(util_get_res_file_path(DEFAULT_BG));
+	}
+
+	if (current->background_file && !strcmp(current->background_file, path)) {
 		return 0;
 	}
 
 	if (!ecore_file_can_read(path)) {
-		_E("Cannot read background file: %s", path);
-		return -1;
+		_E("Cannot access/read background file: %s", path);
+		return lockscreen_data_model_background_file_set(util_get_res_file_path(DEFAULT_BG));
 	}
 
 	free(current->background_file);

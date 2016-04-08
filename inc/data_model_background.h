@@ -19,6 +19,10 @@
 
 int lockscreen_data_model_background_init(lockscreen_data_model_t *model);
 
+/**
+ * @brief Sets background file that will be display be lockscreen.
+ * If @path parameter is NULL the default background will be used.
+ */
 int lockscreen_data_model_background_file_set(const char *path);
 
 void lockscreen_data_model_background_shutdown(void);
