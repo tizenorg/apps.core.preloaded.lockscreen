@@ -91,6 +91,7 @@ int lockscreen_data_model_camera_activate()
 
 int lockscreen_data_model_camera_init(lockscreen_data_model_t *model)
 {
+	model->camera_on = true;
 	return 0;
 }
 
