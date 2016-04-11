@@ -37,6 +37,7 @@ typedef struct {
 	Eina_List *missed_events; /* List of missed_event_t structs */
 	struct {
 		char *locale;
+		char *timezone;
 		bool use24hformat;
 	} time;
 } lockscreen_data_model_t;

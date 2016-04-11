@@ -17,6 +17,7 @@
 #include "data_model.h"
 #include "log.h"
 #include <system_settings.h>
+#include <stdlib.h>
 
 static lockscreen_data_model_t *current;
 
@@ -26,13 +27,18 @@ static void _time_changed(system_settings_key_e key, void *user_data)
 
 	switch (key) {
 		case SYSTEM_SETTINGS_KEY_LOCALE_TIMEFORMAT_24HOUR:
-			ret = system_settings_set_value_bool(SYSTEM_SETTINGS_KEY_LOCALE_TIMEFORMAT_24HOUR, &current->time.use24hformat);
+			ret = system_settings_get_value_bool(SYSTEM_SETTINGS_KEY_LOCALE_TIMEFORMAT_24HOUR, &current->time.use24hformat);
 			break;
 		case SYSTEM_SETTINGS_KEY_LOCALE_TIMEZONE:
+			free(current->time.timezone);
+			ret = system_settings_get_value_string(SYSTEM_SETTINGS_KEY_LOCALE_TIMEZONE, &current->time.timezone);
+			break;
+		case SYSTEM_SETTINGS_KEY_LOCALE_LANGUAGE:
 			free(current->time.locale);
-			ret = system_settings_set_value_bool(SYSTEM_SETTINGS_KEY_LOCALE_TIMEZONE, &current->time.locale);
+			ret = system_settings_get_value_string(SYSTEM_SETTINGS_KEY_LOCALE_LANGUAGE, &current->time.locale);
 			break;
 		case SYSTEM_SETTINGS_KEY_TIME_CHANGED:
+			ret = SYSTEM_SETTINGS_ERROR_NONE;
 			break;
 		default:
 			_E("Unhandled system_setting event: %d", key);
@@ -68,8 +74,15 @@ int lockscreen_data_model_time_init(lockscreen_data_model_t *model)
 		return 1;
 	}
 
-	ret = system_settings_get_value_string(SYSTEM_SETTINGS_KEY_LOCALE_TIMEZONE, &model->time.locale);
+	ret = system_settings_get_value_string(SYSTEM_SETTINGS_KEY_LOCALE_LANGUAGE, &model->time.locale);
 	if (ret != SYSTEM_SETTINGS_ERROR_NONE) {
+		_E("system_settings_get_value_string failed: %s", get_error_message(ret));
+		return 1;
+	}
+
+	ret = system_settings_get_value_string(SYSTEM_SETTINGS_KEY_LOCALE_TIMEZONE, &model->time.timezone);
+	if (ret != SYSTEM_SETTINGS_ERROR_NONE) {
+		free(model->time.locale);
 		_E("system_settings_get_value_string failed: %s", get_error_message(ret));
 		return 1;
 	}
@@ -82,7 +95,9 @@ int lockscreen_data_model_time_init(lockscreen_data_model_t *model)
 void lockscreen_data_model_time_shutdown(void)
 {
 	free(current->time.locale);
+	free(current->time.timezone);
 	system_settings_unset_changed_cb(SYSTEM_SETTINGS_KEY_LOCALE_TIMEFORMAT_24HOUR);
 	system_settings_unset_changed_cb(SYSTEM_SETTINGS_KEY_LOCALE_TIMEZONE);
+	system_settings_unset_changed_cb(SYSTEM_SETTINGS_KEY_LOCALE_LANGUAGE);
 	system_settings_unset_changed_cb(SYSTEM_SETTINGS_KEY_TIME_CHANGED);
 }
