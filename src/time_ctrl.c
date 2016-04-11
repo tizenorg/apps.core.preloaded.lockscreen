@@ -39,7 +39,7 @@ static Eina_Bool _timer_cb(void *data)
 	return ECORE_CALLBACK_RENEW;
 }
 
-static void _time_spawn_timer(void)
+static void _time_spawn_align(void)
 {
 	time_t tt;
 	struct tm st;
@@ -47,13 +47,13 @@ static void _time_spawn_timer(void)
 	tt = time(NULL);
 	localtime_r(&tt, &st);
 
-	update_timer = ecore_timer_add(60 - st.tm_sec, _timer_cb, NULL);
+	ecore_timer_interval_set(update_timer, 60 - st.tm_sec);
 }
 
 static Eina_Bool _time_changed(void *data, int event, void *event_info)
 {
 	_time_update();
-	_time_spawn_timer();
+	_time_spawn_align();
 	return EINA_TRUE;
 }
 
@@ -66,7 +66,7 @@ static Eina_Bool _lcd_status_changed(void *data, int event, void *event_info)
 	}
 	else {
 		_time_update();
-		_time_spawn_timer();
+		_time_spawn_align();
 	}
 	return EINA_TRUE;
 }
@@ -79,12 +79,14 @@ void lockscreen_time_ctrl_init(void)
 	display_handler = ecore_event_handler_add(LOCKSCREEN_DATA_MODEL_EVENT_LCD_STATUS_CHANGED, _lcd_status_changed, NULL);
 	if (!display_handler)
 		FATAL("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_LCD_STATUS_CHANGED event");
+	update_timer = ecore_timer_add(60.0, _timer_cb, NULL);
 	_time_update();
-	_time_spawn_timer();
+	_time_spawn_align();
 }
 
-void lockscreen_time_ctrl_fini(void)
+void lockscreen_time_ctrl_shutdown(void)
 {
+	ecore_timer_del(update_timer);
 	ecore_event_handler_del(handler);
 	ecore_event_handler_del(display_handler);
 }

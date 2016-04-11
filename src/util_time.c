@@ -29,18 +29,21 @@ static i18n_udatepg_h _util_time_generator_get(const char *timezone_id)
 	static char *tz;
 
 	if (tz && !strcmp(tz, timezone_id)) {
-		if (generator) {
-			i18n_udatepg_destroy(generator);
-			generator = NULL;
-		}
-		int ret = i18n_udatepg_create(timezone_id, &generator);
-		if (ret != I18N_ERROR_NONE) {
-			_E("i18n_udatepg_create failed: %s", get_error_message(ret));
-			return NULL;
-		}
-		free(tz);
-		tz = strdup(timezone_id);
+		return generator;
 	}
+
+	if (generator) {
+		i18n_udatepg_destroy(generator);
+		generator = NULL;
+	}
+
+	int ret = i18n_udatepg_create(timezone_id, &generator);
+	if (ret != I18N_ERROR_NONE) {
+		_E("i18n_udatepg_create failed: %s", get_error_message(ret));
+		return NULL;
+	}
+	free(tz);
+	tz = strdup(timezone_id);
 	return generator;
 }
 
@@ -55,7 +58,10 @@ static i18n_udate_format_h __util_time_date_formatter_get(const char *locale, co
 	i18n_udate_format_h formatter = NULL;
 
 	const i18n_udatepg_h generator = _util_time_generator_get(timezone_id);
-	if (!generator) return NULL;
+	if (!generator) {
+		_E("_util_time_generator_get failed");
+		return NULL;
+	}
 
 	i18n_ustring_copy_ua_n(u_skeleton, skeleton, strlen(skeleton));
 	skeleton_len = i18n_ustring_get_length(u_skeleton);
@@ -94,7 +100,10 @@ static i18n_udate_format_h __util_time_time_formatter_get(bool use24hformat, con
 	i18n_udate_format_h formatter = NULL;
 
 	const i18n_udatepg_h generator = _util_time_generator_get(timezone_id);
-	if (!generator) return NULL;
+	if (!generator) {
+		_E("_util_time_generator_get failed");
+		return NULL;
+	}
 
 	if (use24hformat) {
 		snprintf(buf, sizeof(buf)-1, "%s", "HH:mm");

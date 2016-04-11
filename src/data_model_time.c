@@ -52,16 +52,20 @@ static void _time_changed(system_settings_key_e key, void *user_data)
 
 int lockscreen_data_model_time_init(lockscreen_data_model_t *model)
 {
+	current = model;
+
 	int ret = system_settings_set_changed_cb(SYSTEM_SETTINGS_KEY_LOCALE_TIMEFORMAT_24HOUR, _time_changed, NULL);
 	if (ret != SYSTEM_SETTINGS_ERROR_NONE) {
 		_E("system_settings_set_changed_cb failed: %s", get_error_message(ret));
 		return 1;
 	}
+#if 0
 	ret = system_settings_set_changed_cb(SYSTEM_SETTINGS_KEY_LOCALE_TIMEZONE, _time_changed, NULL);
 	if (ret != SYSTEM_SETTINGS_ERROR_NONE) {
 		_E("system_settings_set_changed_cb failed: %s", get_error_message(ret));
 		return 1;
 	}
+#endif
 	ret = system_settings_set_changed_cb(SYSTEM_SETTINGS_KEY_TIME_CHANGED, _time_changed, NULL);
 	if (ret != SYSTEM_SETTINGS_ERROR_NONE) {
 		_E("system_settings_set_changed_cb failed: %s", get_error_message(ret));
@@ -86,8 +90,6 @@ int lockscreen_data_model_time_init(lockscreen_data_model_t *model)
 		_E("system_settings_get_value_string failed: %s", get_error_message(ret));
 		return 1;
 	}
-
-	current = model;
 
 	return 0;
 }

@@ -60,18 +60,11 @@ SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--as-needed -pie")
 INCLUDE_DIRECTORIES(${PROJECT_ROOT_DIR}/inc)
 
 ADD_EXECUTABLE(${PROJECT_NAME}
-	${PROJECT_ROOT_DIR}/src/background_view.c
 	${PROJECT_ROOT_DIR}/src/battery_ctrl.c
 	${PROJECT_ROOT_DIR}/src/camera_ctrl.c
-	${PROJECT_ROOT_DIR}/src/default_lock.c
-	${PROJECT_ROOT_DIR}/src/lock_time.c
 	${PROJECT_ROOT_DIR}/src/lockscreen.c
-	${PROJECT_ROOT_DIR}/src/property.c
-	${PROJECT_ROOT_DIR}/src/sim_state.c
 	${PROJECT_ROOT_DIR}/src/util.c
 	${PROJECT_ROOT_DIR}/src/window.c
-	${PROJECT_ROOT_DIR}/src/music_player.c
-	${PROJECT_ROOT_DIR}/src/contextual_view.c
 	${PROJECT_ROOT_DIR}/src/data_model.c
 	${PROJECT_ROOT_DIR}/src/data_model_background.c
 	${PROJECT_ROOT_DIR}/src/data_model_battery.c

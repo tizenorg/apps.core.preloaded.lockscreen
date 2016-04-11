@@ -154,7 +154,7 @@ void _terminate_app(void *data)
 {
 	_D("%s", __func__);
 
-	lock_default_lock_fini();
+	//lock_default_lock_fini();
 
 	//lock_property_unregister();
 }
