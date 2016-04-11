@@ -34,6 +34,7 @@ int LOCKSCREEN_DATA_MODEL_EVENT_LOCK_TYPE_CHANGED;
 int LOCKSCREEN_DATA_MODEL_EVENT_SIM_STATUS_CHANGED;
 int LOCKSCREEN_DATA_MODEL_EVENT_MISSED_EVENTS_CHANGED;
 int LOCKSCREEN_DATA_MODEL_EVENT_CAMERA_STATUS_CHANGED;
+int LOCKSCREEN_DATA_MODEL_EVENT_TIME_FORMAT_CHANGED;
 
 
 static void _events_init()
@@ -46,6 +47,7 @@ static void _events_init()
 	LOCKSCREEN_DATA_MODEL_EVENT_SIM_STATUS_CHANGED = ecore_event_type_new();
 	LOCKSCREEN_DATA_MODEL_EVENT_MISSED_EVENTS_CHANGED = ecore_event_type_new();
 	LOCKSCREEN_DATA_MODEL_EVENT_CAMERA_STATUS_CHANGED = ecore_event_type_new();
+	LOCKSCREEN_DATA_MODEL_EVENT_TIME_FORMAT_CHANGED = ecore_event_type_new();
 }
 
 int lockscreen_data_model_init()
@@ -77,9 +79,13 @@ int lockscreen_data_model_init()
 	if (ret) goto music_shutdown;
 	ret = lockscreen_data_model_display_init(&model);
 	if (ret) goto camera_shutdown;
+	ret = lockscreen_data_model_time_init(&model);
+	if (ret) goto display_shutdown;
 
 	return 0;
 
+display_shutdown:
+	lockscreen_data_model_display_shutdown();
 camera_shutdown:
 	lockscreen_data_model_camera_shutdown();
 music_shutdown:

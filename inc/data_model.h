@@ -33,8 +33,12 @@ typedef struct {
 	struct {
 		char *text; /* for two sims */
 	} sim[2];
-	bool camera_on; /* true if camera shortcut is being enabled */
+	bool camera_on; /* true if camera shortcut should be enabled */
 	Eina_List *missed_events; /* List of missed_event_t structs */
+	struct {
+		char *locale;
+		bool use24hformat;
+	} time;
 } lockscreen_data_model_t;
 
 
@@ -46,14 +50,11 @@ extern int LOCKSCREEN_DATA_MODEL_EVENT_LOCK_TYPE_CHANGED;
 extern int LOCKSCREEN_DATA_MODEL_EVENT_SIM_STATUS_CHANGED;
 extern int LOCKSCREEN_DATA_MODEL_EVENT_MISSED_EVENTS_CHANGED;
 extern int LOCKSCREEN_DATA_MODEL_EVENT_CAMERA_STATUS_CHANGED;
+extern int LOCKSCREEN_DATA_MODEL_EVENT_TIME_FORMAT_CHANGED;
 
 int lockscreen_data_model_init();
 
 const lockscreen_data_model_t *lockscreen_data_model_get_model(void);
-
-int lockscreen_data_model_camera_activate();
-
-int lockscreen_data_model_background_set(const char *path);
 
 int lockscreen_data_model_shutdown();
 
@@ -67,5 +68,6 @@ int lockscreen_data_model_event_emit(int event);
 #include "data_model_sim.h"
 #include "data_model_display.h"
 #include "data_model_missed_events.h"
+#include "data_model_time.h"
 
 #endif

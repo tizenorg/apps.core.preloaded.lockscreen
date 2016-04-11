@@ -82,6 +82,7 @@ ADD_EXECUTABLE(${PROJECT_NAME}
 	${PROJECT_ROOT_DIR}/src/main_view.c
 	${PROJECT_ROOT_DIR}/src/main_ctrl.c
 	${PROJECT_ROOT_DIR}/src/data_model_display.c
+	${PROJECT_ROOT_DIR}/src/data_model_time.c
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${pkgs_LDFLAGS} -lm)
