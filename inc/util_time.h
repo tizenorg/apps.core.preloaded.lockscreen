@@ -17,7 +17,7 @@
 #ifndef __LOCK_SCREEN_UTIL_TIME_H__
 #define __LOCK_SCREEN_UTIL_TIME_H__
 
-bool util_time_formatted_date_get(time_t time, char *locale, char *timezone, char *skeleton, char **str_date);
+bool util_time_formatted_date_get(time_t time, const char *locale, const char *timezone, const char *skeleton, char **str_date);
 
 bool util_time_formatted_time_get(time_t time, const char *locale, const char *timezone, bool use24hformat, char **str_time, char **str_meridiem);
 

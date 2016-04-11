@@ -18,6 +18,7 @@
 #include "util.h"
 #include "log.h"
 #include "lockscreen.h"
+#include "util_time.h"
 
 #include <Elementary.h>
 
@@ -242,4 +243,56 @@ void lockscreen_main_view_unlock(View_Event_Cb animation_end_cb)
 	elm_object_signal_callback_add(view.swipe_layout, "unlock,anim,end", "swipe-layout", _layout_unlocked, animation_end_cb);
 	elm_object_signal_emit(view.swipe_layout, "unlock,anim,start", "task-mgr");
 	elm_object_signal_emit(view.layout, "bg,hide", "task-mgr");
+}
+
+static int _is_korea_locale(const char *locale)
+{
+	int ret = 0;
+	if (locale) {
+		if (strstr(locale,"ko_KR")) {
+			ret = 1;
+		}
+	}
+	return ret;
+}
+
+void lockscreen_main_view_time_set(const char *locale, const char *timezone, bool use24hformat, time_t time)
+{
+	char time_buf[PATH_MAX] = {0,};
+	char date_buf[PATH_MAX] = {0,};
+	char *str_date, *str_time, *str_meridiem;
+
+	if (!util_time_formatted_time_get(time, locale, timezone, use24hformat, &str_time, &str_meridiem)) {
+		_E("util_time_formatted_time_get failed");
+		return;
+	}
+	if (!util_time_formatted_date_get(time, locale, timezone, "MMMMEd", &str_date)) {
+		_E("util_time_formatted_date_get failed");
+		free(str_time);
+		free(str_meridiem);
+		return;
+	}
+
+	if (use24hformat) {
+		if (_is_korea_locale(locale)) {
+			snprintf(time_buf, sizeof(time_buf), "%s", str_time);
+		} else {
+			snprintf(time_buf, sizeof(time_buf), "%s", str_time);
+		}
+	} else {
+		if (_is_korea_locale(locale)) {
+			snprintf(time_buf, sizeof(time_buf), "<%s>%s </>%s", "small_font", str_meridiem, str_time);
+		} else {
+			snprintf(time_buf, sizeof(time_buf), "%s<%s> %s</>", str_time, "small_font", str_meridiem);
+		}
+	}
+
+	snprintf(date_buf, sizeof(time_buf), "<%s>%s</>", "small_font", str_date);
+
+	elm_object_part_text_set(view.swipe_layout, "txt.time", time_buf);
+	elm_object_part_text_set(view.swipe_layout, "txt.date", str_date);
+
+	free(str_date);
+	free(str_time);
+	free(str_meridiem);
 }

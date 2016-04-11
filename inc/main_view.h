@@ -73,5 +73,6 @@ bool lockscreen_main_view_background_set(lockscreen_main_view_background_type ty
  * @note animation_end_cb will be called only once.
  */
 void lockscreen_main_view_unlock(View_Event_Cb animation_end_cb);
+void lockscreen_main_view_time_set(const char *locale, const char *timezone, bool use24hformat, time_t time);
 
 #endif

@@ -212,7 +212,7 @@ bool util_time_formatted_time_get(time_t time, const char *locale, const char *t
 	return true;
 }
 
-bool util_time_formatted_date_get(time_t time, char *locale, char *timezone, char *skeleton, char **str_date)
+bool util_time_formatted_date_get(time_t time, const char *locale, const char *timezone, const char *skeleton, char **str_date)
 {
 	struct tm st;
 	char buf_date[512] = {0,};
