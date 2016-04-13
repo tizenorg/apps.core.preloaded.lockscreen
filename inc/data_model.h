@@ -48,7 +48,6 @@ extern int LOCKSCREEN_DATA_MODEL_EVENT_LOCK_TYPE_CHANGED;
 extern int LOCKSCREEN_DATA_MODEL_EVENT_SIM_STATUS_CHANGED;
 extern int LOCKSCREEN_DATA_MODEL_EVENT_MISSED_EVENTS_CHANGED;
 extern int LOCKSCREEN_DATA_MODEL_EVENT_CAMERA_STATUS_CHANGED;
-extern int LOCKSCREEN_DATA_MODEL_EVENT_TIME_FORMAT_CHANGED;
 
 int lockscreen_data_model_init();
 
@@ -62,6 +61,5 @@ int lockscreen_data_model_event_emit(int event);
 #include "data_model_music_player.h"
 #include "data_model_sim.h"
 #include "data_model_missed_events.h"
-#include "data_model_time.h"
 
 #endif

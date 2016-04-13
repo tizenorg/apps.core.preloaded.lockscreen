@@ -15,7 +15,7 @@
  */
 
 #include "log.h"
-#include "data_model.h"
+#include "time_format.h"
 #include "display.h"
 #include "main_view.h"
 
@@ -27,9 +27,8 @@ static Ecore_Timer *update_timer;
 
 static void _time_update(void)
 {
-	const lockscreen_data_model_t *model = lockscreen_data_model_get_model();
-
-	lockscreen_main_view_time_set(model->time.locale, model->time.timezone, model->time.use24hformat, time(NULL));
+	lockscreen_main_view_time_set(lockscreen_time_format_locale_get(),
+			lockscreen_time_format_timezone_get(), lockscreen_time_format_use_24h(), time(NULL));
 }
 
 static Eina_Bool _timer_cb(void *data)
@@ -59,9 +58,7 @@ static Eina_Bool _time_changed(void *data, int event, void *event_info)
 
 static Eina_Bool _display_status_changed(void *data, int event, void *event_info)
 {
-	const lockscreen_data_model_t *model = lockscreen_data_model_get_model();
-
-	if (model->lcd_off) {
+	if (lockscreen_display_is_off()) {
 		if (update_timer) ecore_timer_freeze(update_timer);
 	}
 	else {
@@ -73,12 +70,12 @@ static Eina_Bool _display_status_changed(void *data, int event, void *event_info
 
 void lockscreen_time_ctrl_init(void)
 {
-	if (lockscreen_display_init()) {
-		FATAL("Time controller init failed");
+	if (lockscreen_display_init() || lockscreen_time_format_init()) {
+		FATAL("Time controller init failed. Time updates will be unavailable.");
 		return;
 	}
 
-	handler = ecore_event_handler_add(LOCKSCREEN_DATA_MODEL_EVENT_TIME_FORMAT_CHANGED, _time_changed, NULL);
+	handler = ecore_event_handler_add(LOCKSCREEN_EVENT_TIME_FORMAT_CHANGED, _time_changed, NULL);
 	if (!handler)
 		FATAL("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_TIME_FORMAT_CHANGED event");
 	display_handler = ecore_event_handler_add(LOCKSCREEN_EVENT_DISPLAY_STATUS_CHANGED, _display_status_changed, NULL);
@@ -94,5 +91,7 @@ void lockscreen_time_ctrl_shutdown(void)
 	ecore_timer_del(update_timer);
 	ecore_event_handler_del(handler);
 	ecore_event_handler_del(display_handler);
+	lockscreen_display_shutdown();
+	lockscreen_time_format_shutdown();
 }
 

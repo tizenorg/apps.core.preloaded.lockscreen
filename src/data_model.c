@@ -61,8 +61,6 @@ int lockscreen_data_model_init()
 	if (ret) goto sim_shutdown;
 	ret = lockscreen_data_model_music_player_init(&model);
 	if (ret) goto missed_shutdown;
-	ret = lockscreen_data_model_time_init(&model);
-	if (ret) goto display_shutdown;
 
 	return 0;
 

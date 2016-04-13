@@ -75,7 +75,7 @@ ADD_EXECUTABLE(${PROJECT_NAME}
 	${PROJECT_ROOT_DIR}/src/main_view.c
 	${PROJECT_ROOT_DIR}/src/main_ctrl.c
 	${PROJECT_ROOT_DIR}/src/display.c
-	${PROJECT_ROOT_DIR}/src/data_model_time.c
+	${PROJECT_ROOT_DIR}/src/time_format.c
 	${PROJECT_ROOT_DIR}/src/util_time.c
 	${PROJECT_ROOT_DIR}/src/time_ctrl.c
 )

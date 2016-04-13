@@ -17,6 +17,8 @@
 #ifndef _LOCKSCREEN_DISPLAY_H_
 #define _LOCKSCREEN_DISPLAY_H_
 
+#include <stdbool.h>
+
 extern int LOCKSCREEN_EVENT_DISPLAY_STATUS_CHANGED;
 
 int lockscreen_display_init(void);
@@ -41,6 +43,6 @@ void lockscreen_display_timer_freeze(void);
  */
 void lockscreen_display_timer_renew(void);
 
-void lockscreen_display_is_on(void);
+bool lockscreen_display_is_off(void);
 
 #endif

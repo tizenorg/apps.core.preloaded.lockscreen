@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-#ifndef _LOCKSCREEN_DATA_MODEL_TIME_H_
-#define _LOCKSCREEN_DATA_MODEL_TIME_H_
+#ifndef _LOCKSCREEN_TIME_FORMAT_H_
+#define _LOCKSCREEN_TIME_FORMAT_H_
 
-int lockscreen_data_model_time_init(lockscreen_data_model_t *model);
+#include <stdbool.h>
 
-void lockscreen_data_model_time_shutdown(void);
+extern int LOCKSCREEN_EVENT_TIME_FORMAT_CHANGED;
+
+int lockscreen_time_format_init(void);
+
+void lockscreen_time_format_shutdown(void);
+
+const char *lockscreen_time_format_locale_get(void);
+const char *lockscreen_time_format_timezone_get(void);
+bool lockscreen_time_format_use_24h(void);
 
 #endif

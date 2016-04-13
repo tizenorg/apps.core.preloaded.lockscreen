@@ -132,3 +132,8 @@ void lockscreen_display_timer_renew(void)
 		ecore_timer_reset(lcd_off_timer);
 	}
 }
+
+bool lockscreen_display_is_off(void)
+{
+	return display_off;
+}
