@@ -15,8 +15,8 @@
  */
 
 #include "log.h"
-#include "time_ctrl.h"
 #include "data_model.h"
+#include "display.h"
 #include "main_view.h"
 
 #include <Ecore.h>
@@ -57,7 +57,7 @@ static Eina_Bool _time_changed(void *data, int event, void *event_info)
 	return EINA_TRUE;
 }
 
-static Eina_Bool _lcd_status_changed(void *data, int event, void *event_info)
+static Eina_Bool _display_status_changed(void *data, int event, void *event_info)
 {
 	const lockscreen_data_model_t *model = lockscreen_data_model_get_model();
 
@@ -73,10 +73,15 @@ static Eina_Bool _lcd_status_changed(void *data, int event, void *event_info)
 
 void lockscreen_time_ctrl_init(void)
 {
+	if (lockscreen_display_init()) {
+		FATAL("Time controller init failed");
+		return;
+	}
+
 	handler = ecore_event_handler_add(LOCKSCREEN_DATA_MODEL_EVENT_TIME_FORMAT_CHANGED, _time_changed, NULL);
 	if (!handler)
 		FATAL("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_TIME_FORMAT_CHANGED event");
-	display_handler = ecore_event_handler_add(LOCKSCREEN_DATA_MODEL_EVENT_LCD_STATUS_CHANGED, _lcd_status_changed, NULL);
+	display_handler = ecore_event_handler_add(LOCKSCREEN_EVENT_DISPLAY_STATUS_CHANGED, _display_status_changed, NULL);
 	if (!display_handler)
 		FATAL("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_LCD_STATUS_CHANGED event");
 	update_timer = ecore_timer_add(60.0, _timer_cb, NULL);

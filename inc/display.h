@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef _LOCKSCREEN_DATA_MODEL_DISPLAY_H_
-#define _LOCKSCREEN_DATA_MODEL_DISPLAY_H_
+#ifndef _LOCKSCREEN_DISPLAY_H_
+#define _LOCKSCREEN_DISPLAY_H_
 
-#include "data_model.h"
+extern int LOCKSCREEN_EVENT_DISPLAY_STATUS_CHANGED;
 
-int lockscreen_data_model_display_init(lockscreen_data_model_t *model);
+int lockscreen_display_init(void);
 
-void lockscreen_data_model_display_shutdown(void);
+void lockscreen_display_shutdown(void);
 
 /**
  * @brief
@@ -29,7 +29,7 @@ void lockscreen_data_model_display_shutdown(void);
  *
  * @note if device display in already in "off" state this function has no effect.
  */
-void lockscreen_data_model_display_timer_freeze(void);
+void lockscreen_display_timer_freeze(void);
 
 /**
  * @brief
@@ -39,6 +39,8 @@ void lockscreen_data_model_display_timer_freeze(void);
  * @note if lockscreen_data_model_display_timer_freeze function was not called
  * beforehead, this function resets time estimated to turn off display.
  */
-void lockscreen_data_model_display_timer_renew(void);
+void lockscreen_display_timer_renew(void);
+
+void lockscreen_display_is_on(void);
 
 #endif

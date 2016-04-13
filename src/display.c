@@ -18,13 +18,15 @@
 #include <device/callback.h>
 #include <Ecore.h>
 
-#include "data_model_display.h"
+#include "display.h"
 #include "log.h"
 
 #define LOCK_LCD_OFF_TIMEOUT_TIME 10
 
-static lockscreen_data_model_t *current;
 static Ecore_Timer *lcd_off_timer;
+int LOCKSCREEN_EVENT_DISPLAY_STATUS_CHANGED;
+static int init_count;
+static int display_off;
 
 static Eina_Bool _time_elapsed(void *data)
 {
@@ -58,63 +60,71 @@ static void _display_status_changed(device_callback_e type, void *value, void *u
 		case DISPLAY_STATE_SCREEN_DIM:
 			_I("Display on");
 			_timer_reset();
-			current->lcd_off = false;
+			display_off = false;
 		break;
 		case DISPLAY_STATE_SCREEN_OFF:
 			_I("Display off");
-			current->lcd_off = true;
+			display_off = true;
 		break;
 	}
 
-	lockscreen_data_model_event_emit(LOCKSCREEN_DATA_MODEL_EVENT_LCD_STATUS_CHANGED);
+	ecore_event_add(LOCKSCREEN_EVENT_DISPLAY_STATUS_CHANGED, NULL, NULL, NULL);
 }
 
-int lockscreen_data_model_display_init(lockscreen_data_model_t *model)
+int lockscreen_display_init(void)
 {
 	display_state_e state;
 
-	int ret = device_add_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed, NULL);
-	if (ret != DEVICE_ERROR_NONE) {
-		_E("device_add_callback failed: %s", get_error_message(ret));
-		return 1;
-	}
-	ret = device_display_get_state(&state);
-	if (ret != DEVICE_ERROR_NONE) {
-		_E("device_display_get_state failed: %s", get_error_message(ret));
-		device_remove_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed);
-		return 1;
-	}
+	if (!init_count++) {
+		LOCKSCREEN_EVENT_DISPLAY_STATUS_CHANGED = ecore_event_type_new();
+		int ret = device_add_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed, NULL);
+		if (ret != DEVICE_ERROR_NONE) {
+			_E("device_add_callback failed: %s", get_error_message(ret));
+			return 1;
+		}
+		ret = device_display_get_state(&state);
+		if (ret != DEVICE_ERROR_NONE) {
+			_E("device_display_get_state failed: %s", get_error_message(ret));
+			device_remove_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed);
+			return 1;
+		}
 
-	switch (state) {
-		case DISPLAY_STATE_NORMAL:
-		case DISPLAY_STATE_SCREEN_DIM:
-			model->lcd_off = false;
-			break;
-		case DISPLAY_STATE_SCREEN_OFF:
-			model->lcd_off = true;
-			break;
-	}
+		switch (state) {
+			case DISPLAY_STATE_NORMAL:
+			case DISPLAY_STATE_SCREEN_DIM:
+				display_off = false;
+				break;
+			case DISPLAY_STATE_SCREEN_OFF:
+				display_off = true;
+				break;
+		}
 
-	current = model;
-	_timer_reset();
+		_timer_reset();
+	}
 
 	return 0;
 }
 
-void lockscreen_data_model_display_shutdown(void)
+void lockscreen_display_shutdown(void)
 {
-	if (lcd_off_timer) ecore_timer_del(lcd_off_timer);
-	device_remove_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed);
+	if (init_count) {
+		init_count--;
+
+		if (!init_count) {
+			if (lcd_off_timer) ecore_timer_del(lcd_off_timer);
+			device_remove_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed);
+		}
+	}
 }
 
-void lockscreen_data_model_display_timer_freeze(void)
+void lockscreen_display_timer_freeze(void)
 {
 	if (lcd_off_timer) {
 		ecore_timer_freeze(lcd_off_timer);
 	}
 }
 
-void lockscreen_data_model_display_timer_renew(void)
+void lockscreen_display_timer_renew(void)
 {
 	if (lcd_off_timer) {
 		ecore_timer_thaw(lcd_off_timer);

@@ -106,7 +106,9 @@ int lockscreen_camera_init(void)
 
 void lockscreen_camera_shutdown(void)
 {
-	init_count--;
+	if (init_count) {
+		init_count--;
+	}
 }
 
 bool lockscreen_camera_is_on(void)

@@ -46,7 +46,6 @@ typedef struct {
 extern int LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED;
 extern int LOCKSCREEN_DATA_MODEL_EVENT_BACKGROUND_CHANGED;
 extern int LOCKSCREEN_DATA_MODEL_EVENT_MINICONTROLLER_CHANGED;
-extern int LOCKSCREEN_DATA_MODEL_EVENT_LCD_STATUS_CHANGED;
 extern int LOCKSCREEN_DATA_MODEL_EVENT_LOCK_TYPE_CHANGED;
 extern int LOCKSCREEN_DATA_MODEL_EVENT_SIM_STATUS_CHANGED;
 extern int LOCKSCREEN_DATA_MODEL_EVENT_MISSED_EVENTS_CHANGED;
@@ -66,7 +65,6 @@ int lockscreen_data_model_event_emit(int event);
 #include "data_model_missed_events.h"
 #include "data_model_music_player.h"
 #include "data_model_sim.h"
-#include "data_model_display.h"
 #include "data_model_missed_events.h"
 #include "data_model_time.h"
 
