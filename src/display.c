@@ -75,7 +75,7 @@ int lockscreen_display_init(void)
 {
 	display_state_e state;
 
-	if (!init_count++) {
+	if (!init_count) {
 		LOCKSCREEN_EVENT_DISPLAY_STATUS_CHANGED = ecore_event_type_new();
 		int ret = device_add_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed, NULL);
 		if (ret != DEVICE_ERROR_NONE) {
@@ -102,6 +102,7 @@ int lockscreen_display_init(void)
 		_timer_reset();
 	}
 
+	init_count++;
 	return 0;
 }
 

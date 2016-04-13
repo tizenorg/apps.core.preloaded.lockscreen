@@ -84,7 +84,7 @@ static void _battery_charger_changed_cb(runtime_info_key_e key, void *data)
 
 int lockscreen_battery_init()
 {
-	if (!init_count++) {
+	if (!init_count) {
 		LOCKSCREEN_EVENT_BATTERY_CHANGED = ecore_event_type_new();
 		int ret = runtime_info_set_changed_cb(RUNTIME_INFO_KEY_CHARGER_CONNECTED, _battery_charger_changed_cb, NULL);
 		if (ret != RUNTIME_INFO_ERROR_NONE) {
@@ -109,7 +109,7 @@ int lockscreen_battery_init()
 
 		_battery_status_update();
 	}
-
+	init_count++;
 	return 0;
 }
 

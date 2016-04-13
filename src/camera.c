@@ -95,12 +95,13 @@ int lockscreen_camera_activate()
 
 int lockscreen_camera_init(void)
 {
-	if (!init_count++) {
+	if (!init_count) {
 		//FIXME load this from settings
 		camera_enabled = true;
 		LOCKSCREEN_EVENT_CAMERA_STATUS_CHANGED = ecore_event_type_new();
 	}
 
+	init_count++;
 	return 0;
 }
 

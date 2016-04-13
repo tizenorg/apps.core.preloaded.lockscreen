@@ -32,7 +32,7 @@ int lockscreen_background_init(void)
 {
 	char *bg;
 
-	if (!init_count++) {
+	if (!init_count) {
 		LOCKSCREEN_EVENT_BACKGROUND_CHANGED = ecore_event_type_new();
 		int ret = system_settings_get_value_string(SYSTEM_SETTINGS_KEY_WALLPAPER_LOCK_SCREEN, &bg);
 		if (ret != SYSTEM_SETTINGS_ERROR_NONE) {
@@ -44,7 +44,7 @@ int lockscreen_background_init(void)
 			lockscreen_background_file_set(NULL);
 		free(bg);
 	}
-
+	init_count++;
 	return 0;
 }
 
