@@ -289,11 +289,9 @@ group {
 			clip_to: "vi_clipper";
 			description {
 				state: "default" 0.0;
-				min: CAMERA_LAYOUT_SIZE CAMERA_LAYOUT_SIZE;
+				max: 500 500;
 				align: 1 1;
 				fixed: 1 1;
-				rel1 { relative: 0.0 0.0; to_x: "padding.right"; to_y: "padding.bottom"; offset: 85 85; }
-				rel2 { relative: 0.0 0.0; to_x: "padding.right"; to_y: "padding.bottom"; offset: 85 85; }
 			}
 		}
 	}

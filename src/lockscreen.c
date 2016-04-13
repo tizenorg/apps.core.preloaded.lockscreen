@@ -117,6 +117,7 @@ bool _create_app(void *data)
 	elm_config_accel_preference_set("opengl");
 
 	_D("base scale : %f", elm_app_base_scale_get());
+	_D("edje scale : %f", edje_scale_get());
 
 // FIXME
 #if 0

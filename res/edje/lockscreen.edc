@@ -47,7 +47,7 @@
 #define CAMERA_ICON_SIZE 110
 
 collections {
-	base_scale: 1.7;
+	base_scale: 2.6;
 
 #include "color_classes.edc"
 #include "swipe_lock.edc"
