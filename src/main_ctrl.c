@@ -20,6 +20,7 @@
 #include "window.h"
 #include "data_model.h"
 #include "battery_ctrl.h"
+#include "background.h"
 #include "camera_ctrl.h"
 #include "time_ctrl.h"
 #include "util.h"
@@ -64,8 +65,12 @@ void lockscreen_main_ctrl_init(void)
 	if (!view)
 		FATAL("lockscreen_main_view_create failed.");
 
-	if (!lockscreen_main_view_background_set(LOCKSCREEN_BACKGROUND_TYPE_DEFAULT, model->background_file))
-		FATAL("lockscreen_main_view_background_image_set failed");
+	if (lockscreen_background_init()) {
+		FATAL("lockscreen_background_init failed. Background changes will not be available");
+	} else {
+		if (!lockscreen_main_view_background_set(LOCKSCREEN_BACKGROUND_TYPE_DEFAULT, lockscreen_background_file_get()))
+			FATAL("lockscreen_main_view_background_image_set failed");
+	}
 
 	lockscreen_window_content_set(view);
 	lockscreen_main_view_swipe_signal_add(_swipe_finished);
@@ -80,4 +85,5 @@ void lockscreen_main_ctrl_init(void)
 void lockscreen_main_ctrl_shutdown(void)
 {
 	lockscreen_main_view_swipe_signal_del(_swipe_finished);
+	lockscreen_background_shutdown();
 }

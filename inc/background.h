@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-#ifndef _LOCKSCREEN_DATA_MODEL_BACKGROUND_H_
-#define _LOCKSCREEN_DATA_MODEL_BACKGROUND_H_
+#ifndef _LOCKSCREEN_BACKGROUND_H_
+#define _LOCKSCREEN_BACKGROUND_H_
 
-int lockscreen_data_model_background_init(lockscreen_data_model_t *model);
+extern int LOCKSCREEN_EVENT_BACKGROUND_CHANGED;
+
+int lockscreen_background_init(void);
 
 /**
  * @brief Sets background file that will be display be lockscreen.
  * If @path parameter is NULL the default background will be used.
  */
-int lockscreen_data_model_background_file_set(const char *path);
+int lockscreen_background_file_set(const char *path);
 
-void lockscreen_data_model_background_shutdown(void);
+void lockscreen_background_shutdown(void);
+
+const char *lockscreen_background_file_get(void);
 
 #endif
 
