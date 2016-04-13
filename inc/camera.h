@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-#ifndef _LOCKSCREEN_DATA_MODEL_CAMERA_H__
-#define _LOCKSCREEN_DATA_MODEL_CAMERA_H__
+#ifndef _LOCKSCREEN_CAMERA_H__
+#define _LOCKSCREEN_CAMERA_H__
 
-int lockscreen_data_model_camera_init(lockscreen_data_model_t *model);
-int lockscreen_data_model_camera_activate();
-void lockscreen_data_model_camera_shutdown(void);
+#include <stdbool.h>
+
+extern int LOCKSCREEN_EVENT_CAMERA_STATUS_CHANGED;
+
+int lockscreen_camera_init(void);
+int lockscreen_camera_activate();
+void lockscreen_camera_shutdown(void);
+
+bool lockscreen_camera_is_on(void);
 
 #endif
 

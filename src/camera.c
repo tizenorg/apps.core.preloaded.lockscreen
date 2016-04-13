@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-#include "data_model.h"
+#include "camera.h"
 #include "log.h"
 
 #include <app_control.h>
+#include <Ecore.h>
 #define KEY_DISPLAY_OVER_LOCKSCREEN "http://tizen.org/lock/window/above"
+
+static bool camera_enabled;
+static int init_count;
+
+int LOCKSCREEN_EVENT_CAMERA_STATUS_CHANGED;
 
 static void _app_control_reply_cb(app_control_h request, app_control_h reply, app_control_result_e result, void *user_data)
 {
@@ -32,10 +38,9 @@ static void _app_control_reply_cb(app_control_h request, app_control_h reply, ap
 			_D("Camera application launch failed.");
 			break;
 	}
-	//lockscreen_lcd_off_timer_set();
 }
 
-int lockscreen_data_model_camera_activate()
+int lockscreen_camera_activate()
 {
 	app_control_h app_ctr;
 
@@ -84,17 +89,27 @@ int lockscreen_data_model_camera_activate()
 
 	_D("Launch request send for %s", APP_CONTROL_OPERATION_CREATE_CONTENT);
 	app_control_destroy(app_ctr);
-	//lockscreen_lcd_off_timer_unset();
 
 	return 0;
 }
 
-int lockscreen_data_model_camera_init(lockscreen_data_model_t *model)
+int lockscreen_camera_init(void)
 {
-	model->camera_on = true;
+	if (!init_count++) {
+		//FIXME load this from settings
+		camera_enabled = true;
+		LOCKSCREEN_EVENT_CAMERA_STATUS_CHANGED = ecore_event_type_new();
+	}
+
 	return 0;
 }
 
-void lockscreen_data_model_camera_shutdown(void)
+void lockscreen_camera_shutdown(void)
 {
+	init_count--;
+}
+
+bool lockscreen_camera_is_on(void)
+{
+	return camera_enabled;
 }

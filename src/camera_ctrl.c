@@ -18,16 +18,14 @@
 
 #include "log.h"
 #include "camera_ctrl.h"
-#include "data_model.h"
+#include "camera.h"
 #include "main_view.h"
 
 static Ecore_Event_Handler *handler;
 
 static void _camera_view_update()
 {
-	const lockscreen_data_model_t *model = lockscreen_data_model_get_model();
-
-	if (model->camera_on)
+	if (lockscreen_camera_is_on())
 		lockscreen_main_view_camera_show();
 	else
 		lockscreen_main_view_camera_hide();
@@ -41,14 +39,19 @@ static Eina_Bool _cam_status_changed(void *data, int event, void *event_info)
 
 static void _camera_clicked(void)
 {
-	lockscreen_data_model_camera_activate();
+	lockscreen_camera_activate();
 }
 
 void lockscreen_camera_ctrl_init(void)
 {
-	handler = ecore_event_handler_add(LOCKSCREEN_DATA_MODEL_EVENT_CAMERA_STATUS_CHANGED, _cam_status_changed, NULL);
+	if (lockscreen_camera_init()) {
+		_E("lockscreen_camera_init failed");
+		return;
+	}
+
+	handler = ecore_event_handler_add(LOCKSCREEN_EVENT_CAMERA_STATUS_CHANGED, _cam_status_changed, NULL);
 	if (!handler)
-		FATAL("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED event");
+		FATAL("ecore_event_handler_add failed on LOCKSCREEN_EVENT_BATTERY_CHANGED event");
 	_camera_view_update();
 
 	lockscreen_main_view_camera_clicked_signal_add(_camera_clicked);
@@ -58,4 +61,5 @@ void lockscreen_camera_ctrl_fini(void)
 {
 	ecore_event_handler_del(handler);
 	lockscreen_main_view_camera_clicked_signal_del();
+	lockscreen_camera_shutdown();
 }

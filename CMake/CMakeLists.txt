@@ -71,7 +71,7 @@ ADD_EXECUTABLE(${PROJECT_NAME}
 	${PROJECT_ROOT_DIR}/src/data_model_missed_events.c
 	${PROJECT_ROOT_DIR}/src/data_model_music_player.c
 	${PROJECT_ROOT_DIR}/src/data_model_sim.c
-	${PROJECT_ROOT_DIR}/src/data_model_camera.c
+	${PROJECT_ROOT_DIR}/src/camera.c
 	${PROJECT_ROOT_DIR}/src/main_view.c
 	${PROJECT_ROOT_DIR}/src/main_ctrl.c
 	${PROJECT_ROOT_DIR}/src/data_model_display.c
