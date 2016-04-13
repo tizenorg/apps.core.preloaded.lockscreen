@@ -17,7 +17,6 @@
 #include "log.h"
 #include "data_model.h"
 #include "data_model_background.h"
-#include "data_model_battery.h"
 #include "data_model_missed_events.h"
 #include "data_model_music_player.h"
 #include "data_model_sim.h"
@@ -26,7 +25,6 @@
 
 static lockscreen_data_model_t model;
 static int _init_count;
-int LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED;
 int LOCKSCREEN_DATA_MODEL_EVENT_BACKGROUND_CHANGED;
 int LOCKSCREEN_DATA_MODEL_EVENT_MINICONTROLLER_CHANGED;
 int LOCKSCREEN_DATA_MODEL_EVENT_LOCK_TYPE_CHANGED;
@@ -37,7 +35,6 @@ int LOCKSCREEN_DATA_MODEL_EVENT_TIME_FORMAT_CHANGED;
 
 static void _events_init()
 {
-	LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED = ecore_event_type_new();
 	LOCKSCREEN_DATA_MODEL_EVENT_BACKGROUND_CHANGED = ecore_event_type_new();
 	LOCKSCREEN_DATA_MODEL_EVENT_MINICONTROLLER_CHANGED = ecore_event_type_new();
 	LOCKSCREEN_DATA_MODEL_EVENT_LOCK_TYPE_CHANGED = ecore_event_type_new();
@@ -61,9 +58,7 @@ int lockscreen_data_model_init()
 		run_once = true;
 	}
 
-	int ret = lockscreen_data_model_battery_init(&model);
-	if (ret) return -1;
-	ret = lockscreen_data_model_background_init(&model);
+	int ret = lockscreen_data_model_background_init(&model);
 	if (ret) goto battery_shutdown;
 	ret = lockscreen_data_model_sim_init(&model);
 	if (ret) goto background_shutdown;
@@ -87,7 +82,6 @@ sim_shutdown:
 background_shutdown:
 	lockscreen_data_model_background_shutdown();
 battery_shutdown:
-	lockscreen_data_model_battery_shutdown();
 
 	ecore_shutdown();
 
@@ -106,7 +100,6 @@ int lockscreen_data_model_shutdown()
 	{
 		if (--_init_count) return 0;
 
-		lockscreen_data_model_battery_shutdown();
 		lockscreen_data_model_background_shutdown();
 		lockscreen_data_model_sim_shutdown();
 		lockscreen_data_model_missed_events_shutdown();

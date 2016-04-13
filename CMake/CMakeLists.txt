@@ -67,7 +67,7 @@ ADD_EXECUTABLE(${PROJECT_NAME}
 	${PROJECT_ROOT_DIR}/src/window.c
 	${PROJECT_ROOT_DIR}/src/data_model.c
 	${PROJECT_ROOT_DIR}/src/data_model_background.c
-	${PROJECT_ROOT_DIR}/src/data_model_battery.c
+	${PROJECT_ROOT_DIR}/src/battery.c
 	${PROJECT_ROOT_DIR}/src/data_model_missed_events.c
 	${PROJECT_ROOT_DIR}/src/data_model_music_player.c
 	${PROJECT_ROOT_DIR}/src/data_model_sim.c

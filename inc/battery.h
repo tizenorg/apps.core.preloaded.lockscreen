@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-#ifndef _LOCKSCREEN_DATA_MODEL_BATTERY_H_
-#define _LOCKSCREEN_DATA_MODEL_BATTERY_H_
+#ifndef _LOCKSCREEN_BATTERY_H_
+#define _LOCKSCREEN_BATTERY_H_
 
-int lockscreen_data_model_battery_init(lockscreen_data_model_t *model);
+#include <stdbool.h>
 
-void lockscreen_data_model_battery_shutdown(void);
+extern int LOCKSCREEN_EVENT_BATTERY_CHANGED;
+
+int lockscreen_battery_init(void);
+void lockscreen_battery_shutdown(void);
+bool lockscreen_battery_is_charging(void);
+bool lockscreen_battery_is_connected(void);
+
+/**
+ * @brief Returns battery level state 0 - 100
+ */
+int lockscreen_battery_level_get(void);
 
 #endif

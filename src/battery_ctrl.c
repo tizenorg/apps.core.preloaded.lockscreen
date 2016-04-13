@@ -20,7 +20,7 @@
 #include "lockscreen.h"
 #include "log.h"
 #include "battery_ctrl.h"
-#include "data_model.h"
+#include "battery.h"
 #include "main_view.h"
 
 #include <Ecore.h>
@@ -31,8 +31,7 @@ static Ecore_Event_Handler *handler;
 // FIXME why this is needed?
 static char *_replaceString(char *strInput, const char *strTarget, const char *strChange)
 {
-	char* strResult;
-	char* strTemp;
+	char* strResult; char* strTemp;
 	int i = 0;
 	int nCount = 0;
 	int nTargetLength = strlen(strTarget);
@@ -97,21 +96,16 @@ static char *_text_from_percentage(int capacity)
 
 static int _battery_update(void)
 {
-	const lockscreen_data_model_t *model = lockscreen_data_model_get_model();
-
-	if (!model)
-		FATAL("lockscreen_data_model_get_model failed");
-
-	if (model->battery.is_charging) {
-		if (model->battery.level == 100) {
+	if (lockscreen_battery_is_charging()) {
+		if (lockscreen_battery_level_get() == 100) {
 			lockscreen_main_view_battery_status_text_set(_("IDS_SM_POP_FULLY_CHARGED"));
 		} else {
-			char *buff = _text_from_percentage(model->battery.level);
+			char *buff = _text_from_percentage(lockscreen_battery_level_get());
 			lockscreen_main_view_battery_status_text_set(buff);
 			free(buff);
 		}
 	} else {
-		if (model->battery.level == 100 && model->battery.is_connected) {
+		if (lockscreen_battery_level_get() == 100 && lockscreen_battery_is_connected()) {
 			lockscreen_main_view_battery_status_text_set(_("IDS_SM_POP_FULLY_CHARGED"));
 		} else {
 			lockscreen_main_view_battery_status_text_set(NULL);
@@ -128,7 +122,11 @@ static Eina_Bool _data_battery_update(void *data, int event, void *event_info)
 
 void lock_battery_ctrl_init(void)
 {
-	handler = ecore_event_handler_add(LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED, _data_battery_update, NULL);
+	if (lockscreen_battery_init()) {
+		FATAL("lockscreen_battery_init failed. Battery related information will not be available");
+		return;
+	}
+	handler = ecore_event_handler_add(LOCKSCREEN_EVENT_BATTERY_CHANGED, _data_battery_update, NULL);
 	if (!handler)
 		FATAL("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED event");
 	_battery_update();
