@@ -189,9 +189,12 @@ void lockscreen_main_view_sim_status_text_set(const char *text)
 	Evas_Object *tb = NULL;
 	Evas_Coord tb_w = 0;
 
-	label = elm_label_add(view.layout);
-	ret_if(!label);
+	if (!text) {
+		elm_object_signal_emit(view.swipe_layout, "hide,txt,plmn", "lockscreen");
+		return;
+	}
 
+	label = elm_label_add(view.layout);
 	markup_text = elm_entry_utf8_to_markup(text);
 	snprintf(buf, sizeof(buf), "%s%s%s", PLMN_LABEL_STYLE_START, markup_text, PLMN_LABEL_STYLE_END);
 	free(markup_text);
@@ -203,10 +206,10 @@ void lockscreen_main_view_sim_status_text_set(const char *text)
 	elm_label_slide_mode_set(label, ELM_LABEL_SLIDE_MODE_NONE);
 
 	Evas_Object *label_edje = elm_layout_edje_get(label);
-	ret_if(!label_edje);
-
 	tb = (Evas_Object *)edje_object_part_object_get(label_edje, "elm.text");
-	ret_if(!tb);
+	if (!tb) {
+		FATAL("elm.text part not found in edje");
+	}
 
 	evas_object_textblock_size_native_get(tb, &tb_w, NULL);
 
@@ -217,7 +220,8 @@ void lockscreen_main_view_sim_status_text_set(const char *text)
 	elm_label_slide_go(label);
 	elm_object_text_set(label, buf);
 
-	elm_object_part_content_set(view.layout, "txt.plmn", label);
+	elm_object_part_content_set(view.swipe_layout, "txt.plmn", label);
+	elm_object_signal_emit(view.swipe_layout, "show,txt,plmn", "lockscreen");
 	evas_object_show(label);
 }
 

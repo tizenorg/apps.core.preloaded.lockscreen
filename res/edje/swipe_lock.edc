@@ -368,14 +368,14 @@ group {
 		program {
 			name: "hide,txt,plmn";
 			signal: "hide,txt,plmn";
-			source: "txt.plmn";
+			source: "lockscreen";
 			action: STATE_SET "hide" 0.0;
 			target: "txt.plmn";
 		}
 		program {
 			name: "show,txt,plmn";
 			signal: "show,txt,plmn";
-			source: "txt.plmn";
+			source: "lockscreen";
 			action: STATE_SET "default" 0.0;
 			target: "txt.plmn";
 		}

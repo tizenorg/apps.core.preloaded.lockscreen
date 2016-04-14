@@ -172,7 +172,7 @@ static void _on_sim_info_changed_cb(telephony_h handle, telephony_noti_e noti_id
 	_update_sim_info(true);
 }
 
-int lockscreen_data_model_sim_init(void)
+int lockscreen_sim_init(void)
 {
 	int i;
 	if (!init_count) {

@@ -23,6 +23,7 @@
 #include "camera_ctrl.h"
 #include "time_ctrl.h"
 #include "util.h"
+#include "sim_ctrl.h"
 
 #include <Elementary.h>
 #include <efl_extension.h>
@@ -72,6 +73,9 @@ void lockscreen_main_ctrl_init(void)
 	lock_battery_ctrl_init();
 	lockscreen_camera_ctrl_init();
 	lockscreen_time_ctrl_init();
+
+	if (!lockscreen_sim_ctrl_init())
+		FATAL("lockscreen_sim_ctrl_init failed. Sim PLMN updates will not be available");
 }
 
 void lockscreen_main_ctrl_shutdown(void)

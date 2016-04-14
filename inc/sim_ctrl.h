@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-#ifndef __SIM_STATE_H__
-#define __SIM_STATE_H__
+#ifndef _LOCKSCREEN_SIM_CTRL_H_
+#define _LOCKSCREEN_SIM_CTRL_H_
 
-lock_error_e lock_sim_state_init(void);
-void lock_sim_state_deinit(void);
+bool lockscreen_sim_ctrl_init();
+
+void lockscreen_sim_ctrl_shutdown();
 
 #endif

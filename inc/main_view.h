@@ -75,4 +75,6 @@ bool lockscreen_main_view_background_set(lockscreen_main_view_background_type ty
 void lockscreen_main_view_unlock(View_Event_Cb animation_end_cb);
 void lockscreen_main_view_time_set(const char *locale, const char *timezone, bool use24hformat, time_t time);
 
+void lockscreen_main_view_sim_status_text_set(const char *text);
+
 #endif
