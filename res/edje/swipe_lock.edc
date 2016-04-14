@@ -323,7 +323,7 @@ group {
 		program {
 			name: "unlock,anim,start";
 			signal: "unlock,anim,start";
-			source: "task-mgr";
+			source: "lockscreen";
 			action: STATE_SET "blocked" 1.0;
 			target: "event";
 			after: "vi_effect_anim";
