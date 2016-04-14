@@ -24,10 +24,11 @@
 
 static Ecore_Event_Handler *handler, *display_handler;
 static Ecore_Timer *update_timer;
+static Evas_Object *main_view;
 
 static void _time_update(void)
 {
-	lockscreen_main_view_time_set(lockscreen_time_format_locale_get(),
+	lockscreen_main_view_time_set(main_view, lockscreen_time_format_locale_get(),
 			lockscreen_time_format_timezone_get(), lockscreen_time_format_use_24h(), time(NULL));
 }
 
@@ -68,7 +69,7 @@ static Eina_Bool _display_status_changed(void *data, int event, void *event_info
 	return EINA_TRUE;
 }
 
-int lockscreen_time_format_ctrl_init(void)
+int lockscreen_time_format_ctrl_init(Evas_Object *view)
 {
 	if (lockscreen_display_init()) {
 		FATAL("lockscreen_display_init failed");
@@ -87,6 +88,7 @@ int lockscreen_time_format_ctrl_init(void)
 	display_handler = ecore_event_handler_add(LOCKSCREEN_EVENT_DISPLAY_STATUS_CHANGED, _display_status_changed, NULL);
 	if (!display_handler)
 		FATAL("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_LCD_STATUS_CHANGED event");
+	main_view = view;
 	update_timer = ecore_timer_add(60.0, _timer_cb, NULL);
 	_time_update();
 	_time_spawn_align();

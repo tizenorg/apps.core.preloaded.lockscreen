@@ -17,7 +17,9 @@
 #ifndef __CAMERA_CTRL_H__
 #define __CAMERA_CTRL_H__
 
-int lockscreen_camera_ctrl_init(void);
+#include <Elementary.h>
+
+int lockscreen_camera_ctrl_init(Evas_Object *main_view);
 void lockscreen_camera_ctrl_fini(void);
 
 #endif

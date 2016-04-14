@@ -71,16 +71,16 @@ int lockscreen_main_ctrl_init(void)
 	eext_object_event_callback_add(win, EEXT_CALLBACK_BACK, _back_key_cb, NULL);
 
 	// init subcontrollers
-	if (lock_battery_ctrl_init())
+	if (lock_battery_ctrl_init(view))
 		FATAL("lock_battery_ctrl_init failed. Battery information will not be available");
 
-	if (lockscreen_camera_ctrl_init())
+	if (lockscreen_camera_ctrl_init(view))
 		FATAL("lockscreen_camera_ctrl_init failed. Camera quickshot will not be available");
 
-	if (lockscreen_time_format_ctrl_init())
+	if (lockscreen_time_format_ctrl_init(view))
 		FATAL("lockscreen_time_format_ctrl_init failed. Time format changes will not be available");
 
-	if (lockscreen_sim_ctrl_init())
+	if (lockscreen_sim_ctrl_init(view))
 		FATAL("lockscreen_sim_ctrl_init failed. Sim PLMN updates will not be available");
 
 	return 0;

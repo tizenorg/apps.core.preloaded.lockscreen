@@ -26,6 +26,7 @@
 #include <Ecore.h>
 
 static Ecore_Event_Handler *handler;
+static Evas_Object *main_view;
 
 
 // FIXME why this is needed?
@@ -98,17 +99,17 @@ static int _battery_update(void)
 {
 	if (lockscreen_battery_is_charging()) {
 		if (lockscreen_battery_level_get() == 100) {
-			lockscreen_main_view_battery_status_text_set(_("IDS_SM_POP_FULLY_CHARGED"));
+			lockscreen_main_view_battery_status_text_set(main_view, _("IDS_SM_POP_FULLY_CHARGED"));
 		} else {
 			char *buff = _text_from_percentage(lockscreen_battery_level_get());
-			lockscreen_main_view_battery_status_text_set(buff);
+			lockscreen_main_view_battery_status_text_set(main_view, buff);
 			free(buff);
 		}
 	} else {
 		if (lockscreen_battery_level_get() == 100 && lockscreen_battery_is_connected()) {
-			lockscreen_main_view_battery_status_text_set(_("IDS_SM_POP_FULLY_CHARGED"));
+			lockscreen_main_view_battery_status_text_set(main_view, _("IDS_SM_POP_FULLY_CHARGED"));
 		} else {
-			lockscreen_main_view_battery_status_text_set(NULL);
+			lockscreen_main_view_battery_status_text_set(main_view, NULL);
 		}
 	}
 	return LOCK_ERROR_OK;
@@ -120,7 +121,7 @@ static Eina_Bool _data_battery_update(void *data, int event, void *event_info)
 	return EINA_TRUE;
 }
 
-int lock_battery_ctrl_init(void)
+int lock_battery_ctrl_init(Evas_Object *view)
 {
 	if (lockscreen_battery_init()) {
 		FATAL("lockscreen_battery_init failed. Battery related information will not be available");
@@ -129,6 +130,7 @@ int lock_battery_ctrl_init(void)
 	handler = ecore_event_handler_add(LOCKSCREEN_EVENT_BATTERY_CHANGED, _data_battery_update, NULL);
 	if (!handler)
 		FATAL("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED event");
+	main_view = view;
 	_battery_update();
 	return 0;
 }

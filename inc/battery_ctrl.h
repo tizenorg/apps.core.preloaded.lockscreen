@@ -17,7 +17,9 @@
 #ifndef __BATTERY_CTRL_H__
 #define __BATTERY_CTRL_H__
 
-int lock_battery_ctrl_init(void);
+#include <Elementary.h>
+
+int lock_battery_ctrl_init(Evas_Object *main_view);
 void lock_battery_ctrl_fini(void);
 
 #endif

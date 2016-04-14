@@ -17,7 +17,9 @@
 #ifndef _LOCKSCREEN_SIM_CTRL_H_
 #define _LOCKSCREEN_SIM_CTRL_H_
 
-int lockscreen_sim_ctrl_init();
+#include <Elementary.h>
+
+int lockscreen_sim_ctrl_init(Evas_Object *main_view);
 
 void lockscreen_sim_ctrl_shutdown();
 

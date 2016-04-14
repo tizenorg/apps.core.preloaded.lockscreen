@@ -22,13 +22,14 @@
 #include "main_view.h"
 
 static Ecore_Event_Handler *handler;
+static Evas_Object *main_view;
 
 static void _camera_view_update()
 {
 	if (lockscreen_camera_is_on())
-		lockscreen_main_view_camera_show();
+		lockscreen_main_view_camera_show(main_view);
 	else
-		lockscreen_main_view_camera_hide();
+		lockscreen_main_view_camera_hide(main_view);
 }
 
 static Eina_Bool _cam_status_changed(void *data, int event, void *event_info)
@@ -37,12 +38,12 @@ static Eina_Bool _cam_status_changed(void *data, int event, void *event_info)
 	return EINA_TRUE;
 }
 
-static void _camera_clicked(void)
+static void _camera_clicked(void *data, Evas_Object *obj, void *event)
 {
 	lockscreen_camera_activate();
 }
 
-int lockscreen_camera_ctrl_init(void)
+int lockscreen_camera_ctrl_init(Evas_Object *view)
 {
 	if (lockscreen_camera_init()) {
 		_E("lockscreen_camera_init failed");
@@ -52,15 +53,16 @@ int lockscreen_camera_ctrl_init(void)
 	handler = ecore_event_handler_add(LOCKSCREEN_EVENT_CAMERA_STATUS_CHANGED, _cam_status_changed, NULL);
 	if (!handler)
 		FATAL("ecore_event_handler_add failed on LOCKSCREEN_EVENT_BATTERY_CHANGED event");
+	main_view = view;
 	_camera_view_update();
 
-	lockscreen_main_view_camera_clicked_signal_add(_camera_clicked);
+	evas_object_smart_callback_add(view, SIGNAL_CAMERA_SELECTED, _camera_clicked, NULL);
 	return 0;
 }
 
 void lockscreen_camera_ctrl_fini(void)
 {
 	ecore_event_handler_del(handler);
-	lockscreen_main_view_camera_clicked_signal_del();
+	evas_object_smart_callback_del(main_view, SIGNAL_CAMERA_SELECTED, _camera_clicked);
 	lockscreen_camera_shutdown();
 }

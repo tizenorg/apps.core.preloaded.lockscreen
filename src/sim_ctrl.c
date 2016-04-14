@@ -19,6 +19,7 @@
 #include "sim.h"
 
 static Ecore_Event_Handler *handler;
+static Evas_Object *main_view;
 
 static void _sim_state_view_update()
 {
@@ -36,7 +37,7 @@ static void _sim_state_view_update()
 		snprintf(buf, sizeof(buf), "%s", sim2);
 	}
 
-	lockscreen_main_view_sim_status_text_set(buf);
+	lockscreen_main_view_sim_status_text_set(main_view, buf);
 }
 
 static Eina_Bool _sim_status_changed(void *data, int type, void *event_info)
@@ -45,15 +46,16 @@ static Eina_Bool _sim_status_changed(void *data, int type, void *event_info)
 	return EINA_TRUE;
 }
 
-int lockscreen_sim_ctrl_init()
+int lockscreen_sim_ctrl_init(Evas_Object *view)
 {
 	if (lockscreen_sim_init()) {
 		_E("lockscreen_sim_init failed");
-		lockscreen_main_view_sim_status_text_set(NULL);
+		lockscreen_main_view_sim_status_text_set(main_view, NULL);
 		return 1;
 	}
 
 	handler = ecore_event_handler_add(LOCKSCREEN_EVENT_SIM_STATUS_CHANGED, _sim_status_changed, NULL);
+	main_view = view;
 	_sim_state_view_update();
 	return 0;
 }

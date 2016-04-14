@@ -17,7 +17,9 @@
 #ifndef __TIME_FORMAT_CTRL_H__
 #define __TIME_FORMAT_CTRL_H__
 
-int lockscreen_time_format_ctrl_init(void);
+#include <Elementary.h>
+
+int lockscreen_time_format_ctrl_init(Evas_Object *view);
 void lockscreen_time_format_ctrl_shutdown(void);
 
 #endif
