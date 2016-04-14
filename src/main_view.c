@@ -160,10 +160,10 @@ bool lockscreen_main_view_background_set(lockscreen_main_view_background_type ty
 
 	switch (type) {
 		case LOCKSCREEN_BACKGROUND_TYPE_DEFAULT:
-			elm_layout_signal_emit(view.layout, "music_off", "lockscreen");
+			elm_object_signal_emit(view.layout, "music_off", "lockscreen");
 			break;
 		case LOCKSCREEN_BACKGROUND_TYPE_ALBUM_ART:
-			elm_layout_signal_emit(view.layout, "music_on", "lockscreen");
+			elm_object_signal_emit(view.layout, "music_on", "lockscreen");
 			break;
 	}
 
