@@ -174,9 +174,9 @@ void lockscreen_main_view_battery_status_text_set(const char *battery)
 {
 	if (battery) {
 		elm_object_part_text_set(view.swipe_layout, "txt.battery", battery);
-		elm_object_signal_emit(view.swipe_layout, "show,txt,battery", "txt.battery");
+		elm_object_signal_emit(view.swipe_layout, "show,txt,battery", "lockscreen");
 	} else {
-		elm_object_signal_emit(view.swipe_layout, "hide,txt,battery", "txt.battery");
+		elm_object_signal_emit(view.swipe_layout, "hide,txt,battery", "lockscreen");
 		elm_object_part_text_set(view.swipe_layout, "txt.battery", "");
 	}
 }

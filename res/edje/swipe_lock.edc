@@ -347,14 +347,14 @@ group {
 		program {
 			name: "hide,txt,battery";
 			signal: "hide,txt,battery";
-			source: "txt.battery";
+			source: "lockscreen";
 			action: STATE_SET "hide" 0.0;
 			target: "txt.battery";
 		}
 		program {
 			name: "show,txt,battery";
 			signal: "show,txt,battery";
-			source: "txt.battery";
+			source: "lockscreen";
 			action: STATE_SET "default" 0.0;
 			target: "txt.battery";
 		}
