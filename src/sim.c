@@ -16,12 +16,15 @@
 
 #include "log.h"
 #include "util.h"
-#include "data_model.h"
+#include "sim.h"
 
 #include <telephony/telephony.h>
+#include <Ecore.h>
 
-static lockscreen_data_model_t *current;
 static telephony_handle_list_s handle_list;
+static char *sim_plmn[LOCKSCREEN_SIM_MAX];
+static int init_count;
+int LOCKSCREEN_EVENT_SIM_STATUS_CHANGED;
 
 static const telephony_noti_e notis[] = {
 	TELEPHONY_NOTI_SIM_STATUS,
@@ -138,7 +141,7 @@ static void _update_sim_info(bool emit)
 	int i;
 	telephony_sim_state_e state;
 
-	for (i = 0; (i < handle_list.count) && (i < 2); i++)
+	for (i = 0; (i < handle_list.count) && (i < LOCKSCREEN_SIM_MAX); i++)
 	{
 		char *out = NULL;
 
@@ -152,13 +155,11 @@ static void _update_sim_info(bool emit)
 			out = _sim_state_text_for_sim_get(handle_list.handle[i]);
 		}
 
-		if (current->sim[i].text)
-			free(current->sim[i].text);
-
-		current->sim[i].text = out;
+		free(sim_plmn[i]);
+		sim_plmn[i] = out;
 	}
 
-	if (emit) lockscreen_data_model_event_emit(LOCKSCREEN_DATA_MODEL_EVENT_SIM_STATUS_CHANGED);
+	if (emit) ecore_event_add(LOCKSCREEN_EVENT_SIM_STATUS_CHANGED, NULL, NULL, NULL);
 }
 
 static void _on_telephony_state_changed_cb(telephony_state_e state, void *user_data)
@@ -171,54 +172,60 @@ static void _on_sim_info_changed_cb(telephony_h handle, telephony_noti_e noti_id
 	_update_sim_info(true);
 }
 
-int lockscreen_data_model_sim_init(lockscreen_data_model_t *model)
+int lockscreen_data_model_sim_init(void)
 {
 	int i;
-
-	if (current)
-		return -1;
-
-	int ret = telephony_init(&handle_list);
-	if (ret != TELEPHONY_ERROR_NONE)
-	{
-		_E("telephony_init failed: %s", get_error_message(ret));
-		return -1;
-	}
-
-	ret = telephony_set_state_changed_cb(_on_telephony_state_changed_cb, NULL);
-	if (ret != TELEPHONY_ERROR_NONE) {
-		telephony_deinit(&handle_list);
-		_E("telephony_set_state_changed_cb failed: %s", get_error_message(ret));
-		return -1;
-	}
-
-	for (i = 0; (i < handle_list.count) && (i < 2); i++)
-	{
-		int j;
-		for (j = 0; j < SIZE(notis); j++)
+	if (!init_count) {
+		LOCKSCREEN_EVENT_SIM_STATUS_CHANGED = ecore_event_type_new();
+		int ret = telephony_init(&handle_list);
+		if (ret != TELEPHONY_ERROR_NONE)
 		{
-			ret = telephony_set_noti_cb(handle_list.handle[i], notis[j], _on_sim_info_changed_cb, NULL);
-			if (ret != TELEPHONY_ERROR_NONE) {
-				_E("telephony_set_noti_cb failed: %s", get_error_message(ret));
+			_E("telephony_init failed: %s", get_error_message(ret));
+			return -1;
+		}
+
+		ret = telephony_set_state_changed_cb(_on_telephony_state_changed_cb, NULL);
+		if (ret != TELEPHONY_ERROR_NONE) {
+			telephony_deinit(&handle_list);
+			_E("telephony_set_state_changed_cb failed: %s", get_error_message(ret));
+			return -1;
+		}
+
+		for (i = 0; (i < handle_list.count) && (i < LOCKSCREEN_SIM_MAX); i++)
+		{
+			int j;
+			for (j = 0; j < SIZE(notis); j++)
+			{
+				ret = telephony_set_noti_cb(handle_list.handle[i], notis[j], _on_sim_info_changed_cb, NULL);
+				if (ret != TELEPHONY_ERROR_NONE) {
+					_E("telephony_set_noti_cb failed: %s", get_error_message(ret));
+				}
 			}
 		}
+
+		_update_sim_info(false);
 	}
-
-	current = model;
-	_update_sim_info(false);
-
+	init_count++;
 	return 0;
 }
 
-void lockscreen_data_model_sim_shutdown(void)
+void lockscreen_sim_shutdown(void)
 {
-	if (!current) return;
+	if (init_count) {
+		init_count--;
+		if (!init_count) {
+			int i;
+			for (i = 0; i < LOCKSCREEN_SIM_MAX; i++) {
+				free(sim_plmn[i]);
+				sim_plmn[i] = NULL;
+			}
+			telephony_deinit(&handle_list);
+			telephony_unset_state_changed_cb(_on_telephony_state_changed_cb);
+		}
+	}
+}
 
-	free(current->sim[0].text);
-	free(current->sim[1].text);
-
-	telephony_deinit(&handle_list);
-	telephony_unset_state_changed_cb(_on_telephony_state_changed_cb);
-
-	current = NULL;
+const char *lockscreen_sim_get_plmn(lockscreen_sim_num_e num)
+{
+	return sim_plmn[num];
 }

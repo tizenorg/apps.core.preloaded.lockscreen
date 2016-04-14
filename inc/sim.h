@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-#ifndef _LOCKSCREEN_DATA_MODEL_SIM_H_
-#define _LOCKSCREEN_DATA_MODEL_SIM_H_
+#ifndef _LOCKSCREEN_SIM_H_
+#define _LOCKSCREEN_SIM_H_
 
-int lockscreen_data_model_sim_init(lockscreen_data_model_t *model);
+extern int LOCKSCREEN_EVENT_SIM_STATUS_CHANGED;
 
-void lockscreen_data_model_sim_shutdown(void);
+int lockscreen_sim_init();
+
+typedef enum {
+	LOCKSCREEN_PRIMARY_SIM = 0,
+	LOCKSCREEN_SECONDARY_SIM,
+	LOCKSCREEN_SIM_MAX,
+} lockscreen_sim_num_e;
+
+void lockscreen_sim_shutdown(void);
+
+const char *lockscreen_sim_get_plmn(lockscreen_sim_num_e num);
 
 #endif
-
-
