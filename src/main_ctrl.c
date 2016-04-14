@@ -18,7 +18,6 @@
 #include "main_ctrl.h"
 #include "main_view.h"
 #include "window.h"
-#include "data_model.h"
 #include "battery_ctrl.h"
 #include "background.h"
 #include "camera_ctrl.h"
@@ -50,13 +49,6 @@ static void _back_key_cb(void *data, Evas_Object *obj, void *event_info)
 
 void lockscreen_main_ctrl_init(void)
 {
-	if (lockscreen_data_model_init())
-		FATAL("lockscreen_data_model_init failed.");
-
-	const lockscreen_data_model_t *model = lockscreen_data_model_get_model();
-	if (!model)
-		FATAL("lockscreen_data_model_get_model failed.");
-
 	win = lockscreen_window_create();
 	if (!win)
 		FATAL("elm_win_add failed.");
