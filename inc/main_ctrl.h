@@ -17,7 +17,7 @@
 #ifndef _LOCKSCREEN_MAIN_CTRL_H_
 #define _LOCKSCREEN_MAIN_CTRL_H_
 
-void lockscreen_main_ctrl_init();
+int lockscreen_main_ctrl_init();
 
 void lockscreen_main_ctrl_shutdown();
 

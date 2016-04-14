@@ -42,11 +42,11 @@ static void _camera_clicked(void)
 	lockscreen_camera_activate();
 }
 
-void lockscreen_camera_ctrl_init(void)
+int lockscreen_camera_ctrl_init(void)
 {
 	if (lockscreen_camera_init()) {
 		_E("lockscreen_camera_init failed");
-		return;
+		return 1;
 	}
 
 	handler = ecore_event_handler_add(LOCKSCREEN_EVENT_CAMERA_STATUS_CHANGED, _cam_status_changed, NULL);
@@ -55,6 +55,7 @@ void lockscreen_camera_ctrl_init(void)
 	_camera_view_update();
 
 	lockscreen_main_view_camera_clicked_signal_add(_camera_clicked);
+	return 0;
 }
 
 void lockscreen_camera_ctrl_fini(void)

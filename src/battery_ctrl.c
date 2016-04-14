@@ -120,16 +120,17 @@ static Eina_Bool _data_battery_update(void *data, int event, void *event_info)
 	return EINA_TRUE;
 }
 
-void lock_battery_ctrl_init(void)
+int lock_battery_ctrl_init(void)
 {
 	if (lockscreen_battery_init()) {
 		FATAL("lockscreen_battery_init failed. Battery related information will not be available");
-		return;
+		return 1;
 	}
 	handler = ecore_event_handler_add(LOCKSCREEN_EVENT_BATTERY_CHANGED, _data_battery_update, NULL);
 	if (!handler)
 		FATAL("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_BATTERY_CHANGED event");
 	_battery_update();
+	return 0;
 }
 
 void lock_battery_ctrl_fini(void)

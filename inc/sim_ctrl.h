@@ -17,7 +17,7 @@
 #ifndef _LOCKSCREEN_SIM_CTRL_H_
 #define _LOCKSCREEN_SIM_CTRL_H_
 
-bool lockscreen_sim_ctrl_init();
+int lockscreen_sim_ctrl_init();
 
 void lockscreen_sim_ctrl_shutdown();
 

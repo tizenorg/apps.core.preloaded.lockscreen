@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#ifndef __TIME_CTRL_H__
-#define __TIME_CTRL_H__
+#ifndef __TIME_FORMAT_CTRL_H__
+#define __TIME_FORMAT_CTRL_H__
 
-void lockscreen_time_ctrl_init(void);
-void lockscreen_time_ctrl_shutdown(void);
+int lockscreen_time_format_ctrl_init(void);
+void lockscreen_time_format_ctrl_shutdown(void);
 
 #endif
 

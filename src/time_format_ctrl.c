@@ -68,11 +68,17 @@ static Eina_Bool _display_status_changed(void *data, int event, void *event_info
 	return EINA_TRUE;
 }
 
-void lockscreen_time_ctrl_init(void)
+int lockscreen_time_format_ctrl_init(void)
 {
-	if (lockscreen_display_init() || lockscreen_time_format_init()) {
-		FATAL("Time controller init failed. Time updates will be unavailable.");
-		return;
+	if (lockscreen_display_init()) {
+		FATAL("lockscreen_display_init failed");
+		return 1;
+	}
+
+	if (lockscreen_time_format_init()) {
+		lockscreen_display_shutdown();
+		FATAL("lockscreen_time_format_init failed");
+		return 1;
 	}
 
 	handler = ecore_event_handler_add(LOCKSCREEN_EVENT_TIME_FORMAT_CHANGED, _time_changed, NULL);
@@ -84,6 +90,8 @@ void lockscreen_time_ctrl_init(void)
 	update_timer = ecore_timer_add(60.0, _timer_cb, NULL);
 	_time_update();
 	_time_spawn_align();
+
+	return 0;
 }
 
 void lockscreen_time_ctrl_shutdown(void)

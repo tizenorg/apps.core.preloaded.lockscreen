@@ -21,7 +21,7 @@
 #include "battery_ctrl.h"
 #include "background.h"
 #include "camera_ctrl.h"
-#include "time_ctrl.h"
+#include "time_format_ctrl.h"
 #include "util.h"
 #include "sim_ctrl.h"
 
@@ -48,7 +48,7 @@ static void _back_key_cb(void *data, Evas_Object *obj, void *event_info)
 	util_feedback_tap_play();
 }
 
-void lockscreen_main_ctrl_init(void)
+int lockscreen_main_ctrl_init(void)
 {
 	win = lockscreen_window_create();
 	if (!win)
@@ -70,12 +70,19 @@ void lockscreen_main_ctrl_init(void)
 	eext_object_event_callback_add(win, EEXT_CALLBACK_BACK, _back_key_cb, NULL);
 
 	// init subcontrollers
-	lock_battery_ctrl_init();
-	lockscreen_camera_ctrl_init();
-	lockscreen_time_ctrl_init();
+	if (lock_battery_ctrl_init())
+		FATAL("lock_battery_ctrl_init failed. Battery information will not be available");
 
-	if (!lockscreen_sim_ctrl_init())
+	if (lockscreen_camera_ctrl_init())
+		FATAL("lockscreen_camera_ctrl_init failed. Camera quickshot will not be available");
+
+	if (lockscreen_time_format_ctrl_init())
+		FATAL("lockscreen_time_format_ctrl_init failed. Time format changes will not be available");
+
+	if (lockscreen_sim_ctrl_init())
 		FATAL("lockscreen_sim_ctrl_init failed. Sim PLMN updates will not be available");
+
+	return 0;
 }
 
 void lockscreen_main_ctrl_shutdown(void)

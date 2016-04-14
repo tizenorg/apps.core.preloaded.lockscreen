@@ -45,17 +45,17 @@ static Eina_Bool _sim_status_changed(void *data, int type, void *event_info)
 	return EINA_TRUE;
 }
 
-bool lockscreen_sim_ctrl_init()
+int lockscreen_sim_ctrl_init()
 {
 	if (lockscreen_sim_init()) {
 		_E("lockscreen_sim_init failed");
 		lockscreen_main_view_sim_status_text_set(NULL);
-		return false;
+		return 1;
 	}
 
 	handler = ecore_event_handler_add(LOCKSCREEN_EVENT_SIM_STATUS_CHANGED, _sim_status_changed, NULL);
 	_sim_state_view_update();
-	return true;
+	return 0;
 }
 
 void lockscreen_sim_ctrl_shutdown()

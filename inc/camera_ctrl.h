@@ -17,7 +17,7 @@
 #ifndef __CAMERA_CTRL_H__
 #define __CAMERA_CTRL_H__
 
-void lockscreen_camera_ctrl_init(void);
+int lockscreen_camera_ctrl_init(void);
 void lockscreen_camera_ctrl_fini(void);
 
 #endif
