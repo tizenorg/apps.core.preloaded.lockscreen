@@ -18,13 +18,16 @@
 #include <notification_list.h>
 #include <notification_internal.h>
 #include <app_control_internal.h>
+#include <Ecore.h>
 
 #include "log.h"
-#include "data_model.h"
+#include "notifications.h"
 
-static lockscreen_data_model_t *current;
+static Eina_List *notifications;
+static int init_count;
+int LOCKSCREEN_EVENT_NOTIFICATIONS_CHANGED;
 
-struct missed_event {
+struct lockscreen_notification {
 	char *icon_path;
 	char *icon_sub_path;
 	char *title;
@@ -45,7 +48,7 @@ static bool _notification_accept(notification_h noti)
 	return app_list & NOTIFICATION_DISPLAY_APP_LOCK;
 }
 
-static void _missed_event_destroy(missed_event_t *event)
+static void _lockscreen_notification_destroy(lockscreen_notification_t *event)
 {
 	if (event->title) free(event->title);
 	if (event->content) free(event->content);
@@ -57,58 +60,58 @@ static void _missed_event_destroy(missed_event_t *event)
 	free(event);
 }
 
-static missed_event_t *_missed_event_create(notification_h noti)
+static lockscreen_notification_t *_lockscreen_notification_create(notification_h noti)
 {
 	int ret;
-	missed_event_t *event = calloc(1, sizeof(missed_event_t));
+	lockscreen_notification_t *event = calloc(1, sizeof(lockscreen_notification_t));
 	if (!event) return NULL;
 
 	ret = notification_get_text(noti, NOTIFICATION_TEXT_TYPE_TITLE, &event->title);
 	if (ret != NOTIFICATION_ERROR_NONE) {
 		_E("notification_get_text failed: %s", get_error_message(ret));
-		_missed_event_destroy(event);
+		_lockscreen_notification_destroy(event);
 		return NULL;
 	}
 
 	ret = notification_get_text(noti, NOTIFICATION_TEXT_TYPE_CONTENT, &event->content);
 	if (ret != NOTIFICATION_ERROR_NONE) {
 		_E("notification_get_text failed: %s", get_error_message(ret));
-		_missed_event_destroy(event);
+		_lockscreen_notification_destroy(event);
 		return NULL;
 	}
 
 	ret = notification_get_pkgname(noti, &event->package);
 	if (ret != NOTIFICATION_ERROR_NONE) {
 		_E("notification_get_pkgname failed: %s", get_error_message(ret));
-		_missed_event_destroy(event);
+		_lockscreen_notification_destroy(event);
 		return NULL;
 	}
 
 	ret = notification_get_image(noti, NOTIFICATION_IMAGE_TYPE_ICON, &event->icon_path);
 	if (ret != NOTIFICATION_ERROR_NONE) {
 		_E("notification_get_image failed: %s", get_error_message(ret));
-		_missed_event_destroy(event);
+		_lockscreen_notification_destroy(event);
 		return NULL;
 	}
 
 	ret = notification_get_image(noti, NOTIFICATION_IMAGE_TYPE_ICON_SUB, &event->icon_sub_path);
 	if (ret != NOTIFICATION_ERROR_NONE) {
 		_E("notification_get_image failed: %s", get_error_message(ret));
-		_missed_event_destroy(event);
+		_lockscreen_notification_destroy(event);
 		return NULL;
 	}
 
 	ret = notification_get_time(noti, &event->time);
 	if (ret != NOTIFICATION_ERROR_NONE) {
 		_E("notification_get_time failed: %s", get_error_message(ret));
-		_missed_event_destroy(event);
+		_lockscreen_notification_destroy(event);
 		return NULL;
 	}
 
 	ret = notification_get_execute_option(noti, NOTIFICATION_EXECUTE_TYPE_SINGLE_LAUNCH, NULL, &event->service_handle);
 	if (ret != NOTIFICATION_ERROR_NONE) {
 		_E("notification_get_execute_option failed: %s", get_error_message(ret));
-		_missed_event_destroy(event);
+		_lockscreen_notification_destroy(event);
 		return NULL;
 	}
 
@@ -135,13 +138,13 @@ static int load_notifications()
 	while (noti_list) {
 		noti = notification_list_get_data(noti_list);
 		if (_notification_accept(noti)) {
-			missed_event_t *me = _missed_event_create(noti);
-			current->missed_events = eina_list_append(current->missed_events, me);
+			lockscreen_notification_t *me = _lockscreen_notification_create(noti);
+			notifications = eina_list_append(notifications, me);
 		}
 		noti_list = notification_list_get_next(noti_list);
 	}
 
-	lockscreen_data_model_event_emit(LOCKSCREEN_DATA_MODEL_EVENT_MISSED_EVENTS_CHANGED);
+	ecore_event_add(LOCKSCREEN_EVENT_NOTIFICATIONS_CHANGED, NULL, NULL, NULL);
 
 	notification_free_list(noti_list_head);
 	return 0;
@@ -149,16 +152,16 @@ static int load_notifications()
 
 static void unload_notifications()
 {
-	missed_event_t *event;
+	lockscreen_notification_t *event;
 
-	if (!current->missed_events)
+	if (!notifications)
 		return;
 
-	EINA_LIST_FREE(current->missed_events, event)
-		_missed_event_destroy(event);
+	EINA_LIST_FREE(notifications, event)
+		_lockscreen_notification_destroy(event);
 
-	current->missed_events = NULL;
-	lockscreen_data_model_event_emit(LOCKSCREEN_DATA_MODEL_EVENT_MISSED_EVENTS_CHANGED);
+	notifications = NULL;
+	ecore_event_add(LOCKSCREEN_EVENT_NOTIFICATIONS_CHANGED, NULL, NULL, NULL);
 }
 
 static void _noti_changed_cb(void *data, notification_type_e type, notification_op *op_list, int num_op)
@@ -167,31 +170,39 @@ static void _noti_changed_cb(void *data, notification_type_e type, notification_
 	load_notifications();
 }
 
-int lockscreen_data_model_missed_events_init(lockscreen_data_model_t *model)
+int lockscreen_data_model_lockscreen_notifications_init(void)
 {
-	int ret = notification_register_detailed_changed_cb(_noti_changed_cb, NULL);
-	if (ret != NOTIFICATION_ERROR_NONE) {
-		_E("notification_register_detailed_changed_cb failed: %d", get_error_message(ret));
-		return 1;
+	if (!init_count) {
+		LOCKSCREEN_EVENT_NOTIFICATIONS_CHANGED = ecore_event_type_new();
+		int ret = notification_register_detailed_changed_cb(_noti_changed_cb, NULL);
+		if (ret != NOTIFICATION_ERROR_NONE) {
+			_E("notification_register_detailed_changed_cb failed: %d", get_error_message(ret));
+			return 1;
+		}
+		if (load_notifications()) {
+			_E("load_notifications failed");
+			return 1;
+		}
 	}
-	current = model;
-	if (load_notifications()) {
-		_E("load_notifications failed");
-		return 1;
-	}
+	init_count++;
 	return 0;
 }
 
-void lockscreen_data_model_missed_events_shutdown(void)
+void lockscreen_notifications_shutdown(void)
 {
-	int ret = notification_unregister_detailed_changed_cb(_noti_changed_cb, NULL);
-	if (ret != NOTIFICATION_ERROR_NONE) {
-		_E("notification_unregister_detailed_changed_cb failed: %s", get_error_message(ret));
+	if (init_count) {
+		init_count--;
+		if (!init_count) {
+			int ret = notification_unregister_detailed_changed_cb(_noti_changed_cb, NULL);
+			if (ret != NOTIFICATION_ERROR_NONE) {
+				_E("notification_unregister_detailed_changed_cb failed: %s", get_error_message(ret));
+			}
+			unload_notifications();
+		}
 	}
-	unload_notifications();
 }
 
-bool lockscreen_data_model_missed_event_launch(missed_event_t *event)
+bool lockscreen_notification_launch(lockscreen_notification_t *event)
 {
 	app_control_h service = NULL;
 
@@ -218,4 +229,9 @@ bool lockscreen_data_model_missed_event_launch(missed_event_t *event)
 	app_control_destroy(service);
 
 	return true;
+}
+
+const Eina_List *lockscreen_notifications_get(void)
+{
+	return notifications;
 }

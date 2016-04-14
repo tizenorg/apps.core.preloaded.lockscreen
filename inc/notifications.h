@@ -13,18 +13,25 @@
  * limitations under the License.
  */
 
-#ifndef _LOCKSCREEN_DATA_MODEL_MISSED_EVENTS_H_
-#define _LOCKSCREEN_DATA_MODEL_MISSED_EVENTS_H_
+#ifndef _LOCKSCREEN_NOTIFICATIONS_H_
+#define _LOCKSCREEN_NOTIFICATIONS_H_
 
-typedef struct missed_event missed_event_t;
+#include <Eina.h>
 
-int lockscreen_data_model_missed_events_init(lockscreen_data_model_t *model);
+extern int LOCKSCREEN_EVENT_NOTIFICATIONS_CHANGED;
 
-void lockscreen_data_model_missed_events_shutdown(void);
+typedef struct lockscreen_notification lockscreen_notification_t;
 
-const char *lockscreen_data_model_missed_event_icon_get(missed_event_t *event);
+int lockscreen_notifications_init(void);
 
-const char *lockscreen_data_model_missed_event_sub_icon_get(missed_event_t *event);
+void lockscreen_notifications_shutdown(void);
 
-bool lockscreen_data_model_missed_event_launch(missed_event_t *event);
+const char *lockscreen_notification_icon_get(lockscreen_notification_t *event);
+
+const char *lockscreen_notification_sub_icon_get(lockscreen_notification_t *event);
+
+bool lockscreen_notification_launch(lockscreen_notification_t *event);
+
+const Eina_List *lockscreen_notifications_get(void);
+
 #endif
