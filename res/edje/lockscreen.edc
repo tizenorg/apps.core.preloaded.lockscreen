@@ -126,7 +126,7 @@ collections {
 			program {
 				name: "bg,hide";
 				signal: "bg,hide";
-				source: "task-mgr";
+				source: "lockscreen";
 				action: STATE_SET "effect" 0.0;
 				target: "bg_clipper";
 				transition: SIN_FAC 0.5 1.7;
@@ -134,7 +134,7 @@ collections {
 			program {
 				name: "bg,show";
 				signal: "bg,show";
-				source: "task-mgr";
+				source: "lockscreen";
 				action: STATE_SET "default" 0.0;
 				target: "bg_clipper";
 				transition: SIN_FAC 0.5 1.7;
@@ -142,14 +142,14 @@ collections {
 			program {
 				name: "music_on";
 				signal: "music_on";
-				source: "bg";
+				source: "lockscreen";
 				action: STATE_SET "music_on" 0.0;
 				target: "music_dim";
 			}
 			program {
 				name: "music_off";
 				signal: "music_off";
-				source: "bg";
+				source: "lockscreen";
 				action: STATE_SET "default" 0.0;
 				target: "music_dim";
 			}

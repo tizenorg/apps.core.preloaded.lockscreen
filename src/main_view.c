@@ -160,10 +160,10 @@ bool lockscreen_main_view_background_set(lockscreen_main_view_background_type ty
 
 	switch (type) {
 		case LOCKSCREEN_BACKGROUND_TYPE_DEFAULT:
-			elm_layout_signal_emit(view.layout, "music_off", "bg");
+			elm_layout_signal_emit(view.layout, "music_off", "lockscreen");
 			break;
 		case LOCKSCREEN_BACKGROUND_TYPE_ALBUM_ART:
-			elm_layout_signal_emit(view.layout, "music_on", "bg");
+			elm_layout_signal_emit(view.layout, "music_on", "lockscreen");
 			break;
 	}
 
@@ -245,8 +245,8 @@ static void _layout_unlocked(void *data, Evas_Object *obj, const char *emission,
 void lockscreen_main_view_unlock(View_Event_Cb animation_end_cb)
 {
 	elm_object_signal_callback_add(view.swipe_layout, "unlock,anim,end", "swipe-layout", _layout_unlocked, animation_end_cb);
-	elm_object_signal_emit(view.swipe_layout, "unlock,anim,start", "task-mgr");
-	elm_object_signal_emit(view.layout, "bg,hide", "task-mgr");
+	elm_object_signal_emit(view.swipe_layout, "unlock,anim,start", "lockscreen");
+	elm_object_signal_emit(view.layout, "bg,hide", "lockscreen");
 }
 
 static int _is_korea_locale(const char *locale)
