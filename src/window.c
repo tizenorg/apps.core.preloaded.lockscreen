@@ -27,11 +27,6 @@ static struct {
 	int win_h;
 } view;
 
-Evas_Object *lock_window_win_get(void)
-{
-	return view.win;
-}
-
 int lock_window_width_get(void)
 {
 	return view.win_w;
@@ -40,6 +35,27 @@ int lock_window_width_get(void)
 int lock_window_height_get(void)
 {
 	return view.win_h;
+}
+
+static int mouse_down;
+static void _mouse_down(void *data, Evas *e, Evas_Object *src, void *event_info)
+{
+	_E("Mouse down: %d", ++mouse_down);
+	_E("Canvas touch points: %d", evas_touch_point_list_count(e));
+}
+
+static void _mouse_up(void *data, Evas *e, Evas_Object *src, void *event_info)
+{
+	_E("Mouse up: %d", --mouse_down);
+	_E("Canvas touch points: %d", evas_touch_point_list_count(e));
+}
+
+static void _track(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+	_E("Track called");
+	int x, y, w, h;
+	evas_object_geometry_get(obj, &x, &y, &w, &h);
+	evas_object_geometry_set(data, x, y, w, h);
 }
 
 Evas_Object *lockscreen_window_create(void)
@@ -63,6 +79,16 @@ Evas_Object *lockscreen_window_create(void)
 
 	elm_object_signal_emit(conformant, "elm,state,indicator,overlap", "elm");
 
+	Evas_Object *event_rect = evas_object_rectangle_add(evas_object_evas_get(win));
+	evas_object_color_set(event_rect, 64, 0, 0, 64);
+	evas_object_layer_set(event_rect, EVAS_LAYER_MAX);
+	evas_object_repeat_events_set(event_rect, EINA_TRUE);
+	evas_object_event_callback_add(event_rect, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, NULL);
+	evas_object_event_callback_add(event_rect, EVAS_CALLBACK_MOUSE_UP, _mouse_up, NULL);
+	evas_object_show(event_rect);
+
+	evas_object_event_callback_add(win, EVAS_CALLBACK_RESIZE, _track, event_rect);
+	evas_object_event_callback_add(win, EVAS_CALLBACK_MOVE, _track, event_rect);
 	evas_object_show(win);
 	evas_object_show(conformant);
 

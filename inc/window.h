@@ -19,7 +19,6 @@
 
 #include <stdbool.h>
 
-Evas_Object *lock_window_win_get(void);
 int lock_window_width_get(void);
 int lock_window_height_get(void);
 

@@ -26,55 +26,40 @@ typedef enum {
 } lockscreen_main_view_background_type;
 
 /**
- * @brief Generic view event.
+ * @brief Emitted when camera icon is being selected.
  */
-typedef void (*View_Event_Cb)(void);
+#define SIGNAL_CAMERA_SELECTED "camera,icon,selected"
+
+/**
+ * @brief Emitted when swipe gesture gesture has been performed.
+ */
+#define SIGNAL_SWIPE_GESTURE_FINISHED "swipe,gesture,finished"
+
+/**
+ * @brief Emitted unlock animation finished.
+ */
+#define SIGNAL_UNLOCK_ANIMATION_FINISHED "unlock,anim,finished"
 
 Evas_Object *lockscreen_main_view_create(Evas_Object *parent);
 
-void lockscreen_main_view_destroy();
+bool lockscreen_main_view_camera_show(Evas_Object *view);
 
-/**
- * @brief Registers callback function which will be called when
- * camera button is being clicked.
- *
- * @note Only single callback can be registered.
- */
-void lockscreen_main_view_camera_clicked_signal_add(View_Event_Cb cb);
+void lockscreen_main_view_camera_hide(Evas_Object *view);
 
-/**
- * @brief Deregisters callback function.
- */
-void lockscreen_main_view_camera_clicked_signal_del(void);
+bool lockscreen_main_view_background_image_set(Evas_Object *view, lockscreen_main_view_background_type type, const char *file);
 
-bool lockscreen_main_view_camera_show(void);
+void lockscreen_main_view_battery_status_text_set(Evas_Object *view, const char *battery);
 
-void lockscreen_main_view_camera_hide();
-
-bool lockscreen_main_view_background_image_set(lockscreen_main_view_background_type type, const char *file);
-
-void lockscreen_main_view_battery_status_text_set(const char *battery);
-
-/**
- * @brief Registers callback function which will be called when
- * swipe gesture is performed on view.
- */
-void lockscreen_main_view_swipe_signal_add(View_Event_Cb cb);
-
-/**
- * @brief Deregisters callback function.
- */
-void lockscreen_main_view_swipe_signal_del(View_Event_Cb cb);
-
-bool lockscreen_main_view_background_set(lockscreen_main_view_background_type type, const char *file);
+bool lockscreen_main_view_background_set(Evas_Object *view, lockscreen_main_view_background_type type, const char *file);
 
 /**
  * @brief Plays unlock animation and runs @animation_end_cb on end.
  * @note animation_end_cb will be called only once.
  */
-void lockscreen_main_view_unlock(View_Event_Cb animation_end_cb);
-void lockscreen_main_view_time_set(const char *locale, const char *timezone, bool use24hformat, time_t time);
+void lockscreen_main_view_unlock(Evas_Object *obj);
 
-void lockscreen_main_view_sim_status_text_set(const char *text);
+void lockscreen_main_view_time_set(Evas_Object *view, const char *locale, const char *timezone, bool use24hformat, time_t time);
+
+void lockscreen_main_view_sim_status_text_set(Evas_Object *view, const char *text);
 
 #endif
