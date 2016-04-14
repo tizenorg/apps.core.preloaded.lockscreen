@@ -76,41 +76,20 @@ void lockscreen_main_view_camera_hide()
 	view.cam_layout = NULL;
 }
 
-static void _camera_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event)
+static void _camera_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
-	Evas_Event_Mouse_Up *mu = event;
-	Evas_Coord x,y,w,h,ix,iy,iw,ih;
 	View_Event_Cb cb = (View_Event_Cb)data;
-
-	if (!mu) return;
-	if (!edje_object_part_geometry_get(elm_layout_edje_get(obj), "img.camera", &ix, &iy, &iw, &ih))
-		FATAL("edje_object_part_geometry_get failed:");
-
-	evas_object_geometry_get(obj, &x, &y, &w, &h);
-
-	/* Assume that center of camera icon is a center of elipsis */
-	Evas_Coord xc = x + ix + iw / 2;
-	Evas_Coord yc = y + iy + ih / 2;
-
-	/* Calculate x and y radious of elipsis */
-	Evas_Coord radx = xc - x;
-	Evas_Coord rady = yc - y;
-
-	/* Check if mouse (x,y) is in inside elipsis */
-	double d = ((mu->canvas.x - xc) * (mu->canvas.x - xc))/(double)(radx*radx) +
-	    ((mu->canvas.y - yc) * (mu->canvas.y - yc))/(double)(rady*rady);
-
-	if (d <= 1.0 && cb) cb();
+	if (cb) cb();
 }
 
 void lockscreen_main_view_camera_clicked_signal_add(View_Event_Cb cb)
 {
-	evas_object_event_callback_add(view.cam_layout, EVAS_CALLBACK_MOUSE_UP, _camera_mouse_up, cb);
+	elm_object_signal_callback_add(view.cam_layout, "camera,icon,clicked", "camera-layout", _camera_clicked, cb);
 }
 
 void lockscreen_main_view_camera_clicked_signal_del()
 {
-	evas_object_event_callback_del(view.cam_layout, EVAS_CALLBACK_MOUSE_UP, _camera_mouse_up);
+	elm_object_signal_callback_del(view.cam_layout, "camera,icon,clicked", "camera-layout", _camera_clicked);
 }
 
 static Evas_Event_Flags _swipe_state_end(void *data, void *event_info)

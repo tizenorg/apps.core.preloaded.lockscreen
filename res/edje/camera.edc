@@ -96,5 +96,36 @@ group {
 			target: "camera.circle.fill";
 			target: "camera.circle";
 		}
+		program {
+			signal: "mouse,up,1";
+			source: "img.camera";
+			script {
+				/* get parts coords */
+				new x,y,w,h,ix,iy,iw,ih;
+				get_geometry(PART:"img.camera", ix, iy, iw, ih);
+				get_geometry(PART:"camera.circle.fill", x, y, w, h);
+
+				/* calculate elipsis center */
+				new xc = x + ix + iw / 2;
+				new yc = y + iy + ih / 2;
+
+				/* calculate elipsis radious */
+				new radx = xc - x;
+				new rady = yc - y;
+
+				/* get mouse coords */
+				new mx, my;
+				get_mouse(mx, my);
+
+				/* check if mouse is inside elipsis */
+				new Float:d = float((mx-xc)*(mx-xc))/float(radx*radx) + float((my-yc)*(my-yc))/float(rady*rady);
+
+				/* Emit signal if mouse inside elipsis */
+				if (d <= 1.0)
+				{
+					emit("camera,icon,clicked", "camera-layout");
+				}
+			}
+		}
 	}
 }
