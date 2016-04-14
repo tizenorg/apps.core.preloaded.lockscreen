@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-#ifndef _LOCKSCREEN_DATA_MODEL_MUSIC_PLAYER_H_
-#define _LOCKSCREEN_DATA_MODEL_MUSIC_PLAYER_H_
+#ifndef _LOCKSCREEN_MINICONTROLLERS__H_
+#define _LOCKSCREEN_MINICONTROLLERS__H_
 
-int lockscreen_data_model_music_player_init(lockscreen_data_model_t *model);
+extern int LOCKSCREEN_EVENT_MINICONTROLLER_CHANGED;
 
-void lockscreen_data_model_music_player_shutdown(void);
+int lockscreen_minicontrollers_init(void);
+
+void lockscreen_minicontrollers_shutdown(void);
+
+const char *lockscreen_minicontrollers_active_minicontroller_get(void);
 
 #endif
 

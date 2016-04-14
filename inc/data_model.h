@@ -43,7 +43,6 @@ typedef struct {
 } lockscreen_data_model_t;
 
 
-extern int LOCKSCREEN_DATA_MODEL_EVENT_MINICONTROLLER_CHANGED;
 extern int LOCKSCREEN_DATA_MODEL_EVENT_LOCK_TYPE_CHANGED;
 
 int lockscreen_data_model_init();
@@ -53,7 +52,5 @@ const lockscreen_data_model_t *lockscreen_data_model_get_model(void);
 int lockscreen_data_model_shutdown();
 
 int lockscreen_data_model_event_emit(int event);
-
-#include "data_model_music_player.h"
 
 #endif
