@@ -69,6 +69,8 @@ ADD_EXECUTABLE(${PROJECT_NAME}
 	${PROJECT_ROOT_DIR}/src/background.c
 	${PROJECT_ROOT_DIR}/src/battery.c
 	${PROJECT_ROOT_DIR}/src/notifications.c
+	${PROJECT_ROOT_DIR}/src/notifications_view.c
+	${PROJECT_ROOT_DIR}/src/notifications_ctrl.c
 	${PROJECT_ROOT_DIR}/src/minicontrollers.c
 	${PROJECT_ROOT_DIR}/src/sim.c
 	${PROJECT_ROOT_DIR}/src/camera.c

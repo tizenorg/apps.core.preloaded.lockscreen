@@ -25,6 +25,7 @@
 #include "util.h"
 #include "sim_ctrl.h"
 #include "display.h"
+#include "notifications_ctrl.h"
 
 #include <Elementary.h>
 #include <efl_extension.h>
@@ -111,7 +112,9 @@ int lockscreen_main_ctrl_init(void)
 	if (lockscreen_sim_ctrl_init(view))
 		FATAL("lockscreen_sim_ctrl_init failed. Sim PLMN updates will not be available");
 
-	lockscreen_main_view_notifications_show(view);
+	if (lockscreen_notifications_ctrl_init(view))
+		FATAL("lockscreen_notifications_ctrl_init failed. Lockscreen notifications will not be available");
+
 	return 0;
 }
 

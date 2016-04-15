@@ -25,8 +25,11 @@
 static Ecore_Event_Handler *handler;
 static Evas_Object *main_view;
 
-int lockscreen_notifications_ctrl_init(Evas_Object *main_view)
+int lockscreen_notifications_ctrl_init(Evas_Object *mv)
 {
+	main_view = mv;
+
+	return 0;
 }
 
 void lockscreen_notifications_ctrl_shutdown()
