@@ -62,6 +62,7 @@ INCLUDE_DIRECTORIES(${PROJECT_ROOT_DIR}/inc)
 ADD_EXECUTABLE(${PROJECT_NAME}
 	${PROJECT_ROOT_DIR}/src/battery_ctrl.c
 	${PROJECT_ROOT_DIR}/src/camera_ctrl.c
+	${PROJECT_ROOT_DIR}/src/camera_view.c
 	${PROJECT_ROOT_DIR}/src/lockscreen.c
 	${PROJECT_ROOT_DIR}/src/util.c
 	${PROJECT_ROOT_DIR}/src/window.c

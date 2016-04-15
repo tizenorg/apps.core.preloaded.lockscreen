@@ -47,44 +47,34 @@ static Evas_Object *_swipe_layout_create(Evas_Object *parent)
 	return swipe_layout;
 }
 
-static void _camera_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
+void lockscreen_main_view_part_content_set(Evas_Object *view, const char *part, Evas_Object *content)
 {
-	evas_object_smart_callback_call(data, SIGNAL_CAMERA_SELECTED, NULL);
+	Evas_Object *swipe_layout = elm_object_part_content_get(view, "sw.swipe_layout");
+	if (!swipe_layout) {
+		FATAL("No sw.swipe_layout part");
+		return;
+	}
+	elm_object_part_content_set(swipe_layout, part, content);
 }
 
-bool lockscreen_main_view_camera_show(Evas_Object *view)
+Evas_Object *lockscreen_main_view_part_content_unset(Evas_Object *view, const char *part)
 {
 	Evas_Object *swipe_layout = elm_object_part_content_get(view, "sw.swipe_layout");
 	if (!swipe_layout) {
 		FATAL("No sw.swipe_layout part");
 		return false;
 	}
-	Evas_Object *cam_ly = elm_layout_add(swipe_layout);
-	if (!elm_layout_file_set(cam_ly, util_get_res_file_path(LOCK_EDJE_FILE), "camera-layout")) {
-		FATAL("elm_layout_file_set failed");
-		return false;
-	}
-	elm_object_part_content_set(swipe_layout, "sw.camera", cam_ly);
-	evas_object_show(cam_ly);
-	elm_object_signal_callback_add(cam_ly, "camera,icon,clicked", "camera-layout", _camera_clicked, view);
-
-	return true;
+	return elm_object_part_content_unset(swipe_layout, part);
 }
 
-void lockscreen_main_view_camera_hide(Evas_Object *view)
+Evas_Object *lockscreen_main_view_part_content_get(Evas_Object *view, const char *part)
 {
-	Evas_Object *cam_layout = elm_object_part_content_get(view, "sw.camera");
-	if (!cam_layout) {
-		_E("No sw.camera part");
-		return;
-	}
 	Evas_Object *swipe_layout = elm_object_part_content_get(view, "sw.swipe_layout");
 	if (!swipe_layout) {
-		_E("No sw.swipe_layout part");
-		return;
+		FATAL("No sw.swipe_layout part");
+		return false;
 	}
-	elm_object_signal_callback_del(cam_layout, "camera,icon,clicked", "camera-layout", _camera_clicked);
-	elm_object_part_content_set(swipe_layout, "sw.camera", NULL);
+	return elm_object_part_content_get(swipe_layout, part);
 }
 
 static Evas_Event_Flags _swipe_state_end(void *data, void *event_info)

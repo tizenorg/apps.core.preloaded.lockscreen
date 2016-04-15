@@ -19,28 +19,36 @@
 #include "log.h"
 #include "camera_ctrl.h"
 #include "camera.h"
+#include "camera_view.h"
 #include "main_view.h"
 
 static Ecore_Event_Handler *handler;
 static Evas_Object *main_view;
 
+static void _camera_clicked(void *data, Evas_Object *obj, void *event)
+{
+	lockscreen_camera_activate();
+}
+
 static void _camera_view_update()
 {
-	if (lockscreen_camera_is_on())
-		lockscreen_main_view_camera_show(main_view);
-	else
-		lockscreen_main_view_camera_hide(main_view);
+	Evas_Object *cam_view;
+
+	if (lockscreen_camera_is_on()) {
+		cam_view = lockscreen_camera_view_create(main_view);
+		evas_object_smart_callback_add(cam_view, SIGNAL_CAMERA_SELECTED, _camera_clicked, NULL);
+		lockscreen_main_view_part_content_set(main_view, PART_CAMERA, cam_view);
+	}
+	else {
+		cam_view = lockscreen_main_view_part_content_unset(main_view, PART_CAMERA);
+		evas_object_del(cam_view);
+	}
 }
 
 static Eina_Bool _cam_status_changed(void *data, int event, void *event_info)
 {
 	_camera_view_update();
 	return EINA_TRUE;
-}
-
-static void _camera_clicked(void *data, Evas_Object *obj, void *event)
-{
-	lockscreen_camera_activate();
 }
 
 int lockscreen_camera_ctrl_init(Evas_Object *view)
@@ -56,13 +64,13 @@ int lockscreen_camera_ctrl_init(Evas_Object *view)
 	main_view = view;
 	_camera_view_update();
 
-	evas_object_smart_callback_add(view, SIGNAL_CAMERA_SELECTED, _camera_clicked, NULL);
 	return 0;
 }
 
 void lockscreen_camera_ctrl_fini(void)
 {
+	Evas_Object *cam_view = lockscreen_main_view_part_content_get(main_view, PART_CAMERA);
+	if (cam_view) evas_object_smart_callback_del(cam_view, SIGNAL_CAMERA_SELECTED, _camera_clicked);
 	ecore_event_handler_del(handler);
-	evas_object_smart_callback_del(main_view, SIGNAL_CAMERA_SELECTED, _camera_clicked);
 	lockscreen_camera_shutdown();
 }

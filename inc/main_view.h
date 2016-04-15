@@ -26,11 +26,6 @@ typedef enum {
 } lockscreen_main_view_background_type;
 
 /**
- * @brief Emitted when camera icon is being selected.
- */
-#define SIGNAL_CAMERA_SELECTED "camera,icon,selected"
-
-/**
  * @brief Emitted when swipe gesture gesture has been performed.
  */
 #define SIGNAL_SWIPE_GESTURE_FINISHED "swipe,gesture,finished"
@@ -45,11 +40,18 @@ typedef enum {
  */
 #define SIGNAL_NOTIFICATION_CLICKED "notification,clicked"
 
+/**
+ * @brief Accessible via lockscreen_main_view_part_content_get
+ */
+#define PART_CAMERA "sw.camera"
+
 Evas_Object *lockscreen_main_view_create(Evas_Object *parent);
 
-bool lockscreen_main_view_camera_show(Evas_Object *view);
+void lockscreen_main_view_part_content_set(Evas_Object *view, const char *part, Evas_Object *content);
 
-void lockscreen_main_view_camera_hide(Evas_Object *view);
+Evas_Object *lockscreen_main_view_part_content_get(Evas_Object *view, const char *part);
+
+Evas_Object *lockscreen_main_view_part_content_unset(Evas_Object *view, const char *part);
 
 bool lockscreen_main_view_background_image_set(Evas_Object *view, lockscreen_main_view_background_type type, const char *file);
 
