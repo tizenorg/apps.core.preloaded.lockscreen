@@ -36,7 +36,7 @@ static Eina_Bool _lock_idler_cb(void *data)
 
 bool _create_app(void *data)
 {
-	_D("Launching...");
+	_D("Lockscreen launch request.");
 	elm_config_accel_preference_set("opengl");
 	_D("base scale : %f", elm_app_base_scale_get());
 	_D("edje scale : %f", edje_scale_get());
@@ -50,7 +50,7 @@ bool _create_app(void *data)
 
 void _terminate_app(void *data)
 {
-	_D("Terminating...");
+	_D("Lockscreen terminated request.");
 }
 
 int main(int argc, char *argv[])
