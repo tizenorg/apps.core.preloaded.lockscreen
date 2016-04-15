@@ -119,7 +119,6 @@ static lockscreen_notification_t *_lockscreen_notification_create(notification_h
 		event->service_handle = bundle_dup(event->service_handle);
 	}
 
-	_D("New lockscrene notification");
 	_D("Title: %s", event->title);
 	_D("Content: %s", event->content);
 	_D("Package: %s", event->package);
