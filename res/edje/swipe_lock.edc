@@ -337,7 +337,7 @@ group {
 			target: "sw.contextual_event";
 			target: "padding.bottom";
 			target: "vi_clipper";
-			transition: SIN_FAC 0.5 1.7;
+			transition: DECEL 0.5;
 			after: "vi_effect_end";
 		}
 		program {
@@ -391,7 +391,7 @@ group {
 			target: "sw.contextual_event";
 			target: "padding.bottom";
 			target: "vi_clipper";
-			transition: BOUNCE 0.6 2.5 3.0;
+			transition: DECEL 0.2;
 		}
 		program {
 			name: "bounce,end";
