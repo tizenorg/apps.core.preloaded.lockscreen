@@ -17,10 +17,6 @@
 group {
 	styles {
 		style {
-			name: "time_style_contextual";
-			base: "style=far_shadow,bottom shadow_color=#00000033 font=SamsungNeoNum-3T:style=Regular color=#FFFFFF font_size=28 align=center wrap=none";
-		}
-		style {
 			name: "close_style";
 			base: "font=Tizen:style=Regular color=#FFFFFF font_size=21 wrap=none align=center";
 		}
@@ -40,31 +36,14 @@ group {
 			}
 		}
 		part {
-			name: "txt.date";
-			type: TEXTBLOCK;
-			description {
-				state: "default" 0.0;
-				align: 0.0 0.0;
-				rel1 { relative: 0.0 0.0; to: "bg"; }
-				rel2 { relative: 1.0 CONTEXTUAL_INFO_DATE_HEIGHT/CONTEXTUAL_INFO_HEIGHT; to: "bg"; }
-				text {
-					style: "time_style_contextual";
-					align: 0.5 0.5;
-					min: 1 1;
-					ellipsis: -1;
-					text: "12:45 PM     Wed, 3 August";
-				}
-			}
-		}
-		part {
 			name: "rect.event.area.bg";
 			type: RECT;
 			description {
 				state: "default" 0.0;
 				color: 150 150 150 150;
 				align: 0.0 0.0;
-				rel1 { relative: 0.0 CONTEXTUAL_INFO_DATE_HEIGHT/CONTEXTUAL_INFO_HEIGHT; to: "bg"; }
-				rel2 { relative: 1.0 (CONTEXTUAL_INFO_DATE_HEIGHT + CONTEXTUAL_INFO_EVENT_AREA_HEIGHT)/CONTEXTUAL_INFO_HEIGHT; to: "bg"; }
+				rel1 { relative: 0.0 0.0; }
+				rel2 { relative: 1.0 1.0; }
 			}
 		}
 		part {

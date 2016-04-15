@@ -26,7 +26,6 @@
 #define PLMN_LABEL_STYLE_START "<style=far_shadow,bottom><shadow_color=#00000033><font_size=24><align=left><color=#FFFFFF><text_class=ATO007><color_class=ATO007><wrap=none>"
 #define PLMN_LABEL_STYLE_END "</wrap></color_class></text_class></color></align></font_size></shadow_color></style>"
 
-
 static Evas_Object *_swipe_layout_create(Evas_Object *parent)
 {
 	Evas_Object *swipe_layout = NULL;
@@ -299,4 +298,57 @@ void lockscreen_main_view_time_set(Evas_Object *view, const char *locale, const 
 	free(str_date);
 	free(str_time);
 	free(str_meridiem);
+}
+
+static Evas_Object *_lockscreen_main_view_contextual_layout_create(Evas_Object *parent)
+{
+	Evas_Object *layout = elm_layout_add(parent);
+	if (!elm_layout_file_set(layout, util_get_res_file_path(LOCK_EDJE_FILE), "contextual-event")) {
+		FATAL("elm_layout_file_set failed for contextual-event");
+		evas_object_del(layout);
+		return NULL;
+	}
+	evas_object_show(layout);
+
+	Evas_Object *scroller = elm_scroller_add(layout);
+	elm_scroller_content_min_limit(scroller, EINA_FALSE, EINA_TRUE);
+	elm_scroller_bounce_set(scroller, EINA_TRUE, EINA_FALSE);
+	elm_scroller_policy_set(scroller, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+	elm_object_scroll_lock_y_set(scroller, EINA_TRUE);
+	elm_object_tree_focus_allow_set(scroller, EINA_TRUE);
+	evas_object_show(scroller);
+
+	Evas_Object *box = elm_box_add(scroller);
+	evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_fill_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_show(box);
+
+	elm_object_content_set(scroller, box);
+	elm_object_part_content_set(layout, "sw.scroller", scroller);
+
+	return layout;
+}
+
+void lockscreen_main_view_notifications_show(Evas_Object *view)
+{
+	Evas_Object *swipe_layout = elm_object_part_content_get(view, "sw.swipe_layout");
+	if (!swipe_layout) {
+		FATAL("No sw.swipe_layout part");
+		return;
+	}
+	Evas_Object *contextual_layout = elm_object_part_content_get(view, "sw.contextual_event");
+	if (!contextual_layout) {
+		contextual_layout = _lockscreen_main_view_contextual_layout_create(swipe_layout);
+		elm_object_part_content_set(swipe_layout, "sw.contextual_event", contextual_layout);
+	}
+}
+
+void lockscreen_main_view_notifications_hide(Evas_Object *view)
+{
+	Evas_Object *swipe_layout = elm_object_part_content_get(view, "sw.swipe_layout");
+	if (!swipe_layout) {
+		FATAL("No sw.swipe_layout part");
+		return;
+	}
+	elm_object_part_content_unset(swipe_layout, "sw.swipe_layout");
 }

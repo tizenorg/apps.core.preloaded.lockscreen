@@ -26,6 +26,10 @@ group {
 			base: "style=far_shadow,bottom shadow_color=#00000033 font=Tizen:style=Regular font_size=40 color=#FFFFFF wrap=none align=left text_class=ATO003";
 			tag: "small_font" "+ font_size=24";
 		}
+		style {
+			name: "time_style_contextual";
+			base: "style=far_shadow,bottom shadow_color=#00000033 font=SamsungNeoNum-3T:style=Regular color=#FFFFFF font_size=28 align=center wrap=none";
+		}
 	}
 	name: "swipe-lock";
 	parts {
@@ -123,13 +127,32 @@ group {
 			}
 		}
 		part {
+			name: "txt.shortdate";
+			type: TEXTBLOCK;
+			description {
+				state: "default" 0.0;
+				align: 0.5 0.5;
+				visible: 0;
+				fixed: 0 0;
+				rel1 { relative: 1.0 1.0; to_x: "padding.left"; to_y: "padding.top"; }
+				rel2 { relative: 0.0 1.0; to_x: "padding.right"; to_y: "padding.top"; }
+				text {
+					style: "time_style_contextual";
+					align: 0.5 0.5;
+					min: 1 1;
+					ellipsis: -1;
+					text: "12:45 PM     Wed, 3 August";
+				}
+			}
+		}
+		part {
 			name: "sw.contextual_event";
 			type: SWALLOW;
 			clip_to: "vi_clipper";
 			description {
 				state: "default" 0.0;
 				align: 0 0;
-				rel1 { relative: 0.0 INDICATOR_HEIGHT/WIN_HEIGHT; to: "bg"; }
+				rel1 { relative: 0.0 1.0; to_x: "bg"; to_y: "txt.shortdate"; }
 				rel2 { relative: 1.0 (INDICATOR_HEIGHT+CONTEXTUAL_INFO_HEIGHT)/WIN_HEIGHT; to: "bg"; }
 			}
 			description {
@@ -229,8 +252,13 @@ group {
 				rel2 { relative: 1.0 1.0; to_x: "padding.left"; to_y: "sw.contextual_event"; offset: 0 5; }
 			}
 			description {
-				state: "hide" 0.0;
+				state: "default_hidden" 0.0;
 				inherit: "default" 0.0;
+				visible: 0;
+			}
+			description {
+				state: "contextual_event_hidden" 0.0;
+				inherit: "contextual_event" 0.0;
 				visible: 0;
 			}
 		}
@@ -346,24 +374,35 @@ group {
 			source: "vi_clipper";
 			action: SIGNAL_EMIT "unlock,anim,end" "swipe-layout";
 		}
+		/* Handle battery status updates
 		program {
 			name: "hide,txt,battery";
 			signal: "hide,txt,battery";
 			source: "lockscreen";
-			action: STATE_SET "hide" 0.0;
+			filter: "txt.battery" "default";
+			action: STATE_SET "default_hidden" 0.0;
 			target: "txt.battery";
 		}
 		program {
 			name: "show,txt,battery";
 			signal: "show,txt,battery";
 			source: "lockscreen";
+			filter: "txt.battery" "default_hidden";
 			action: STATE_SET "default" 0.0;
 			target: "txt.battery";
 		}
+		/* Handle contextual layout transformation */
 		program {
-			name: "show,txt,battery,contextual,event";
-			signal: "show,txt,battery,contextual,event";
-			source: "txt.battery";
+			name: "contextual,events,show";
+			signal: "contextual,events,show";
+			source: "lockscreen";
+			action: STATE_SET "contextual_event" 0.0;
+			target: "txt.battery";
+		}
+		program {
+			name: "contextual,events,hide";
+			signal: "contextual,events,hide";
+			source: "lockscreen";
 			action: STATE_SET "contextual_event" 0.0;
 			target: "txt.battery";
 		}

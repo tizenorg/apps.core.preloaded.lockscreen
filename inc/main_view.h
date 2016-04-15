@@ -40,6 +40,11 @@ typedef enum {
  */
 #define SIGNAL_UNLOCK_ANIMATION_FINISHED "unlock,anim,finished"
 
+/**
+ * @brief Emitted unlock animation finished.
+ */
+#define SIGNAL_NOTIFICATION_CLICKED "notification,clicked"
+
 Evas_Object *lockscreen_main_view_create(Evas_Object *parent);
 
 bool lockscreen_main_view_camera_show(Evas_Object *view);
@@ -61,5 +66,15 @@ void lockscreen_main_view_unlock(Evas_Object *obj);
 void lockscreen_main_view_time_set(Evas_Object *view, const char *locale, const char *timezone, bool use24hformat, time_t time);
 
 void lockscreen_main_view_sim_status_text_set(Evas_Object *view, const char *text);
+
+void lockscreen_main_view_notifications_show(Evas_Object *view);
+
+void lockscreen_main_view_notifications_hide(Evas_Object *view);
+
+int lockscreen_main_view_notifications_append(Evas_Object *view, Evas_Object *content, void *data);
+
+int lockscreen_main_view_notifications_append_relative(Evas_Object *view, int idx, Evas_Object *content, void *data);
+
+Evas_Object *lockscreen_main_view_notifications_item_get(Evas_Object *view, int idx);
 
 #endif
