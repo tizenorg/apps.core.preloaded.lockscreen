@@ -293,6 +293,7 @@ group {
 				max: 500 500;
 				align: 1 1;
 				fixed: 1 1;
+				rel2 { to: "padding.bottom"; };
 			}
 		}
 	}
