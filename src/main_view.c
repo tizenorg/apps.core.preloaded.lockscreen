@@ -209,7 +209,7 @@ void lockscreen_main_view_sim_status_text_set(Evas_Object *view, const char *tex
 
 	evas_object_textblock_size_native_get(tb, &tb_w, NULL);
 
-	if ((tb_w > 0) && (tb_w > _X(EMG_BUTTON_WIDTH))) {
+	if ((tb_w > 0) && (tb_w > ELM_SCALE_SIZE(EMG_BUTTON_WIDTH))) {
 		elm_label_slide_mode_set(label, ELM_LABEL_SLIDE_MODE_AUTO);
 	}
 

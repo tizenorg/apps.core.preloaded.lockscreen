@@ -112,7 +112,7 @@ static int _battery_update(void)
 			lockscreen_main_view_battery_status_text_set(main_view, NULL);
 		}
 	}
-	return LOCK_ERROR_OK;
+	return 0;
 }
 
 static Eina_Bool _data_battery_update(void *data, int event, void *event_info)
