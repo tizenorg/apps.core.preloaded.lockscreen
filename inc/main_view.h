@@ -41,9 +41,14 @@ typedef enum {
 #define SIGNAL_NOTIFICATION_CLICKED "notification,clicked"
 
 /**
- * @brief Accessible via lockscreen_main_view_part_content_get
+ * @brief Accessible via lockscreen_main_view_part_content_get/set/unset
  */
 #define PART_CAMERA "sw.camera"
+
+/**
+ * @brief Accessible via lockscreen_main_view_part_content_get/set/unset
+ */
+#define PART_NOTIFICATIONS "sw.camera"
 
 Evas_Object *lockscreen_main_view_create(Evas_Object *parent);
 
