@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2014 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2016 Samsung Electronics Co., Ltd All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef __LOCKSCREEN_H__
-#define __LOCKSCREEN_H__
+#ifndef _LOCKSCREEN_H_
+#define _LOCKSCREEN_H_
 
 #define EDJE_DIR "edje/"
 #define IMAGE_DIR "images/"
