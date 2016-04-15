@@ -50,7 +50,6 @@ int lockscreen_sim_ctrl_init(Evas_Object *view)
 {
 	if (lockscreen_sim_init()) {
 		_E("lockscreen_sim_init failed");
-		lockscreen_main_view_sim_status_text_set(main_view, NULL);
 		return 1;
 	}
 
