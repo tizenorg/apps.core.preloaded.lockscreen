@@ -70,8 +70,8 @@ group {
 			description {
 				state: "effect_start" 0.0;
 				inherit: "default" 0.0;
-				rel1 { offset: 0 -6; }
-				rel2 { offset: 0 -6; }
+				rel1 { relative: 0.0 (INDICATOR_HEIGHT-SWIPE_LOCK_BOUNCE_EFFECT_OFFSET)/WIN_HEIGHT; to: "bg"; }
+				rel2 { relative: 1.0 (INDICATOR_HEIGHT+SWIPE_LOCK_PADDING_TOP-SWIPE_LOCK_BOUNCE_EFFECT_OFFSET)/WIN_HEIGHT; to: "bg"; }
 			}
 			description {
 				state: "effect" 0.0;
@@ -92,8 +92,8 @@ group {
 			description {
 				state: "effect_start" 0.0;
 				inherit: "default" 0.0;
-				rel1 { offset: 0 6; }
-				rel2 { offset: 0 6; }
+				rel1 { relative: 0.0 (WIN_HEIGHT-SWIPE_LOCK_PADDING_BOTTOM+SWIPE_LOCK_BOUNCE_EFFECT_OFFSET)/WIN_HEIGHT; to: "bg"; }
+				rel2 { relative: 1.0 (WIN_HEIGHT+SWIPE_LOCK_BOUNCE_EFFECT_OFFSET)/WIN_HEIGHT; to: "bg"; }
 			}
 			description {
 				state: "effect" 0.0;
