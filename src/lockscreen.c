@@ -25,12 +25,6 @@
 
 #include "lockscreen.h"
 #include "log.h"
-#include "property.h"
-#include "window.h"
-#include "background_view.h"
-#include "default_lock.h"
-#include "lock_time.h"
-
 #include "main_ctrl.h"
 
 static Eina_Bool _lock_idler_cb(void *data)
