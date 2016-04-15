@@ -45,9 +45,19 @@ static void _swipe_finished(void *data, Evas_Object *obj, void *event)
 	lockscreen_main_view_unlock(obj);
 }
 
-static void _lockcscreen_main_ctrl_win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
+static Eina_Bool _lockscreen_main_ctrl_win_event_cb(void *data, Evas_Object *obj, Evas_Object *source, Evas_Callback_Type type, void *event_info)
 {
-	util_feedback_tap_play();
+	if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_TRUE;
+	Evas_Event_Key_Down *ev = event_info;
+
+	if (!strcmp(ev->key, "XF86PowerOff") || !strcmp(ev->key, "XF86Menu")) {
+		lockscreen_time_format_time_update();
+	}
+	else if (!strcmp(ev->key, "XF86Back")) {
+		util_feedback_tap_play();
+	}
+
+	return EINA_TRUE;
 }
 
 static void _lockcscreen_main_ctrl_win_touch_start_cb(void *data, Evas_Object *obj, void *event_info)
@@ -84,10 +94,9 @@ int lockscreen_main_ctrl_init(void)
 		evas_object_smart_callback_add(win, SIGNAL_TOUCH_ENDED, _lockcscreen_main_ctrl_win_touch_end_cb, NULL);
 	}
 
-
 	lockscreen_window_content_set(view);
 	evas_object_smart_callback_add(view, SIGNAL_SWIPE_GESTURE_FINISHED, _swipe_finished, NULL);
-	eext_object_event_callback_add(win, EEXT_CALLBACK_BACK, _lockcscreen_main_ctrl_win_back_key_cb, NULL);
+	elm_object_event_callback_add(win, _lockscreen_main_ctrl_win_event_cb, NULL);
 
 	// init subcontrollers
 	if (lock_battery_ctrl_init(view))

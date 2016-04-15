@@ -105,3 +105,8 @@ void lockscreen_time_ctrl_shutdown(void)
 	lockscreen_time_format_shutdown();
 }
 
+void lockscreen_time_format_time_update(void)
+{
+	_time_update();
+}
+

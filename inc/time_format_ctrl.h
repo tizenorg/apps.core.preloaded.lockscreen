@@ -20,6 +20,7 @@
 #include <Elementary.h>
 
 int lockscreen_time_format_ctrl_init(Evas_Object *view);
+void lockscreen_time_format_time_update(void);
 void lockscreen_time_format_ctrl_shutdown(void);
 
 #endif

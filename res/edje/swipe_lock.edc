@@ -149,6 +149,7 @@ group {
 			name: "txt.time";
 			type: TEXTBLOCK;
 			clip_to: "vi_clipper";
+			scale: 1;
 			description {
 				state: "default" 0.0;
 				align: 0 0;
@@ -168,6 +169,7 @@ group {
 			name: "txt.date";
 			type: TEXTBLOCK;
 			clip_to: "vi_clipper";
+			scale: 1;
 			description {
 				state: "default" 0.0;
 				align: 0 0;
