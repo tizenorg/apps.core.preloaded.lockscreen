@@ -237,7 +237,6 @@ group {
 		part {
 			name: "padding.txt.plmn";
 			type: SPACER;
-			scale: 1;
 			description {
 				state: "default" 0.0;
 				min: WIN_WIDTH 14;
