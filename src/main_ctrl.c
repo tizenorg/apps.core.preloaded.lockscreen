@@ -24,6 +24,7 @@
 #include "time_format_ctrl.h"
 #include "util.h"
 #include "sim_ctrl.h"
+#include "display.h"
 
 #include <Elementary.h>
 #include <efl_extension.h>
@@ -44,9 +45,19 @@ static void _swipe_finished(void *data, Evas_Object *obj, void *event)
 	lockscreen_main_view_unlock(obj);
 }
 
-static void _back_key_cb(void *data, Evas_Object *obj, void *event_info)
+static void _lockcscreen_main_ctrl_win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
 {
 	util_feedback_tap_play();
+}
+
+static void _lockcscreen_main_ctrl_win_touch_start_cb(void *data, Evas_Object *obj, void *event_info)
+{
+	lockscreen_display_timer_freeze();
+}
+
+static void _lockcscreen_main_ctrl_win_touch_end_cb(void *data, Evas_Object *obj, void *event_info)
+{
+	lockscreen_display_timer_renew();
 }
 
 int lockscreen_main_ctrl_init(void)
@@ -66,9 +77,17 @@ int lockscreen_main_ctrl_init(void)
 			FATAL("lockscreen_main_view_background_image_set failed");
 	}
 
+	if (lockscreen_display_init()) {
+		FATAL("lockscreen_display_init failed. Display on/off changes will not be available.");
+	} else {
+		evas_object_smart_callback_add(win, SIGNAL_TOUCH_STARTED, _lockcscreen_main_ctrl_win_touch_start_cb, NULL);
+		evas_object_smart_callback_add(win, SIGNAL_TOUCH_ENDED, _lockcscreen_main_ctrl_win_touch_end_cb, NULL);
+	}
+
+
 	lockscreen_window_content_set(view);
 	evas_object_smart_callback_add(view, SIGNAL_SWIPE_GESTURE_FINISHED, _swipe_finished, NULL);
-	eext_object_event_callback_add(win, EEXT_CALLBACK_BACK, _back_key_cb, NULL);
+	eext_object_event_callback_add(win, EEXT_CALLBACK_BACK, _lockcscreen_main_ctrl_win_back_key_cb, NULL);
 
 	// init subcontrollers
 	if (lock_battery_ctrl_init(view))
