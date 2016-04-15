@@ -18,12 +18,12 @@ group {
 	styles {
 		style {
 			name: "time_style_default";
-			base: "style=far_shadow,bottom shadow_color=#00000033 font=SamsungNeoNum-3T:style=Regular color=#FFFFFF font_size=102 wrap=none";
+			base: "style=far_shadow,bottom shadow_color=#00000033 font=SamsungNeoNum-3T:style=Regular color=#FFFFFF font_size=106 wrap=none";
 			tag: "small_font" "+ font_size=40 font=SamsungNeoNum-3T:style=Light";
 		}
 		style {
 			name: "date_style_default";
-			base: "style=far_shadow,bottom shadow_color=#00000033 font=Tizen:style=Regular font_size=30 color=#FFFFFF wrap=none align=left text_class=ATO003";
+			base: "style=far_shadow,bottom shadow_color=#00000033 font=Tizen:style=Regular font_size=40 color=#FFFFFF wrap=none align=left text_class=ATO003";
 			tag: "small_font" "+ font_size=24";
 		}
 	}
@@ -218,7 +218,7 @@ group {
 					min: 1 1;
 					ellipsis: -1;
 					text: "Charging: 50%";
-					size: 28;
+					size: 34;
 				}
 			}
 			description {
