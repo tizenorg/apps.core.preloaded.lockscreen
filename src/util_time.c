@@ -170,7 +170,7 @@ static i18n_udate_format_h __util_time_ampm_formatter_get(const char *locale, co
 
 static int __util_time_formatted_time_get(i18n_udate_format_h formatter, time_t tt, char *buf, int buf_len)
 {
-	retv_if (!formatter, -1);
+	if (!formatter) return -1;
 
 	i18n_udate u_time = (i18n_udate)tt * 1000;
 	i18n_uchar u_formatted_str[64] = {0,};

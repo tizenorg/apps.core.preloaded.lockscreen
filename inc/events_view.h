@@ -28,14 +28,22 @@
 #define WIDGET_ITEM_CONTENT "elm.swallow.icon"
 
 /**
- * @brief Emitted when notification is being selected.
+ * @brief Smart signal emitted when notification is being selected.
  */
 #define SIGNAL_CAMERA_SELECTED "notification,item,selected"
 
 #include <Elementary.h>
 
+/**
+ * @brief Creates camera view object.
+ * @note parent should be elementary widget.
+ */
 Evas_Object *lockscreen_events_view_create(Evas_Object *parent);
 
+/**
+ * @brief Gets internall genlist object
+ * @note should not be del manually
+ */
 Evas_Object *lockscreen_events_genlist_get(Evas_Object *events_view);
 
 #endif

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "lockscreen.h"
 #include "log.h"
 #include "background.h"
 #include "util.h"
@@ -22,7 +23,7 @@
 #include <Ecore.h>
 #include <Ecore_File.h>
 
-#define DEFAULT_BG "images/Default.jpg"
+#define DEFAULT_BG IMAGE_DIR"Default.jpg"
 
 static char *background_file;
 static int init_count;

@@ -17,18 +17,34 @@
 #ifndef _LOCKSCREEN_BACKGROUND_H_
 #define _LOCKSCREEN_BACKGROUND_H_
 
+/**
+ * @brief Event fired when lockscreen background changes.
+ * @note register via ecore_event_handler_add
+ * @note can be triggered after lockscreen_background_init
+ */
 extern int LOCKSCREEN_EVENT_BACKGROUND_CHANGED;
 
+/**
+ * @brief Initializes background notification changes.
+ */
 int lockscreen_background_init(void);
 
 /**
  * @brief Sets background file that will be display be lockscreen.
  * If @path parameter is NULL the default background will be used.
+ *
+ * @note can fire LOCKSCREEN_EVENT_BACKGROUND_CHANGED event
  */
 int lockscreen_background_file_set(const char *path);
 
+/**
+ * @brief Deinitialize background notification changes.
+ */
 void lockscreen_background_shutdown(void);
 
+/**
+ * @brief Get current background file path.
+ */
 const char *lockscreen_background_file_get(void);
 
 #endif

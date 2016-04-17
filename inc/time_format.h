@@ -19,14 +19,35 @@
 
 #include <stdbool.h>
 
+/**
+ * @brief Event fired when locale/timezone/24h fromat information changes
+ */
 extern int LOCKSCREEN_EVENT_TIME_FORMAT_CHANGED;
 
+/**
+ * @brief Initializes time format information events.
+ */
 int lockscreen_time_format_init(void);
 
+/**
+ * @brief Shutdowns time format information
+ */
 void lockscreen_time_format_shutdown(void);
 
+/**
+ * @brief Get system default locale
+ */
 const char *lockscreen_time_format_locale_get(void);
+
+/**
+ * @brief Get system default timezone
+ */
 const char *lockscreen_time_format_timezone_get(void);
+
+/**
+ * @brief Get 24-h format option
+ * @note return true is system is using 24-h time date format, false otherwise.
+ */
 bool lockscreen_time_format_use_24h(void);
 
 #endif

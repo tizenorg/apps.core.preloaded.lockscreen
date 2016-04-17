@@ -26,12 +26,12 @@ typedef enum {
 } lockscreen_main_view_background_type;
 
 /**
- * @brief Emitted when swipe gesture gesture has been performed.
+ * @brief Smart signal emitted when swipe gesture gesture has been performed.
  */
 #define SIGNAL_SWIPE_GESTURE_FINISHED "swipe,gesture,finished"
 
 /**
- * @brief Emitted unlock animation finished.
+ * @brief Smart signal emitted unlock animation finished.
  */
 #define SIGNAL_UNLOCK_ANIMATION_FINISHED "unlock,anim,finished"
 
@@ -45,19 +45,35 @@ typedef enum {
  */
 #define PART_EVENTS "sw.contextual_event"
 
+/**
+ * @brief Creates main view object
+ */
 Evas_Object *lockscreen_main_view_create(Evas_Object *parent);
 
+/**
+ * @brief Set sub view of main view object
+ */
 void lockscreen_main_view_part_content_set(Evas_Object *view, const char *part, Evas_Object *content);
 
+/**
+ * @brief Get sub view of main view object
+ */
 Evas_Object *lockscreen_main_view_part_content_get(Evas_Object *view, const char *part);
 
+/**
+ * @brief Unsets sub view of main view object
+ */
 Evas_Object *lockscreen_main_view_part_content_unset(Evas_Object *view, const char *part);
 
-bool lockscreen_main_view_background_image_set(Evas_Object *view, lockscreen_main_view_background_type type, const char *file);
-
-void lockscreen_main_view_battery_status_text_set(Evas_Object *view, const char *battery);
-
+/**
+ * @brief Set main view background image
+ */
 bool lockscreen_main_view_background_set(Evas_Object *view, lockscreen_main_view_background_type type, const char *file);
+
+/**
+ * @brief Sets battery status displayed text
+ */
+void lockscreen_main_view_battery_status_text_set(Evas_Object *view, const char *battery);
 
 /**
  * @brief Plays unlock animation and runs @animation_end_cb on end.
@@ -65,8 +81,17 @@ bool lockscreen_main_view_background_set(Evas_Object *view, lockscreen_main_view
  */
 void lockscreen_main_view_unlock(Evas_Object *obj);
 
+/**
+ * @brief Sets main view time information
+ *
+ * @note time information will be displayed in format suitable for given locale,
+ * timezone and 24h format option.
+ */
 void lockscreen_main_view_time_set(Evas_Object *view, const char *locale, const char *timezone, bool use24hformat, time_t time);
 
+/**
+ * @brief Sets sim status textual information.
+ */
 void lockscreen_main_view_sim_status_text_set(Evas_Object *view, const char *text);
 
 #endif

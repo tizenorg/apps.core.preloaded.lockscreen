@@ -17,27 +17,69 @@
 #define _LOCKSCREEN_NOTIFICATIONS_H_
 
 #include <Eina.h>
+#include <time.h>
 
+/**
+ * @brief Event fired when lockscreen's notification change.
+ */
 extern int LOCKSCREEN_EVENT_NOTIFICATIONS_CHANGED;
 
+/**
+ * @brief lockscreen notification handle
+ */
 typedef struct lockscreen_notification lockscreen_notification_t;
 
+/**
+ * @brief Initialize notification support
+ */
 int lockscreen_notifications_init(void);
 
+/**
+ * @brief Denitialize notification support.
+ */
 void lockscreen_notifications_shutdown(void);
 
+/**
+ * @brief Gets main notification icon
+ */
 const char *lockscreen_notification_icon_get(lockscreen_notification_t *event);
 
+/**
+ * @brief Get secondary notification icon
+ */
 const char *lockscreen_notification_sub_icon_get(lockscreen_notification_t *event);
 
+/**
+ * @brief Get notification title
+ */
 const char *lockscreen_notification_title_get(lockscreen_notification_t *event);
 
+/**
+ * @brief Get notification textual content.
+ */
 const char *lockscreen_notification_content_get(lockscreen_notification_t *event);
 
+/**
+ * @brief Gets time when notification was posted.
+ */
+time_t lockscreen_notification_time_get(lockscreen_notification_t *event);
+
+/**
+ * @brief Launch application which posted the notification
+ */
 bool lockscreen_notification_launch(lockscreen_notification_t *event);
 
+/**
+ * @brief Gets list of all displayed notifications.
+ *
+ * @note list elements are only until LOCKSCREEN_EVENT_NOTIFICATIONS_CHANGED is
+ * fired.
+ */
 Eina_List *lockscreen_notifications_get(void);
 
+/**
+ * @brief Inticates if any notifications for lockscreen are currently posted.
+ */
 bool lockscreen_notifications_exists(void);
 
 #endif

@@ -14,17 +14,38 @@
  * limitations under the License.
  */
 
-#ifndef _LOCKSCREEN_CAMERA_H__
-#define _LOCKSCREEN_CAMERA_H__
+#ifndef _LOCKSCREEN_CAMERA_H_
+#define _LOCKSCREEN_CAMERA_H_
 
 #include <stdbool.h>
 
+/**
+ * @brief Event fired when lockscreen camera shortcut required status
+ * changes. 
+ *
+ * @see lockscreen_camera_is_on
+ */
 extern int LOCKSCREEN_EVENT_CAMERA_STATUS_CHANGED;
 
+/**
+ * @brief Initializes camera module
+ */
 int lockscreen_camera_init(void);
+
+/**
+ * @brief Activates system-default camera application.
+ */
 int lockscreen_camera_activate();
+
+/**
+ * @brief Shutdowns camera module
+ */
 void lockscreen_camera_shutdown(void);
 
+/**
+ * @brief Returns true if camera shortcut icon should be displayed
+ * on lockscreen, false otherwise.
+ */
 bool lockscreen_camera_is_on(void);
 
 #endif

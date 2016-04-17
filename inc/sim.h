@@ -17,8 +17,14 @@
 #ifndef _LOCKSCREEN_SIM_H_
 #define _LOCKSCREEN_SIM_H_
 
+/**
+ * @brief Event fired when sim information changes
+ */
 extern int LOCKSCREEN_EVENT_SIM_STATUS_CHANGED;
 
+/**
+ * @brief Initializes sim information changes
+ */
 int lockscreen_sim_init();
 
 typedef enum {
@@ -27,8 +33,14 @@ typedef enum {
 	LOCKSCREEN_SIM_MAX,
 } lockscreen_sim_num_e;
 
+/**
+ * @brief Shutdowns sim information changes.
+ */
 void lockscreen_sim_shutdown(void);
 
+/**
+ * @brief Get current PLMN information for given sim
+ */
 const char *lockscreen_sim_get_plmn(lockscreen_sim_num_e num);
 
 #endif

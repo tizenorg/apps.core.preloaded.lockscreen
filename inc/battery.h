@@ -19,11 +19,31 @@
 
 #include <stdbool.h>
 
+/**
+ * @brief Event fired when battery status changes.
+ * @note register via ecore_event_handler_add
+ * @note can be triggered after lockscreen_battery_init
+ */
 extern int LOCKSCREEN_EVENT_BATTERY_CHANGED;
 
+/**
+ * @brief Initializes battery notification changes.
+ */
 int lockscreen_battery_init(void);
+
+/**
+ * @brief Deinitialize battery notification changes.
+ */
 void lockscreen_battery_shutdown(void);
+
+/**
+ * @brief true is battery is charging.
+ */
 bool lockscreen_battery_is_charging(void);
+
+/**
+ * @brief true is battery charger is connected.
+ */
 bool lockscreen_battery_is_connected(void);
 
 /**

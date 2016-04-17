@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-#ifndef __BATTERY_CTRL_H__
-#define __BATTERY_CTRL_H__
+#ifndef _LOCKSCREEN_BATTERY_CTRL_H_
+#define _LOCKSCREEN_BATTERY_CTRL_H_
 
 #include <Elementary.h>
 
+/**
+ * @brief Initializes battery controller.
+ *
+ * Battery controller manages battery information
+ * presentation on @main_view object.
+ */
 int lock_battery_ctrl_init(Evas_Object *main_view);
+
+/**
+ * @brief Deinitializes battery controller.
+ */
 void lock_battery_ctrl_fini(void);
 
 #endif

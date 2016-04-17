@@ -52,7 +52,7 @@ static Eina_Bool _lockscreen_main_ctrl_win_event_cb(void *data, Evas_Object *obj
 	Evas_Event_Key_Down *ev = event_info;
 
 	if (!strcmp(ev->key, "XF86PowerOff") || !strcmp(ev->key, "XF86Menu")) {
-		lockscreen_time_format_time_update();
+		lockscreen_time_format_ctrl_time_update();
 	}
 	else if (!strcmp(ev->key, "XF86Back")) {
 		util_feedback_tap_play();

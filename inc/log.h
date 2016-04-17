@@ -51,47 +51,4 @@
 #undef _
 #define _(str) i18n_get_text(str)
 
-#define retv_if(expr, val) do { \
-	if(expr) { \
-		_E("(%s) -> %s() return", #expr, __FUNCTION__); \
-		return (val); \
-	} \
-} while (0)
-
-#define retm_if(expr, fmt, arg...) do { \
-	if(expr) { \
-		_E(fmt, ##arg); \
-		_E("(%s) -> %s() return", #expr, __FUNCTION__); \
-		return; \
-	} \
-} while (0)
-
-#define ret_if(expr) do { \
-	if(expr) { \
-		_E("(%s) -> %s() return", #expr, __FUNCTION__); \
-		return; \
-	} \
-} while (0)
-
-#define goto_if(expr, val) do { \
-	if(expr) { \
-		_E("(%s) -> goto", #expr); \
-		goto val; \
-	} \
-} while (0)
-
-#define break_if(expr) { \
-	if(expr) { \
-		_E("(%s) -> break", #expr); \
-		break; \
-	} \
-}
-
-#define continue_if(expr) { \
-	if(expr) { \
-		_E("(%s) -> continue", #expr); \
-		continue; \
-	} \
-}
-
 #endif

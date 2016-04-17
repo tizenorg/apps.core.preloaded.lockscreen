@@ -19,8 +19,17 @@
 
 #include <Elementary.h>
 
+/**
+ * @brief Intializes sim controller
+ *
+ * Sim controller is resposible for updating main_view information when sim PLMN
+ * information changes.
+ */
 int lockscreen_sim_ctrl_init(Evas_Object *main_view);
 
+/**
+ * @brief Shutdonws sim controller
+ */
 void lockscreen_sim_ctrl_shutdown();
 
 #endif

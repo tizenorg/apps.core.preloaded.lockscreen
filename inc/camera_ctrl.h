@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-#ifndef __CAMERA_CTRL_H__
-#define __CAMERA_CTRL_H__
+#ifndef _LOCKSCREEN_CAMERA_CTRL_H_
+#define _LOCKSCREEN_CAMERA_CTRL_H_
 
 #include <Elementary.h>
 
+/**
+ * @brief Initializes camera controller.
+ *
+ * Camera controller module is responsible for displaying camera icon on
+ * @main_view and launching camera application when requested by user.
+ */
 int lockscreen_camera_ctrl_init(Evas_Object *main_view);
+
+/**
+ * @brief Deinitializes camera controller.
+ */
 void lockscreen_camera_ctrl_fini(void);
 
 #endif

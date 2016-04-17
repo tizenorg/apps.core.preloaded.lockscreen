@@ -19,10 +19,19 @@
 
 #include <stdbool.h>
 
+/**
+ * @brief Event fired when device display truns off or on.
+ */
 extern int LOCKSCREEN_EVENT_DISPLAY_STATUS_CHANGED;
 
+/**
+ * @brief Initializes display notifications.
+ */
 int lockscreen_display_init(void);
 
+/**
+ * @brief Deinitialize display notifications.
+ */
 void lockscreen_display_shutdown(void);
 
 /**
@@ -43,6 +52,10 @@ void lockscreen_display_timer_freeze(void);
  */
 void lockscreen_display_timer_renew(void);
 
+/**
+ * @brief Gets current display status.
+ * Returns true if display is turned on, false otherwise.
+ */
 bool lockscreen_display_is_off(void);
 
 #endif

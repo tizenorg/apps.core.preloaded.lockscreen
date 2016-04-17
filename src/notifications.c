@@ -262,3 +262,8 @@ const char *lockscreen_notification_content_get(lockscreen_notification_t *event
 {
 	return event->content;
 }
+
+time_t lockscreen_notification_time_get(lockscreen_notification_t *event)
+{
+	return event->time;
+}

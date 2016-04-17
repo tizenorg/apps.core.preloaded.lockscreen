@@ -1,5 +1,4 @@
-/*
- * Copyright 2016  Samsung Electronics Co., Ltd
+/* * Copyright 2016  Samsung Electronics Co., Ltd
  *
  * Licensed under the Flora License, Version 1.1 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef __LOCK_SCREEN_UTIL_H__
-#define __LOCK_SCREEN_UTIL_H__
+#ifndef _LOCKSCREEN_UTIL_H_
+#define _LOCKSCREEN_UTIL_H_
 
 #include <Elementary.h>
 
@@ -64,7 +63,6 @@ const char *util_get_file_path(enum app_subdir dir, const char *relative);
  * @brief utility macro to enumerate
  */
 #define SIZE(x) sizeof(x)/sizeof(x[0])
-
 
 /**
  * @brief Get default lockscreen elementary theme extension.

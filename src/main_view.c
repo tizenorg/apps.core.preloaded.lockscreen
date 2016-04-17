@@ -29,7 +29,7 @@
 static Evas_Object *_swipe_layout_create(Evas_Object *parent)
 {
 	Evas_Object *swipe_layout = NULL;
-	retv_if(!parent, NULL);
+	if (!parent) return NULL;
 
 	swipe_layout = elm_layout_add(parent);
 

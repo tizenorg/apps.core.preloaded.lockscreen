@@ -17,8 +17,17 @@
 #ifndef _LOCKSCREEN_MAIN_CTRL_H_
 #define _LOCKSCREEN_MAIN_CTRL_H_
 
+/**
+ * @brief Initializes main controller.
+ *
+ * Application's root controller. Manages all other controllers.
+ * Creates main_view.
+ */
 int lockscreen_main_ctrl_init();
 
+/**
+ * @brief Shutdown main controller.
+ */
 void lockscreen_main_ctrl_shutdown();
 
 #endif

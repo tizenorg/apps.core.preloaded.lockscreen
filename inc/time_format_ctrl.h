@@ -14,14 +14,28 @@
  * limitations under the License.
  */
 
-#ifndef __TIME_FORMAT_CTRL_H__
-#define __TIME_FORMAT_CTRL_H__
+#ifndef _LOCKSCREEN_TIME_FORMAT_CTRL_H_
+#define _LOCKSCREEN_TIME_FORMAT_CTRL_H_
 
 #include <Elementary.h>
 
-int lockscreen_time_format_ctrl_init(Evas_Object *view);
-void lockscreen_time_format_time_update(void);
+/**
+ * @brief Initializes time format controller
+ *
+ * time format controller manages time updates na @main_view object
+ * and apply proper time formating when system default settings changes.
+ */
+int lockscreen_time_format_ctrl_init(Evas_Object *main_view);
+
+/**
+ * @brief Shutdowns time format controller.
+ */
 void lockscreen_time_format_ctrl_shutdown(void);
+
+/**
+ * @brief Forces controller to refrest time information on view
+ */
+void lockscreen_time_format_ctrl_time_update(void);
 
 #endif
 

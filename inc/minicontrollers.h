@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-#ifndef _LOCKSCREEN_MINICONTROLLERS__H_
-#define _LOCKSCREEN_MINICONTROLLERS__H_
+#ifndef _LOCKSCREEN_MINICONTROLLERS_H_
+#define _LOCKSCREEN_MINICONTROLLERS_H_
 
 #include <Elementary.h>
 
+/**
+ * @brief Event fired when minicontroller changes.
+ */
 extern int LOCKSCREEN_EVENT_MINICONTROLLER_CHANGED;
 
+/**
+ * @brief Initialize minicontroller support
+ */
 int lockscreen_minicontrollers_init(void);
 
+/**
+ * @brief Deinitialize minicontroller support.
+ */
 void lockscreen_minicontrollers_shutdown(void);
 
 Evas_Object *lockscreen_minicontrollers_active_minicontroller_get(Evas_Object *parent);

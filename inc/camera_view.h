@@ -17,13 +17,18 @@
 #ifndef _LOCKSCREEN_CAMERA_VIEW_H_
 #define _LOCKSCREEN_CAMERA_VIEW_H_
 
+#include <Elementary.h>
+
 /**
- * @brief Emitted when camera icon is being selected.
+ * @brief Smart signal emitted when camera icon is being selected.
  */
 #define SIGNAL_CAMERA_SELECTED "camera,icon,selected"
 
-#include <Elementary.h>
-
+/**
+ * @brief Creates camera view
+ *
+ * @note parent should be Elementary widget.
+ */
 Evas_Object *lockscreen_camera_view_create(Evas_Object *parent);
 
 #endif
