@@ -40,6 +40,8 @@ Evas_Object *lockscreen_events_view_create(Evas_Object *parent)
 	elm_object_tree_focus_allow_set(genlist, EINA_TRUE);
 	evas_object_show(genlist);
 
+	/* Defined in elm-theme-tizen.edj */
+	elm_layout_theme_set(genlist, "scroller", "base", "effect");
 	elm_object_part_content_set(layout, "sw.genlist", genlist);
 
 	return layout;
