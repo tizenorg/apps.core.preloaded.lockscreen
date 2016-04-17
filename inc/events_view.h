@@ -14,13 +14,26 @@
  * limitations under the License.
  */
 
-#ifndef _LOCKSCREEN_NOTIFICATIONS_CTRL_H_
-#define _LOCKSCREEN_NOTIFICATIONS_CTRL_H_
+#ifndef _LOCKSCREEN_EVENTS_VIEW_H_
+#define _LOCKSCREEN_EVENTS_VIEW_H_
+
+#define NOTI_ITEM_STYLE "noti-item"
+#define NOTI_ITEM_TEXT_MAIN "elm.text"
+#define NOTI_ITEM_TEXT_SUB "elm.sub.text"
+#define NOTI_ITEM_TEXT_TIME "elm.time"
+#define NOTI_ITEM_CONTENT_ICON "elm.icon"
+#define NOTI_ITEM_CONTENT_SUB_ICON "elm.sub.icon"
+
+/**
+ * @brief Emitted when notification is being selected.
+ */
+#define SIGNAL_CAMERA_SELECTED "notification,item,selected"
 
 #include <Elementary.h>
 
-int lockscreen_notifications_ctrl_init(Evas_Object *main_view);
+Evas_Object *lockscreen_events_view_create(Evas_Object *parent);
 
-void lockscreen_notifications_ctrl_shutdown();
+Evas_Object *lockscreen_events_genlist_get(Evas_Object *events_view);
 
 #endif
+

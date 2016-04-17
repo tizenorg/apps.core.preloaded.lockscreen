@@ -237,7 +237,12 @@ bool lockscreen_notification_launch(lockscreen_notification_t *event)
 	return true;
 }
 
-const Eina_List *lockscreen_notifications_get(void)
+Eina_List *lockscreen_notifications_get(void)
 {
-	return notifications;
+	return eina_list_clone(notifications);
+}
+
+Eina_Bool lockscreen_notifications_exists(void)
+{
+	return notifications ? EINA_TRUE : EINA_FALSE;
 }

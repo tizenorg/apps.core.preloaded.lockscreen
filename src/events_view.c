@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "notifications_view.h"
+#include "events_view.h"
 #include "util.h"
 #include "log.h"
 #include "lockscreen.h"
@@ -22,7 +22,7 @@
 
 #include <Elementary.h>
 
-Evas_Object *lockscreen_notifications_view_create(Evas_Object *parent)
+Evas_Object *lockscreen_events_view_create(Evas_Object *parent)
 {
 	Evas_Object *layout = elm_layout_add(parent);
 	if (!elm_layout_file_set(layout, util_get_res_file_path(LOCK_EDJE_FILE), "contextual-event")) {
@@ -32,21 +32,20 @@ Evas_Object *lockscreen_notifications_view_create(Evas_Object *parent)
 	}
 	evas_object_show(layout);
 
-	Evas_Object *scroller = elm_scroller_add(layout);
-	elm_scroller_content_min_limit(scroller, EINA_FALSE, EINA_TRUE);
-	elm_scroller_bounce_set(scroller, EINA_TRUE, EINA_FALSE);
-	elm_scroller_policy_set(scroller, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-	elm_object_scroll_lock_y_set(scroller, EINA_TRUE);
-	elm_object_tree_focus_allow_set(scroller, EINA_TRUE);
-	evas_object_show(scroller);
+	Evas_Object *genlist = elm_genlist_add(layout);
+	elm_scroller_content_min_limit(genlist, EINA_FALSE, EINA_TRUE);
+	elm_scroller_bounce_set(genlist, EINA_TRUE, EINA_FALSE);
+	elm_scroller_policy_set(genlist, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+	elm_object_scroll_lock_y_set(genlist, EINA_TRUE);
+	elm_object_tree_focus_allow_set(genlist, EINA_TRUE);
+	evas_object_show(genlist);
 
-	Evas_Object *box = elm_box_add(scroller);
-	evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_fill_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	evas_object_show(box);
-
-	elm_object_content_set(scroller, box);
-	elm_object_part_content_set(layout, "sw.scroller", scroller);
+	elm_object_part_content_set(layout, "sw.genlist", genlist);
 
 	return layout;
+}
+
+Evas_Object *lockscreen_events_genlist_get(Evas_Object *events_view)
+{
+	return elm_object_part_content_get(events_view, "sw.genlist");
 }

@@ -14,24 +14,13 @@
  * limitations under the License.
  */
 
-#include "log.h"
-#include "notifications_ctrl.h"
-#include "notifications.h"
-#include "main_view.h"
+#ifndef _LOCKSCREEN_EVENTS_CTRL_H_
+#define _LOCKSCREEN_EVENTS_CTRL_H_
 
-#include <Ecore.h>
-#include <time.h>
+#include <Elementary.h>
 
-static Ecore_Event_Handler *handler;
-static Evas_Object *main_view;
+int lockscreen_events_ctrl_init(Evas_Object *main_view);
 
-int lockscreen_notifications_ctrl_init(Evas_Object *mv)
-{
-	main_view = mv;
+void lockscreen_events_ctrl_shutdown();
 
-	return 0;
-}
-
-void lockscreen_notifications_ctrl_shutdown()
-{
-}
+#endif

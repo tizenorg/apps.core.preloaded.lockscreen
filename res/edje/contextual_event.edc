@@ -84,7 +84,7 @@ group {
 			}
 		}
 		part {
-			name: "sw.scroller";
+			name: "sw.genlist";
 			type: SWALLOW;
 			description {
 				state: "default" 0.0;
