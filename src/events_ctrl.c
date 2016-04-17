@@ -65,10 +65,7 @@ static char *_lockscreen_events_view_ctrl_genlist_noti_text_get(void *data, Evas
 static Evas_Object *_lockscreen_events_view_ctrl_genlist_widget_content_get(void *data, Evas_Object *obj, const char *part)
 {
 	if (!strcmp(part, WIDGET_ITEM_CONTENT)) {
-		Evas_Object *ret = lockscreen_minicontrollers_active_minicontroller_get(obj);
-		_E("Get minicontroller: %p", ret);
-		evas_object_show(ret);
-		return ret;
+		return lockscreen_minicontrollers_active_minicontroller_get(obj);
 	}
 	return NULL;
 }
@@ -127,7 +124,6 @@ static void _lockscreen_events_ctrl_minicontroller_load()
 		return;
 	}
 
-	_E("Display minicontroller");
 	active_minicontroller = elm_genlist_item_prepend(genlist, &widget_itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 }
 
@@ -154,7 +150,6 @@ static Eina_Bool _lockscreen_events_ctrl_notifications_changed(void *data, int e
 
 static Eina_Bool _lockscreen_events_ctrl_minicontroller_changed(void *data, int event, void *event_info)
 {
-	_E("Minicontroller changed");
 	_lockscreen_events_ctrl_minicontroller_unload();
 	_lockscreen_events_ctrl_minicontroller_load();
 

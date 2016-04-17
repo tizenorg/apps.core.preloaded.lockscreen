@@ -110,10 +110,9 @@ void lockscreen_minicontrollers_shutdown(void)
 Evas_Object *lockscreen_minicontrollers_active_minicontroller_get(Evas_Object *parent)
 {
 	if (!active_minicontroller) return NULL;
-	_E("Active mini: %s (on %s)", active_minicontroller, evas_object_type_get(parent));
 	Evas_Object *ret = minicontrol_viewer_add(parent, active_minicontroller);
 	evas_object_size_hint_min_set(ret, width, height);
-	_E("Active mini min size: %d %d", width, height);
+	_D("Create minicontroller for %s, (size: %d %d)", active_minicontroller, width, height);
 	evas_object_show(ret);
 	return ret;
 }
