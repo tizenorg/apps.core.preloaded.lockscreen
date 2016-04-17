@@ -44,8 +44,18 @@ static Evas_Object *_lockscreen_events_view_ctrl_genlist_noti_content_get(void *
 
 static char *_lockscreen_events_view_ctrl_genlist_noti_text_get(void *data, Evas_Object *obj, const char *part)
 {
-	_E("Return stub");
-	return strdup("stub");
+	lockscreen_notification_t *noti = data;
+	const char *val = NULL;
+
+	if (!strcmp(part, "elm.text")) {
+		val = lockscreen_notification_title_get(noti);
+	}
+	else if (!strcmp(part, "elm.text.end")) {
+		val = lockscreen_notification_content_get(noti);
+	}
+
+	if (val) _E("Returned string: %s", val);
+	return val ? strdup(val) : NULL;
 }
 
 static void _lockscreen_events_ctrl_view_show()
@@ -82,9 +92,9 @@ static void _lockscreen_events_ctrl_notifications_load()
 	}
 
 	Eina_List *notis = lockscreen_notifications_get();
-	notis = eina_list_sort(notis, -1, _lockscreen_events_ctrl_sort);
+	//notis = eina_list_sort(notis, -1, _lockscreen_events_ctrl_sort);
 	EINA_LIST_FREE(notis, lnoti) {
-		_D("Append genlist item for package ");
+		_D("Append genlist item for package %s (%p)", lockscreen_notification_title_get(lnoti), lnoti);
 		Elm_Genlist_Item *it = elm_genlist_item_append(genlist, &noti_itc, lnoti, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 		if (!it) FATAL("Item addition failed!");
 	}
@@ -93,7 +103,7 @@ static void _lockscreen_events_ctrl_notifications_load()
 static void _lockscreen_events_ctrl_notifications_unload()
 {
 	_D("Notifications unload");
-	Evas_Object *genlist = lockscreen_events_genlist_get(main_view);
+	Evas_Object *genlist = lockscreen_events_genlist_get(lockscreen_main_view_part_content_get(main_view, PART_EVENTS));
 	elm_genlist_clear(genlist);
 }
 

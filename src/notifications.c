@@ -63,15 +63,17 @@ static void _lockscreen_notification_destroy(lockscreen_notification_t *event)
 static lockscreen_notification_t *_lockscreen_notification_create(notification_h noti)
 {
 	int ret;
+	char *val;
 	lockscreen_notification_t *event = calloc(1, sizeof(lockscreen_notification_t));
 	if (!event) return NULL;
 
-	ret = notification_get_text(noti, NOTIFICATION_TEXT_TYPE_TITLE, &event->title);
+	ret = notification_get_text(noti, NOTIFICATION_TEXT_TYPE_TITLE, &val);
 	if (ret != NOTIFICATION_ERROR_NONE) {
 		_E("notification_get_text failed: %s", get_error_message(ret));
 		_lockscreen_notification_destroy(event);
 		return NULL;
 	}
+	if (val) event->title = strdup(val);
 
 	ret = notification_get_text(noti, NOTIFICATION_TEXT_TYPE_CONTENT, &event->content);
 	if (ret != NOTIFICATION_ERROR_NONE) {
@@ -79,27 +81,31 @@ static lockscreen_notification_t *_lockscreen_notification_create(notification_h
 		_lockscreen_notification_destroy(event);
 		return NULL;
 	}
+	if (val) event->content = strdup(val);
 
-	ret = notification_get_pkgname(noti, &event->package);
+	ret = notification_get_pkgname(noti, &val);
 	if (ret != NOTIFICATION_ERROR_NONE) {
 		_E("notification_get_pkgname failed: %s", get_error_message(ret));
 		_lockscreen_notification_destroy(event);
 		return NULL;
 	}
+	if (val) event->package = strdup(val);
 
-	ret = notification_get_image(noti, NOTIFICATION_IMAGE_TYPE_ICON, &event->icon_path);
+	ret = notification_get_image(noti, NOTIFICATION_IMAGE_TYPE_ICON, &val);
 	if (ret != NOTIFICATION_ERROR_NONE) {
 		_E("notification_get_image failed: %s", get_error_message(ret));
 		_lockscreen_notification_destroy(event);
 		return NULL;
 	}
+	if (val) event->icon_path = strdup(val);
 
-	ret = notification_get_image(noti, NOTIFICATION_IMAGE_TYPE_ICON_SUB, &event->icon_sub_path);
+	ret = notification_get_image(noti, NOTIFICATION_IMAGE_TYPE_ICON_SUB, &val);
 	if (ret != NOTIFICATION_ERROR_NONE) {
 		_E("notification_get_image failed: %s", get_error_message(ret));
 		_lockscreen_notification_destroy(event);
 		return NULL;
 	}
+	if (val) event->icon_sub_path = strdup(val);
 
 	ret = notification_get_time(noti, &event->time);
 	if (ret != NOTIFICATION_ERROR_NONE) {
@@ -145,7 +151,9 @@ static int load_notifications()
 		noti = notification_list_get_data(noti_list);
 		if (_notification_accept(noti)) {
 			lockscreen_notification_t *me = _lockscreen_notification_create(noti);
+			_E("Add item from %s (%p) to list (%p)", me->package, me, notifications);
 			notifications = eina_list_append(notifications, me);
+			_E("Ret list (%p)", notifications);
 		}
 		noti_list = notification_list_get_next(noti_list);
 	}
@@ -239,10 +247,21 @@ bool lockscreen_notification_launch(lockscreen_notification_t *event)
 
 Eina_List *lockscreen_notifications_get(void)
 {
+	_E("Clone list (%p)", notifications);
 	return eina_list_clone(notifications);
 }
 
 bool lockscreen_notifications_exists(void)
 {
 	return notifications ? EINA_TRUE : EINA_FALSE;
+}
+
+const char *lockscreen_notification_title_get(lockscreen_notification_t *event)
+{
+	return event->title;
+}
+
+const char *lockscreen_notification_content_get(lockscreen_notification_t *event)
+{
+	return event->content;
 }

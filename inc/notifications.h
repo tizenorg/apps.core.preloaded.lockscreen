@@ -30,6 +30,10 @@ const char *lockscreen_notification_icon_get(lockscreen_notification_t *event);
 
 const char *lockscreen_notification_sub_icon_get(lockscreen_notification_t *event);
 
+const char *lockscreen_notification_title_get(lockscreen_notification_t *event);
+
+const char *lockscreen_notification_content_get(lockscreen_notification_t *event);
+
 bool lockscreen_notification_launch(lockscreen_notification_t *event);
 
 Eina_List *lockscreen_notifications_get(void);
