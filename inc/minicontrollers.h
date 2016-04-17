@@ -17,13 +17,15 @@
 #ifndef _LOCKSCREEN_MINICONTROLLERS__H_
 #define _LOCKSCREEN_MINICONTROLLERS__H_
 
+#include <Elementary.h>
+
 extern int LOCKSCREEN_EVENT_MINICONTROLLER_CHANGED;
 
 int lockscreen_minicontrollers_init(void);
 
 void lockscreen_minicontrollers_shutdown(void);
 
-const char *lockscreen_minicontrollers_active_minicontroller_get(void);
+Evas_Object *lockscreen_minicontrollers_active_minicontroller_get(Evas_Object *parent);
 
 #endif
 

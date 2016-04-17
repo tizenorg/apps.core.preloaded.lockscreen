@@ -151,9 +151,7 @@ static int load_notifications()
 		noti = notification_list_get_data(noti_list);
 		if (_notification_accept(noti)) {
 			lockscreen_notification_t *me = _lockscreen_notification_create(noti);
-			_E("Add item from %s (%p) to list (%p)", me->package, me, notifications);
 			notifications = eina_list_append(notifications, me);
-			_E("Ret list (%p)", notifications);
 		}
 		noti_list = notification_list_get_next(noti_list);
 	}
@@ -247,7 +245,6 @@ bool lockscreen_notification_launch(lockscreen_notification_t *event)
 
 Eina_List *lockscreen_notifications_get(void)
 {
-	_E("Clone list (%p)", notifications);
 	return eina_list_clone(notifications);
 }
 

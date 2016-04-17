@@ -21,13 +21,15 @@
 #include "minicontrollers.h"
 
 static const char *active_minicontroller;
-static int init_count;
+static int init_count, width, height;
 int LOCKSCREEN_EVENT_MINICONTROLLER_CHANGED;
 
-static void _minicontroller_start_handle(const char *name)
+static void _minicontroller_start_handle(const char *name, int w, int h)
 {
-	if (!active_minicontroller) {
+	if (!active_minicontroller && strstr(name, "LOCKSCREEN]")) {
 		active_minicontroller = eina_stringshare_add(name);
+		width = w;
+		height = h;
 		ecore_event_add(LOCKSCREEN_EVENT_MINICONTROLLER_CHANGED, NULL, NULL, NULL);
 	}
 }
@@ -41,8 +43,23 @@ static void _minicontroller_stop_handle(const char *name)
 	}
 }
 
+static void _minicontroller_geometry_from_bundle_get(bundle *event_arg, int *width, int *height)
+{
+	int *val;
+	size_t val_size;
+	int ret = bundle_get_byte(event_arg, "width", (void**)&val, &val_size);
+	if (ret == BUNDLE_ERROR_NONE) {
+		if (width) *width = *val;
+	}
+	ret = bundle_get_byte(event_arg, "height", (void**)&val, &val_size);
+	if (ret == BUNDLE_ERROR_NONE) {
+		if (height) *height = *val;
+	}
+}
+
 static void _minicontroler_event(minicontrol_event_e event, const char *minicontrol_name, bundle *event_arg, void *data)
 {
+	int w = 0, h = 0;
 	if (!minicontrol_name)
 		return;
 
@@ -50,7 +67,8 @@ static void _minicontroler_event(minicontrol_event_e event, const char *minicont
 
 	switch (event) {
 		case MINICONTROL_EVENT_START:
-			_minicontroller_start_handle(minicontrol_name);
+			_minicontroller_geometry_from_bundle_get(event_arg, &w, &h);
+			_minicontroller_start_handle(minicontrol_name, w, h);
 			break;
 		case MINICONTROL_EVENT_STOP:
 			_minicontroller_stop_handle(minicontrol_name);
@@ -75,7 +93,7 @@ int lockscreen_minicontrollers_init(void)
 	return 0;
 }
 
-void lockscreen_data_model_music_player_shutdown(void)
+void lockscreen_minicontrollers_shutdown(void)
 {
 	if (init_count) {
 		init_count--;
@@ -87,4 +105,15 @@ void lockscreen_data_model_music_player_shutdown(void)
 			eina_stringshare_del(active_minicontroller);
 		}
 	}
+}
+
+Evas_Object *lockscreen_minicontrollers_active_minicontroller_get(Evas_Object *parent)
+{
+	if (!active_minicontroller) return NULL;
+	_E("Active mini: %s (on %s)", active_minicontroller, evas_object_type_get(parent));
+	Evas_Object *ret = minicontrol_viewer_add(parent, active_minicontroller);
+	evas_object_size_hint_min_set(ret, width, height);
+	_E("Active mini min size: %d %d", width, height);
+	evas_object_show(ret);
+	return ret;
 }

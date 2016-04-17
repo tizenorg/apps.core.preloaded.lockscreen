@@ -19,22 +19,28 @@
 #include "events_view.h"
 #include "main_view.h"
 #include "notifications.h"
+#include "minicontrollers.h"
 
 #include <Ecore.h>
 #include <time.h>
 
-static Ecore_Event_Handler *handler;
+static Ecore_Event_Handler *events_handler, *mini_handler;
 static Evas_Object *main_view;
 static Elm_Object_Item *active_minicontroller;
 
 static Evas_Object *_lockscreen_events_view_ctrl_genlist_noti_content_get(void *data, Evas_Object *obj, const char *part);
-;
 static char *_lockscreen_events_view_ctrl_genlist_noti_text_get(void *data, Evas_Object *obj, const char *part);
+static Evas_Object *_lockscreen_events_view_ctrl_genlist_widget_content_get(void *data, Evas_Object *obj, const char *part);
 
 static Elm_Genlist_Item_Class noti_itc = {
 	.item_style = "double_label",
 	.func.content_get = _lockscreen_events_view_ctrl_genlist_noti_content_get,
 	.func.text_get = _lockscreen_events_view_ctrl_genlist_noti_text_get,
+};
+
+static Elm_Genlist_Item_Class widget_itc = {
+	.item_style = WIDGET_ITEM_STYLE,
+	.func.content_get = _lockscreen_events_view_ctrl_genlist_widget_content_get,
 };
 
 static Evas_Object *_lockscreen_events_view_ctrl_genlist_noti_content_get(void *data, Evas_Object *obj, const char *part)
@@ -53,9 +59,18 @@ static char *_lockscreen_events_view_ctrl_genlist_noti_text_get(void *data, Evas
 	else if (!strcmp(part, "elm.text.end")) {
 		val = lockscreen_notification_content_get(noti);
 	}
-
-	if (val) _E("Returned string: %s", val);
 	return val ? strdup(val) : NULL;
+}
+
+static Evas_Object *_lockscreen_events_view_ctrl_genlist_widget_content_get(void *data, Evas_Object *obj, const char *part)
+{
+	if (!strcmp(part, WIDGET_ITEM_CONTENT)) {
+		Evas_Object *ret = lockscreen_minicontrollers_active_minicontroller_get(obj);
+		_E("Get minicontroller: %p", ret);
+		evas_object_show(ret);
+		return ret;
+	}
+	return NULL;
 }
 
 static void _lockscreen_events_ctrl_view_show()
@@ -84,7 +99,6 @@ static void _lockscreen_events_ctrl_notifications_load()
 {
 	lockscreen_notification_t *lnoti;
 
-	_D("Notifications load");
 	Evas_Object *genlist = lockscreen_events_genlist_get(lockscreen_main_view_part_content_get(main_view, PART_EVENTS));
 	if (!genlist) {
 		FATAL("lockscreen_events_genlist_get failed");
@@ -92,19 +106,35 @@ static void _lockscreen_events_ctrl_notifications_load()
 	}
 
 	Eina_List *notis = lockscreen_notifications_get();
-	//notis = eina_list_sort(notis, -1, _lockscreen_events_ctrl_sort);
+	notis = eina_list_sort(notis, -1, _lockscreen_events_ctrl_sort);
 	EINA_LIST_FREE(notis, lnoti) {
-		_D("Append genlist item for package %s (%p)", lockscreen_notification_title_get(lnoti), lnoti);
 		Elm_Genlist_Item *it = elm_genlist_item_append(genlist, &noti_itc, lnoti, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
-		if (!it) FATAL("Item addition failed!");
+		if (!it) FATAL("elm_genlist_item_append failed!");
 	}
 }
 
 static void _lockscreen_events_ctrl_notifications_unload()
 {
-	_D("Notifications unload");
 	Evas_Object *genlist = lockscreen_events_genlist_get(lockscreen_main_view_part_content_get(main_view, PART_EVENTS));
 	elm_genlist_clear(genlist);
+}
+
+static void _lockscreen_events_ctrl_minicontroller_load()
+{
+	Evas_Object *genlist = lockscreen_events_genlist_get(lockscreen_main_view_part_content_get(main_view, PART_EVENTS));
+	if (!genlist) {
+		FATAL("lockscreen_events_genlist_get failed");
+		return;
+	}
+
+	_E("Display minicontroller");
+	active_minicontroller = elm_genlist_item_prepend(genlist, &widget_itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+}
+
+static void _lockscreen_events_ctrl_minicontroller_unload()
+{
+	if (active_minicontroller)
+		elm_object_item_del(active_minicontroller);
 }
 
 static Eina_Bool _lockscreen_events_ctrl_notifications_changed(void *data, int event, void *event_info)
@@ -122,6 +152,15 @@ static Eina_Bool _lockscreen_events_ctrl_notifications_changed(void *data, int e
 	return EINA_TRUE;
 }
 
+static Eina_Bool _lockscreen_events_ctrl_minicontroller_changed(void *data, int event, void *event_info)
+{
+	_E("Minicontroller changed");
+	_lockscreen_events_ctrl_minicontroller_unload();
+	_lockscreen_events_ctrl_minicontroller_load();
+
+	return EINA_TRUE;
+}
+
 int lockscreen_events_ctrl_init(Evas_Object *mv)
 {
 	if (lockscreen_notifications_init()) {
@@ -129,12 +168,19 @@ int lockscreen_events_ctrl_init(Evas_Object *mv)
 		return 1;
 	}
 
-	handler = ecore_event_handler_add(LOCKSCREEN_EVENT_NOTIFICATIONS_CHANGED, _lockscreen_events_ctrl_notifications_changed, NULL);
+	if (lockscreen_minicontrollers_init()) {
+		FATAL("lockscreen_minicontrollers_init failed.");
+		lockscreen_notifications_shutdown();
+		return 1;
+	}
+
 	main_view = mv;
+
+	events_handler = ecore_event_handler_add(LOCKSCREEN_EVENT_NOTIFICATIONS_CHANGED, _lockscreen_events_ctrl_notifications_changed, NULL);
+	mini_handler = ecore_event_handler_add(LOCKSCREEN_EVENT_MINICONTROLLER_CHANGED, _lockscreen_events_ctrl_minicontroller_changed, NULL);
 
 	if (lockscreen_notifications_exists()) {
 		_lockscreen_events_ctrl_view_show();
-		_lockscreen_events_ctrl_notifications_load();
 	}
 	else
 		_lockscreen_events_ctrl_view_hide();
@@ -144,6 +190,8 @@ int lockscreen_events_ctrl_init(Evas_Object *mv)
 
 void lockscreen_events_ctrl_shutdown()
 {
-	ecore_event_handler_del(handler);
+	ecore_event_handler_del(mini_handler);
+	ecore_event_handler_del(events_handler);
 	lockscreen_notifications_shutdown();
+	lockscreen_minicontrollers_shutdown();
 }
