@@ -23,19 +23,7 @@
 static struct {
 	Evas_Object *win;
 	Evas_Object *conformant;
-	int win_w;
-	int win_h;
 } view;
-
-int lock_window_width_get(void)
-{
-	return view.win_w;
-}
-
-int lock_window_height_get(void)
-{
-	return view.win_h;
-}
 
 static void _lockscreen_window_event_rect_mouse_down_cb(void *data, Evas *e, Evas_Object *src, void *event_info)
 {
@@ -66,7 +54,6 @@ Evas_Object *lockscreen_window_create(void)
 	elm_win_role_set(win, "notification-normal");
 	elm_win_fullscreen_set(win, EINA_TRUE);
 	elm_win_indicator_mode_set(win, ELM_WIN_INDICATOR_SHOW);
-	elm_win_screen_size_get(win, NULL, NULL, &view.win_w, &view.win_h);
 
 	Evas_Object *conformant = elm_conformant_add(win);
 	evas_object_size_hint_weight_set(conformant, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
