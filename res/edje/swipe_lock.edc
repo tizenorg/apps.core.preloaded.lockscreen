@@ -146,29 +146,6 @@ group {
 			}
 		}
 		part {
-			name: "sw.contextual_event";
-			type: SWALLOW;
-			clip_to: "vi_clipper";
-			description {
-				state: "default" 0.0;
-				align: 0 0;
-				rel1 { relative: 0.0 1.0; to_x: "bg"; to_y: "txt.shortdate"; }
-				rel2 { relative: 1.0 (INDICATOR_HEIGHT+CONTEXTUAL_INFO_HEIGHT)/WIN_HEIGHT; to: "bg"; }
-			}
-			description {
-				state: "effect_start" 0.0;
-				inherit: "default" 0.0;
-				rel1 { offset: 0 -6; }
-				rel2 { offset: 0 -6; }
-			}
-			description {
-				state: "effect" 0.0;
-				inherit: "default" 0.0;
-				rel1 { offset: 0 -SWIPE_LOCK_EFFECT_HEIGHT; }
-				rel2 { offset: 0 -SWIPE_LOCK_EFFECT_HEIGHT; }
-			}
-		}
-		part {
 			name: "txt.time";
 			type: TEXTBLOCK;
 			clip_to: "vi_clipper";
@@ -309,6 +286,29 @@ group {
 			description {
 				state: "blocked" 1.0;
 				inherit : "default";
+			}
+		}
+		part {
+			name: "sw.contextual_event";
+			type: SWALLOW;
+			clip_to: "vi_clipper";
+			description {
+				state: "default" 0.0;
+				align: 0 0;
+				rel1 { relative: 0.0 1.0; to_x: "bg"; to_y: "txt.shortdate"; }
+				rel2 { relative: 1.0 (INDICATOR_HEIGHT+CONTEXTUAL_INFO_HEIGHT)/WIN_HEIGHT; to: "bg"; }
+			}
+			description {
+				state: "effect_start" 0.0;
+				inherit: "default" 0.0;
+				rel1 { offset: 0 -6; }
+				rel2 { offset: 0 -6; }
+			}
+			description {
+				state: "effect" 0.0;
+				inherit: "default" 0.0;
+				rel1 { offset: 0 -SWIPE_LOCK_EFFECT_HEIGHT; }
+				rel2 { offset: 0 -SWIPE_LOCK_EFFECT_HEIGHT; }
 			}
 		}
 		part {
