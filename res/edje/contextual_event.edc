@@ -88,10 +88,8 @@ group {
 			type: SWALLOW;
 			description {
 				state: "default" 0.0;
-				fixed: 1 1;
 				align: 0.0 0.0;
 				rel1 { relative: 0.0 1.0; to_x: "bg"; to_y: "btn.close"; offset: 0 6; }
-				rel2 { relative: 1.0 1.0; to_x: "bg"; to_y: "rect.event.area.bg"; }
 			}
 		}
 		part {

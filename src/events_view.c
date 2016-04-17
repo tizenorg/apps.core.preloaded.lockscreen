@@ -33,10 +33,9 @@ Evas_Object *lockscreen_events_view_create(Evas_Object *parent)
 	evas_object_show(layout);
 
 	Evas_Object *genlist = elm_genlist_add(layout);
-	elm_scroller_content_min_limit(genlist, EINA_FALSE, EINA_TRUE);
+	elm_genlist_mode_set(genlist, ELM_LIST_EXPAND);
 	elm_scroller_bounce_set(genlist, EINA_TRUE, EINA_FALSE);
 	elm_scroller_policy_set(genlist, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-	elm_object_scroll_lock_y_set(genlist, EINA_TRUE);
 	elm_object_tree_focus_allow_set(genlist, EINA_TRUE);
 	evas_object_show(genlist);
 

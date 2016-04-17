@@ -47,6 +47,8 @@ static void _minicontroller_geometry_from_bundle_get(bundle *event_arg, int *wid
 {
 	int *val;
 	size_t val_size;
+	if (!event_arg)
+		return;
 	int ret = bundle_get_byte(event_arg, "width", (void**)&val, &val_size);
 	if (ret == BUNDLE_ERROR_NONE) {
 		if (width) *width = *val;
