@@ -54,6 +54,9 @@ void lockscreen_main_view_part_content_set(Evas_Object *view, const char *part, 
 		FATAL("No sw.swipe_layout part");
 		return;
 	}
+	if (!strcmp(PART_EVENTS, part)) {
+		elm_object_signal_emit(swipe_layout, "contextual,events,show", "lockscreen");
+	}
 	elm_object_part_content_set(swipe_layout, part, content);
 }
 
@@ -63,6 +66,9 @@ Evas_Object *lockscreen_main_view_part_content_unset(Evas_Object *view, const ch
 	if (!swipe_layout) {
 		FATAL("No sw.swipe_layout part");
 		return false;
+	}
+	if (!strcmp(PART_EVENTS, part)) {
+		elm_object_signal_emit(swipe_layout, "contextual,events,hide", "lockscreen");
 	}
 	return elm_object_part_content_unset(swipe_layout, part);
 }
