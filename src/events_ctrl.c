@@ -27,35 +27,74 @@ static Ecore_Event_Handler *handler;
 static Evas_Object *main_view;
 static Elm_Object_Item *active_minicontroller;
 
-static Elm_Genlist_Item_Class itc = {
+static Evas_Object *_lockscreen_events_view_ctrl_genlist_noti_content_get(void *data, Evas_Object *obj, const char *part);
+;
+static char *_lockscreen_events_view_ctrl_genlist_noti_text_get(void *data, Evas_Object *obj, const char *part);
+
+static Elm_Genlist_Item_Class noti_itc = {
+	.item_style = "double_label",
+	.func.content_get = _lockscreen_events_view_ctrl_genlist_noti_content_get,
+	.func.text_get = _lockscreen_events_view_ctrl_genlist_noti_text_get,
 };
+
+static Evas_Object *_lockscreen_events_view_ctrl_genlist_noti_content_get(void *data, Evas_Object *obj, const char *part)
+{
+	return NULL;
+}
+
+static char *_lockscreen_events_view_ctrl_genlist_noti_text_get(void *data, Evas_Object *obj, const char *part)
+{
+	_E("Return stub");
+	return strdup("stub");
+}
 
 static void _lockscreen_events_ctrl_view_show()
 {
+	Evas_Object *events_view = lockscreen_main_view_part_content_get(main_view, PART_EVENTS);
+	if (!events_view) {
+		events_view = lockscreen_events_view_create(main_view);
+		lockscreen_main_view_part_content_set(main_view, PART_EVENTS, events_view);
+	}
 }
 
 static void _lockscreen_events_ctrl_view_hide()
 {
+	Evas_Object *events_view = lockscreen_main_view_part_content_get(main_view, PART_EVENTS);
+	if (events_view) {
+		evas_object_del(events_view);
+	}
 }
 
-static Eina_Bool _lockscreen_events_ctrl_sort(const void *data, const void *data)
+static int _lockscreen_events_ctrl_sort(const void *data1, const void *data2)
 {
 	return EINA_TRUE;
 }
 
-static void _lockscreen_events_ctrl_notifications_load(Evas_Object *genlist)
+static void _lockscreen_events_ctrl_notifications_load()
 {
 	lockscreen_notification_t *lnoti;
 
+	_D("Notifications load");
+	Evas_Object *genlist = lockscreen_events_genlist_get(lockscreen_main_view_part_content_get(main_view, PART_EVENTS));
+	if (!genlist) {
+		FATAL("lockscreen_events_genlist_get failed");
+		return;
+	}
+
 	Eina_List *notis = lockscreen_notifications_get();
-	notis = eina_list_sort(notis, -1, _lockscreen_events_ctrl_sort, NULL);
+	notis = eina_list_sort(notis, -1, _lockscreen_events_ctrl_sort);
 	EINA_LIST_FREE(notis, lnoti) {
-		elm_genlist_item_append(genlist, &itc, NULL, ELM_GENLIST_ITEM_NONE, lnoti, NULL. NULL);
+		_D("Append genlist item for package ");
+		Elm_Genlist_Item *it = elm_genlist_item_append(genlist, &noti_itc, lnoti, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+		if (!it) FATAL("Item addition failed!");
 	}
 }
 
-static void _lockscreen_events_ctrl_notifications_unload(Evas_Object *genlist)
+static void _lockscreen_events_ctrl_notifications_unload()
 {
+	_D("Notifications unload");
+	Evas_Object *genlist = lockscreen_events_genlist_get(main_view);
+	elm_genlist_clear(genlist);
 }
 
 static Eina_Bool _lockscreen_events_ctrl_notifications_changed(void *data, int event, void *event_info)
@@ -83,8 +122,10 @@ int lockscreen_events_ctrl_init(Evas_Object *mv)
 	handler = ecore_event_handler_add(LOCKSCREEN_EVENT_NOTIFICATIONS_CHANGED, _lockscreen_events_ctrl_notifications_changed, NULL);
 	main_view = mv;
 
-	if (lockscreen_notifications_exists())
+	if (lockscreen_notifications_exists()) {
 		_lockscreen_events_ctrl_view_show();
+		_lockscreen_events_ctrl_notifications_load();
+	}
 	else
 		_lockscreen_events_ctrl_view_hide();
 

@@ -34,4 +34,6 @@ bool lockscreen_notification_launch(lockscreen_notification_t *event);
 
 Eina_List *lockscreen_notifications_get(void);
 
+bool lockscreen_notifications_exists(void);
+
 #endif

@@ -43,7 +43,7 @@ typedef enum {
 /**
  * @brief Accessible via lockscreen_main_view_part_content_get/set/unset
  */
-#define PART_NOTIFICATIONS "sw.camera"
+#define PART_EVENTS "sw.contextual_event"
 
 Evas_Object *lockscreen_main_view_create(Evas_Object *parent);
 
