@@ -24,7 +24,7 @@
 #define NOTI_ITEM_CONTENT_ICON "elm.icon"
 #define NOTI_ITEM_CONTENT_SUB_ICON "elm.sub.icon"
 
-#define WIDGET_ITEM_STYLE "one-icon"
+#define WIDGET_ITEM_STYLE "one_icon"
 #define WIDGET_ITEM_CONTENT "elm.swallow.icon"
 
 /**
