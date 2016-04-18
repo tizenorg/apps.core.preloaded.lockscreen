@@ -23,7 +23,7 @@
  * @brief Initialize events controller.
  *
  * Events controller module is responsible for displaying notification and
- * minicontroller on @main_view
+ * minicontrollers on @main_view
  */
 int lockscreen_events_ctrl_init(Evas_Object *main_view);
 

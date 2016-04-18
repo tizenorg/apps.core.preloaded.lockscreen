@@ -130,7 +130,19 @@ static void _lockscreen_events_ctrl_view_hide()
 
 static int _lockscreen_events_ctrl_sort(const void *data1, const void *data2)
 {
-	return EINA_TRUE;
+	lockscreen_event_t *event1 = data1;
+	lockscreen_event_t *event2 = data2;
+
+	lockscreen_event_type_e type1 = lockscreen_event_type_get(event1);
+	lockscreen_event_type_e type2 = lockscreen_event_type_get(event2);
+
+	if (type1 != type2)
+		return type1 > type2 ? 1 : -1;
+
+	time_t time1 = lockscreen_event_time_get(event1);
+	time_t time2 = lockscreen_event_time_get(event2);
+
+	return time1 > time2 ? 1 : -1;
 }
 
 static void _lockscreen_events_ctrl_item_selected(void *data, Evas_Object *obj, void *info)
