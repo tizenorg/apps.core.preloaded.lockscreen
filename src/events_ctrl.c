@@ -68,7 +68,7 @@ static char *_lockscreen_events_view_ctrl_genlist_noti_text_time_get(time_t time
 	char time_buf[PATH_MAX] = {0,};
 
 	if (!util_time_formatted_time_get(time, locale, timezone, use24hformat, &str_time, &str_meridiem)) {
-		_E("util_time_formatted_time_get failed");
+		ERR("util_time_formatted_time_get failed");
 		return NULL;
 	}
 
@@ -130,8 +130,8 @@ static void _lockscreen_events_ctrl_view_hide()
 
 static int _lockscreen_events_ctrl_sort(const void *data1, const void *data2)
 {
-	lockscreen_event_t *event1 = data1;
-	lockscreen_event_t *event2 = data2;
+	const lockscreen_event_t *event1 = data1;
+	const lockscreen_event_t *event2 = data2;
 
 	lockscreen_event_type_e type1 = lockscreen_event_type_get(event1);
 	lockscreen_event_type_e type2 = lockscreen_event_type_get(event2);

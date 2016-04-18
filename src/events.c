@@ -49,7 +49,7 @@ static bool _notification_accept(notification_h noti)
 	int app_list = 0;
 	int ret = notification_get_display_applist(noti, &app_list);
 	if (ret != NOTIFICATION_ERROR_NONE) {
-		_E("notification_get_display_applist failed: %s", get_error_message(ret));
+		ERR("notification_get_display_applist failed: %s", get_error_message(ret));
 		return false;
 	}
 	return app_list & NOTIFICATION_DISPLAY_APP_LOCK;
@@ -89,7 +89,7 @@ static lockscreen_event_t *_lockscreen_event_notification_create(notification_h 
 
 	ret = notification_get_text(noti, NOTIFICATION_TEXT_TYPE_TITLE, &val);
 	if (ret != NOTIFICATION_ERROR_NONE) {
-		_E("notification_get_text failed: %s", get_error_message(ret));
+		ERR("notification_get_text failed: %s", get_error_message(ret));
 		_lockscreen_event_destroy(event);
 		return NULL;
 	}
@@ -97,7 +97,7 @@ static lockscreen_event_t *_lockscreen_event_notification_create(notification_h 
 
 	ret = notification_get_text(noti, NOTIFICATION_TEXT_TYPE_CONTENT, &val);
 	if (ret != NOTIFICATION_ERROR_NONE) {
-		_E("notification_get_text failed: %s", get_error_message(ret));
+		ERR("notification_get_text failed: %s", get_error_message(ret));
 		_lockscreen_event_destroy(event);
 		return NULL;
 	}
@@ -105,7 +105,7 @@ static lockscreen_event_t *_lockscreen_event_notification_create(notification_h 
 
 	ret = notification_get_pkgname(noti, &val);
 	if (ret != NOTIFICATION_ERROR_NONE) {
-		_E("notification_get_pkgname failed: %s", get_error_message(ret));
+		ERR("notification_get_pkgname failed: %s", get_error_message(ret));
 		_lockscreen_event_destroy(event);
 		return NULL;
 	}
@@ -113,7 +113,7 @@ static lockscreen_event_t *_lockscreen_event_notification_create(notification_h 
 
 	ret = notification_get_image(noti, NOTIFICATION_IMAGE_TYPE_ICON, &val);
 	if (ret != NOTIFICATION_ERROR_NONE) {
-		_E("notification_get_image failed: %s", get_error_message(ret));
+		ERR("notification_get_image failed: %s", get_error_message(ret));
 		_lockscreen_event_destroy(event);
 		return NULL;
 	}
@@ -121,7 +121,7 @@ static lockscreen_event_t *_lockscreen_event_notification_create(notification_h 
 
 	ret = notification_get_image(noti, NOTIFICATION_IMAGE_TYPE_ICON_SUB, &val);
 	if (ret != NOTIFICATION_ERROR_NONE) {
-		_E("notification_get_image failed: %s", get_error_message(ret));
+		ERR("notification_get_image failed: %s", get_error_message(ret));
 		_lockscreen_event_destroy(event);
 		return NULL;
 	}
@@ -129,14 +129,14 @@ static lockscreen_event_t *_lockscreen_event_notification_create(notification_h 
 
 	ret = notification_get_time(noti, &event->time);
 	if (ret != NOTIFICATION_ERROR_NONE) {
-		_E("notification_get_time failed: %s", get_error_message(ret));
+		ERR("notification_get_time failed: %s", get_error_message(ret));
 		_lockscreen_event_destroy(event);
 		return NULL;
 	}
 
 	ret = notification_get_execute_option(noti, NOTIFICATION_EXECUTE_TYPE_SINGLE_LAUNCH, NULL, &event->service_handle);
 	if (ret != NOTIFICATION_ERROR_NONE) {
-		_E("notification_get_execute_option failed: %s", get_error_message(ret));
+		ERR("notification_get_execute_option failed: %s", get_error_message(ret));
 		_lockscreen_event_destroy(event);
 		return NULL;
 	}
@@ -145,11 +145,11 @@ static lockscreen_event_t *_lockscreen_event_notification_create(notification_h 
 		event->service_handle = bundle_dup(event->service_handle);
 	}
 
-	_D("Title: %s", event->title);
-	_D("Content: %s", event->content);
-	_D("Package: %s", event->package);
-	_D("Icon: %s", event->icon_path);
-	_D("SubIcon: %s", event->icon_sub_path);
+	DBG("Title: %s", event->title);
+	DBG("Content: %s", event->content);
+	DBG("Package: %s", event->package);
+	DBG("Icon: %s", event->icon_path);
+	DBG("SubIcon: %s", event->icon_sub_path);
 
 	return event;
 }
@@ -162,7 +162,7 @@ static int _load_notifications()
 
 	int ret = notification_get_list(NOTIFICATION_TYPE_NOTI, -1, &noti_list_head);
 	if (ret != NOTIFICATION_ERROR_NONE) {
-		_E("notification_get_list failed: %s", get_error_message(ret));
+		ERR("notification_get_list failed: %s", get_error_message(ret));
 		return 1;
 	}
 
@@ -235,12 +235,12 @@ int lockscreen_events_init(void)
 		LOCKSCREEN_EVENT_EVENTS_CHANGED = ecore_event_type_new();
 		int ret = notification_register_detailed_changed_cb(_noti_changed_cb, NULL);
 		if (ret != NOTIFICATION_ERROR_NONE) {
-			_E("notification_register_detailed_changed_cb failed: %d", get_error_message(ret));
+			ERR("notification_register_detailed_changed_cb failed: %d", get_error_message(ret));
 			return 1;
 		}
 		handler = ecore_event_handler_add(LOCKSCREEN_EVENT_MINICONTROLLERS_CHANGED, _lockscreen_events_minicontroller_changed, NULL);
 		if (_load_notifications()) {
-			_E("load_notifications failed");
+			ERR("load_notifications failed");
 			return 1;
 		}
 	}
@@ -255,7 +255,7 @@ void lockscreen_events_shutdown(void)
 		if (!init_count) {
 			int ret = notification_unregister_detailed_changed_cb(_noti_changed_cb, NULL);
 			if (ret != NOTIFICATION_ERROR_NONE) {
-				_E("notification_unregister_detailed_changed_cb failed: %s", get_error_message(ret));
+				ERR("notification_unregister_detailed_changed_cb failed: %s", get_error_message(ret));
 			}
 			_unload_notifications();
 			_unload_minicontrollers();
@@ -273,20 +273,20 @@ bool lockscreen_event_launch(lockscreen_event_t *event)
 
 	int ret = app_control_create(&service);
 	if (ret != APP_CONTROL_ERROR_NONE) {
-		_E("app_control_create failed: %s", get_error_message(ret));
+		ERR("app_control_create failed: %s", get_error_message(ret));
 		return false;
 	}
 
 	ret = app_control_import_from_bundle(service, event->service_handle);
 	if (ret != APP_CONTROL_ERROR_NONE) {
-		_E("app_control_import_from_bundle: %s", get_error_message(ret));
+		ERR("app_control_import_from_bundle: %s", get_error_message(ret));
 		app_control_destroy(service);
 		return false;
 	}
 
 	ret = app_control_send_launch_request(service, NULL, NULL);
 	if (ret != APP_CONTROL_ERROR_NONE) {
-		_E("app_control_send_launch_request failed: %s", get_error_message(ret));
+		ERR("app_control_send_launch_request failed: %s", get_error_message(ret));
 		app_control_destroy(service);
 		return false;
 	}
@@ -306,32 +306,32 @@ bool lockscreen_events_exists(void)
 	return notifications || minicontrollers ? EINA_TRUE : EINA_FALSE;
 }
 
-const char *lockscreen_event_title_get(lockscreen_event_t *event)
+const char *lockscreen_event_title_get(const lockscreen_event_t *event)
 {
 	return event->title;
 }
 
-const char *lockscreen_event_content_get(lockscreen_event_t *event)
+const char *lockscreen_event_content_get(const lockscreen_event_t *event)
 {
 	return event->content;
 }
 
-time_t lockscreen_event_time_get(lockscreen_event_t *event)
+time_t lockscreen_event_time_get(const lockscreen_event_t *event)
 {
 	return event->time;
 }
 
-const char *lockscreen_event_icon_get(lockscreen_event_t *event)
+const char *lockscreen_event_icon_get(const lockscreen_event_t *event)
 {
 	return event->icon_path;
 }
 
-const char *lockscreen_event_sub_icon_get(lockscreen_event_t *event)
+const char *lockscreen_event_sub_icon_get(const lockscreen_event_t *event)
 {
 	return event->icon_sub_path;
 }
 
-lockscreen_event_type_e lockscreen_event_type_get(lockscreen_event_t *event)
+lockscreen_event_type_e lockscreen_event_type_get(const lockscreen_event_t *event)
 {
 	return event->type;
 }

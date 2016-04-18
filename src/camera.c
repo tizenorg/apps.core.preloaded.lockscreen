@@ -31,11 +31,11 @@ static void _app_control_reply_cb(app_control_h request, app_control_h reply, ap
 	switch (result) {
 		case APP_CONTROL_RESULT_APP_STARTED:
 		case APP_CONTROL_RESULT_SUCCEEDED:
-			_D("Camera application launch succcessed.");
+			DBG("Camera application launch succcessed.");
 			break;
 		case APP_CONTROL_RESULT_FAILED:
 		case APP_CONTROL_RESULT_CANCELED:
-			_D("Camera application launch failed.");
+			DBG("Camera application launch failed.");
 			break;
 	}
 }
@@ -46,13 +46,13 @@ int lockscreen_camera_activate()
 
 	int err = app_control_create(&app_ctr);
 	if (err != APP_CONTROL_ERROR_NONE) {
-		_E("app_control_create failed: %s", get_error_message(err));
+		ERR("app_control_create failed: %s", get_error_message(err));
 		return 1;
 	}
 
 	err = app_control_set_launch_mode(app_ctr, APP_CONTROL_LAUNCH_MODE_GROUP);
 	if (err != APP_CONTROL_ERROR_NONE) {
-		_E("app_control_set_launch_mode failed: %s", get_error_message(err));
+		ERR("app_control_set_launch_mode failed: %s", get_error_message(err));
 		app_control_destroy(app_ctr);
 		return 1;
 	}
@@ -60,7 +60,7 @@ int lockscreen_camera_activate()
 	/* Send a hint to camera-app to display itself over lockscreen */
 	err = app_control_add_extra_data(app_ctr, KEY_DISPLAY_OVER_LOCKSCREEN, "on");
 	if (err != APP_CONTROL_ERROR_NONE) {
-		_E("app_control_add_extra_data failed: %s", get_error_message(err));
+		ERR("app_control_add_extra_data failed: %s", get_error_message(err));
 		app_control_destroy(app_ctr);
 		return 1;
 	}
@@ -68,26 +68,26 @@ int lockscreen_camera_activate()
 	/* Send a hint to camera-app to display itself in secure mode*/
 	err = app_control_add_extra_data(app_ctr, "secure_mode", "true");
 	if (err != APP_CONTROL_ERROR_NONE) {
-		_E("app_control_add_extra_data failed: %s", get_error_message(err));
+		ERR("app_control_add_extra_data failed: %s", get_error_message(err));
 		app_control_destroy(app_ctr);
 		return 1;
 	}
 
 	err = app_control_set_app_id(app_ctr, "org.tizen.camera-app");
 	if (err != APP_CONTROL_ERROR_NONE) {
-		_E("app_control_set_app_id failed: %s", get_error_message(err));
+		ERR("app_control_set_app_id failed: %s", get_error_message(err));
 		app_control_destroy(app_ctr);
 		return 1;
 	}
 
 	err = app_control_send_launch_request(app_ctr, _app_control_reply_cb, NULL);
 	if (err != APP_CONTROL_ERROR_NONE) {
-		_E("app_control_send_launch_request failed: %s", get_error_message(err));
+		ERR("app_control_send_launch_request failed: %s", get_error_message(err));
 		app_control_destroy(app_ctr);
 		return 1;
 	}
 
-	_D("Launch request send for %s", APP_CONTROL_OPERATION_CREATE_CONTENT);
+	DBG("Launch request send for %s", APP_CONTROL_OPERATION_CREATE_CONTENT);
 	app_control_destroy(app_ctr);
 
 	return 0;

@@ -36,7 +36,7 @@ int _battery_status_update()
 
 	ret = runtime_info_get_value_bool(RUNTIME_INFO_KEY_CHARGER_CONNECTED, &connected);
 	if (ret != RUNTIME_INFO_ERROR_NONE) {
-		_E("runtime_info_get_value_bool failed: %s", get_error_message(ret));
+		ERR("runtime_info_get_value_bool failed: %s", get_error_message(ret));
 		return -1;
 	}
 	if (is_connected != connected) {
@@ -46,7 +46,7 @@ int _battery_status_update()
 
 	ret = device_battery_is_charging(&charging);
 	if (ret != DEVICE_ERROR_NONE) {
-		_E("device_battery_is_charging failed: %s", get_error_message(ret));
+		ERR("device_battery_is_charging failed: %s", get_error_message(ret));
 		return -1;
 	}
 	if (is_charging != charging) {
@@ -56,7 +56,7 @@ int _battery_status_update()
 
 	ret = device_battery_get_percent(&percent);
 	if (ret != DEVICE_ERROR_NONE) {
-		_E("device_battery_get_percent failed: %s", get_error_message(ret));
+		ERR("device_battery_get_percent failed: %s", get_error_message(ret));
 		return -1;
 	}
 	if (level != percent) {
@@ -88,20 +88,20 @@ int lockscreen_battery_init()
 		LOCKSCREEN_EVENT_BATTERY_CHANGED = ecore_event_type_new();
 		int ret = runtime_info_set_changed_cb(RUNTIME_INFO_KEY_CHARGER_CONNECTED, _battery_charger_changed_cb, NULL);
 		if (ret != RUNTIME_INFO_ERROR_NONE) {
-			_E("runtime_info_set_changed_cb failed: %s", get_error_message(ret));
+			ERR("runtime_info_set_changed_cb failed: %s", get_error_message(ret));
 			return -1;
 		}
 
 		ret = device_add_callback(DEVICE_CALLBACK_BATTERY_CAPACITY, _battery_changed_cb, NULL);
 		if (ret != DEVICE_ERROR_NONE) {
-			_E("device_add_callback failed: %s", get_error_message(ret));
+			ERR("device_add_callback failed: %s", get_error_message(ret));
 			runtime_info_unset_changed_cb(RUNTIME_INFO_KEY_CHARGER_CONNECTED);
 			return -1;
 		}
 
 		ret = device_add_callback(DEVICE_CALLBACK_BATTERY_CHARGING, _battery_changed_cb, NULL);
 		if (ret != DEVICE_ERROR_NONE) {
-			_E("device_add_callback failed: %s", get_error_message(ret));
+			ERR("device_add_callback failed: %s", get_error_message(ret));
 			device_remove_callback(DEVICE_CALLBACK_BATTERY_CAPACITY, _battery_changed_cb);
 			runtime_info_unset_changed_cb(RUNTIME_INFO_KEY_CHARGER_CONNECTED);
 			return -1;

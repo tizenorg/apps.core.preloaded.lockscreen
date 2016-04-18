@@ -54,7 +54,7 @@ static Eina_Bool _cam_status_changed(void *data, int event, void *event_info)
 int lockscreen_camera_ctrl_init(Evas_Object *view)
 {
 	if (lockscreen_camera_init()) {
-		_E("lockscreen_camera_init failed");
+		ERR("lockscreen_camera_init failed");
 		return 1;
 	}
 

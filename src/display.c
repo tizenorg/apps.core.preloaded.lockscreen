@@ -32,7 +32,7 @@ static Eina_Bool _time_elapsed(void *data)
 {
 	int ret = device_display_change_state(DISPLAY_STATE_SCREEN_OFF);
 	if (ret != DEVICE_ERROR_NONE) {
-		_E("device_display_change_state failed: %s", get_error_message(ret));
+		ERR("device_display_change_state failed: %s", get_error_message(ret));
 	}
 
 	lcd_off_timer = NULL;
@@ -79,12 +79,12 @@ int lockscreen_display_init(void)
 		LOCKSCREEN_EVENT_DISPLAY_STATUS_CHANGED = ecore_event_type_new();
 		int ret = device_add_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed, NULL);
 		if (ret != DEVICE_ERROR_NONE) {
-			_E("device_add_callback failed: %s", get_error_message(ret));
+			ERR("device_add_callback failed: %s", get_error_message(ret));
 			return 1;
 		}
 		ret = device_display_get_state(&state);
 		if (ret != DEVICE_ERROR_NONE) {
-			_E("device_display_get_state failed: %s", get_error_message(ret));
+			ERR("device_display_get_state failed: %s", get_error_message(ret));
 			device_remove_callback(DEVICE_CALLBACK_DISPLAY_STATE, _display_status_changed);
 			return 1;
 		}

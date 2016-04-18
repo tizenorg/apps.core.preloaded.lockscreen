@@ -45,7 +45,7 @@ static void _time_changed(system_settings_key_e key, void *user_data)
 			ret = SYSTEM_SETTINGS_ERROR_NONE;
 			break;
 		default:
-			_E("Unhandled system_setting event: %d", key);
+			ERR("Unhandled system_setting event: %d", key);
 			break;
 	}
 
@@ -60,38 +60,38 @@ int lockscreen_time_format_init(void)
 		LOCKSCREEN_EVENT_TIME_FORMAT_CHANGED = ecore_event_type_new();
 		int ret = system_settings_set_changed_cb(SYSTEM_SETTINGS_KEY_LOCALE_TIMEFORMAT_24HOUR, _time_changed, NULL);
 		if (ret != SYSTEM_SETTINGS_ERROR_NONE) {
-			_E("system_settings_set_changed_cb failed: %s", get_error_message(ret));
+			ERR("system_settings_set_changed_cb failed: %s", get_error_message(ret));
 			return 1;
 		}
 #if 0
 		ret = system_settings_set_changed_cb(SYSTEM_SETTINGS_KEY_LOCALE_TIMEZONE, _time_changed, NULL);
 		if (ret != SYSTEM_SETTINGS_ERROR_NONE) {
-			_E("system_settings_set_changed_cb failed: %s", get_error_message(ret));
+			ERR("system_settings_set_changed_cb failed: %s", get_error_message(ret));
 			return 1;
 		}
 #endif
 		ret = system_settings_set_changed_cb(SYSTEM_SETTINGS_KEY_TIME_CHANGED, _time_changed, NULL);
 		if (ret != SYSTEM_SETTINGS_ERROR_NONE) {
-			_E("system_settings_set_changed_cb failed: %s", get_error_message(ret));
+			ERR("system_settings_set_changed_cb failed: %s", get_error_message(ret));
 			return 1;
 		}
 		ret = system_settings_get_value_bool(SYSTEM_SETTINGS_KEY_LOCALE_TIMEFORMAT_24HOUR, &use24hformat);
 
 		if (ret != SYSTEM_SETTINGS_ERROR_NONE) {
-			_E("system_settings_get_value_bool failed: %s", get_error_message(ret));
+			ERR("system_settings_get_value_bool failed: %s", get_error_message(ret));
 			return 1;
 		}
 
 		ret = system_settings_get_value_string(SYSTEM_SETTINGS_KEY_LOCALE_LANGUAGE, &locale);
 		if (ret != SYSTEM_SETTINGS_ERROR_NONE) {
-			_E("system_settings_get_value_string failed: %s", get_error_message(ret));
+			ERR("system_settings_get_value_string failed: %s", get_error_message(ret));
 			return 1;
 		}
 
 		ret = system_settings_get_value_string(SYSTEM_SETTINGS_KEY_LOCALE_TIMEZONE, &tz_timezone);
 		if (ret != SYSTEM_SETTINGS_ERROR_NONE) {
 			free(locale);
-			_E("system_settings_get_value_string failed: %s", get_error_message(ret));
+			ERR("system_settings_get_value_string failed: %s", get_error_message(ret));
 			return 1;
 		}
 	}

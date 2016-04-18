@@ -47,27 +47,27 @@ void lockscreen_events_shutdown(void);
 /**
  * @brief Gets main event icon
  */
-const char *lockscreen_event_icon_get(lockscreen_event_t *event);
+const char *lockscreen_event_icon_get(const lockscreen_event_t *event);
 
 /**
  * @brief Get secondary event icon
  */
-const char *lockscreen_event_sub_icon_get(lockscreen_event_t *event);
+const char *lockscreen_event_sub_icon_get(const lockscreen_event_t *event);
 
 /**
  * @brief Get event title
  */
-const char *lockscreen_event_title_get(lockscreen_event_t *event);
+const char *lockscreen_event_title_get(const lockscreen_event_t *event);
 
 /**
  * @brief Get event textual content.
  */
-const char *lockscreen_event_content_get(lockscreen_event_t *event);
+const char *lockscreen_event_content_get(const lockscreen_event_t *event);
 
 /**
  * @brief Gets time when event was posted.
  */
-time_t lockscreen_event_time_get(lockscreen_event_t *event);
+time_t lockscreen_event_time_get(const lockscreen_event_t *event);
 
 /**
  * @brief Launch application which posted the event
@@ -77,7 +77,7 @@ bool lockscreen_event_launch(lockscreen_event_t *event);
 /**
  * @brief Get event type.
  */
-lockscreen_event_type_e lockscreen_event_type_get(lockscreen_event_t *event);
+lockscreen_event_type_e lockscreen_event_type_get(const lockscreen_event_t *event);
 
 /**
  * @brief Gets list of all displayed events.

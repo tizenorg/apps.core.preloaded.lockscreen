@@ -37,7 +37,7 @@ int lockscreen_background_init(void)
 		LOCKSCREEN_EVENT_BACKGROUND_CHANGED = ecore_event_type_new();
 		int ret = system_settings_get_value_string(SYSTEM_SETTINGS_KEY_WALLPAPER_LOCK_SCREEN, &bg);
 		if (ret != SYSTEM_SETTINGS_ERROR_NONE) {
-			_E("system_settings_set_value_string failed: %s", get_error_message(ret));
+			ERR("system_settings_set_value_string failed: %s", get_error_message(ret));
 			init_count = 0;
 			return -1;
 		}
@@ -60,7 +60,7 @@ int lockscreen_background_file_set(const char *path)
 	}
 
 	if (!ecore_file_can_read(path)) {
-		_E("Cannot access/read background file: %s", path);
+		ERR("Cannot access/read background file: %s", path);
 		return -1;
 	}
 

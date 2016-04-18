@@ -97,7 +97,7 @@ static void _minicontroler_event(minicontrol_event_e event, const char *minicont
 	if (!minicontrol_name)
 		return;
 
-	_D("Available minicontroller: %s", minicontrol_name);
+	DBG("Available minicontroller: %s", minicontrol_name);
 
 	switch (event) {
 		case MINICONTROL_EVENT_START:
@@ -108,7 +108,7 @@ static void _minicontroler_event(minicontrol_event_e event, const char *minicont
 			_minicontroller_stop_handle(minicontrol_name);
 			break;
 		default:
-			_D("Unahandled minicontroller event: %d for %s", event, minicontrol_name);
+			DBG("Unahandled minicontroller event: %d for %s", event, minicontrol_name);
 			break;
 	}
 }
@@ -119,7 +119,7 @@ int lockscreen_minicontrollers_init(void)
 		LOCKSCREEN_EVENT_MINICONTROLLERS_CHANGED = ecore_event_type_new();
 		int ret = minicontrol_viewer_set_event_cb(_minicontroler_event, NULL);
 		if (ret != MINICONTROL_ERROR_NONE) {
-			_E("minicontrol_viewer_set_event_cb failed: %s", get_error_message(ret));
+			ERR("minicontrol_viewer_set_event_cb failed: %s", get_error_message(ret));
 			return 1;
 		}
 	}
@@ -135,7 +135,7 @@ void lockscreen_minicontrollers_shutdown(void)
 		if (!init_count) {
 			int ret = minicontrol_viewer_unset_event_cb();
 			if (ret != MINICONTROL_ERROR_NONE) {
-				_E("minicontrol_viewer_unset_event_cb failed: %s", get_error_message(ret));
+				ERR("minicontrol_viewer_unset_event_cb failed: %s", get_error_message(ret));
 			}
 			EINA_LIST_FREE(active_minicontroller, info) {
 				_minicontroller_destroy(info);
@@ -157,7 +157,7 @@ Evas_Object *lockscreen_minicontrollers_minicontroller_create(const char *name, 
 	minicontroller_info_t *info = eina_list_search_unsorted(active_minicontroller, _lockscreen_minicontroller_search, name);
  
 	if (!info) {
-		_E("Invalid minicontroller name: %s", name);
+		ERR("Invalid minicontroller name: %s", name);
 		return NULL;
 	}
 

@@ -39,7 +39,7 @@ static i18n_udatepg_h _util_time_generator_get(const char *timezone_id)
 
 	int ret = i18n_udatepg_create(timezone_id, &generator);
 	if (ret != I18N_ERROR_NONE) {
-		_E("i18n_udatepg_create failed: %s", get_error_message(ret));
+		ERR("i18n_udatepg_create failed: %s", get_error_message(ret));
 		return NULL;
 	}
 	free(tz);
@@ -59,7 +59,7 @@ static i18n_udate_format_h __util_time_date_formatter_get(const char *locale, co
 
 	const i18n_udatepg_h generator = _util_time_generator_get(timezone_id);
 	if (!generator) {
-		_E("_util_time_generator_get failed");
+		ERR("_util_time_generator_get failed");
 		return NULL;
 	}
 
@@ -72,7 +72,7 @@ static i18n_udate_format_h __util_time_date_formatter_get(const char *locale, co
 	status = i18n_udatepg_get_best_pattern(generator, u_skeleton, skeleton_len,
 			u_best_pattern, u_best_pattern_capacity, &pattern_len);
 	if (status != I18N_ERROR_NONE) {
-		_E("i18n_udatepg_get_best_pattern failed: %s", get_error_message(status));
+		ERR("i18n_udatepg_get_best_pattern failed: %s", get_error_message(status));
 		return NULL;
 	}
 
@@ -81,7 +81,7 @@ static i18n_udate_format_h __util_time_date_formatter_get(const char *locale, co
 	status = i18n_udate_create(I18N_UDATE_PATTERN, I18N_UDATE_PATTERN, locale, u_timezone_id, -1,
 			u_best_pattern, -1, &formatter);
 	if (status != I18N_ERROR_NONE) {
-		_E("i18n_udate_create() failed");
+		ERR("i18n_udate_create() failed");
 		return NULL;
 	}
 
@@ -101,7 +101,7 @@ static i18n_udate_format_h __util_time_time_formatter_get(bool use24hformat, con
 
 	const i18n_udatepg_h generator = _util_time_generator_get(timezone_id);
 	if (!generator) {
-		_E("_util_time_generator_get failed");
+		ERR("_util_time_generator_get failed");
 		return NULL;
 	}
 
@@ -120,7 +120,7 @@ static i18n_udate_format_h __util_time_time_formatter_get(bool use24hformat, con
 	status = i18n_udatepg_get_best_pattern(generator, u_pattern, sizeof(u_pattern),
 			u_best_pattern, u_best_pattern_capacity, &u_best_pattern_len);
 	if (status != I18N_ERROR_NONE) {
-		_E("i18n_udatepg_get_best_pattern() failed: %s", get_error_message(status));
+		ERR("i18n_udatepg_get_best_pattern() failed: %s", get_error_message(status));
 		return NULL;
 	}
 
@@ -138,7 +138,7 @@ static i18n_udate_format_h __util_time_time_formatter_get(bool use24hformat, con
 	status = i18n_udate_create(I18N_UDATE_PATTERN, I18N_UDATE_PATTERN, locale, u_timezone_id, -1,
 			u_best_pattern, -1, &formatter);
 	if (status != I18N_ERROR_NONE) {
-		_E("i18n_udate_create() failed");
+		ERR("i18n_udate_create() failed");
 		return NULL;
 	}
 
@@ -161,7 +161,7 @@ static i18n_udate_format_h __util_time_ampm_formatter_get(const char *locale, co
 			u_best_pattern, -1, &formatter);
 
 	if (status != I18N_ERROR_NONE) {
-		_E("i18n_udate_create() failed");
+		ERR("i18n_udate_create() failed");
 		return NULL;
 	}
 
@@ -181,12 +181,12 @@ static int __util_time_formatted_time_get(i18n_udate_format_h formatter, time_t 
 
 	status = i18n_udate_format_date(formatter, u_time, u_formatted_str, u_formatted_str_capacity, NULL, &buf_needed);
 	if (status != I18N_ERROR_NONE) {
-		_E("i18n_udate_format_date() failed");
+		ERR("i18n_udate_format_date() failed");
 		return -1;
 	}
 
 	i18n_ustring_copy_au_n(buf,u_formatted_str, buf_len - 1);
-	_D("time(%d) formatted(%s)", tt, buf);
+	DBG("time(%d) formatted(%s)", tt, buf);
 
 	return (int)i18n_ustring_get_length(u_formatted_str);
 }

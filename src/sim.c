@@ -38,7 +38,7 @@ static char *_sim_plmn_get(telephony_h handle)
 
 	int ret = telephony_network_get_network_name(handle, &network_name);
 	if (ret != TELEPHONY_ERROR_NONE) {
-		_E("telephony_network_get_network_name failed: %s", get_error_message(ret));
+		ERR("telephony_network_get_network_name failed: %s", get_error_message(ret));
 		return NULL;
 	}
 
@@ -51,7 +51,7 @@ static char *_sim_spn_get(telephony_h handle)
 
 	int ret = telephony_sim_get_spn(handle, &spn_name);
 	if (ret != TELEPHONY_ERROR_NONE) {
-		_E("telephony_sim_get_spn failed: %s", get_error_message(ret));
+		ERR("telephony_sim_get_spn failed: %s", get_error_message(ret));
 		return NULL;
 	}
 	return spn_name;
@@ -70,7 +70,7 @@ static char *_sim_state_text_for_sim_get(telephony_h handle)
 	/* get service state */
 	ret = telephony_network_get_service_state(handle, &service_state);
 	if (ret != TELEPHONY_ERROR_NONE) {
-		_E("telephony_network_get_service_state failed: %s", get_error_message(ret));
+		ERR("telephony_network_get_service_state failed: %s", get_error_message(ret));
 		return NULL;
 	}
 
@@ -79,7 +79,7 @@ static char *_sim_state_text_for_sim_get(telephony_h handle)
 		/* get network name option */
 		ret = telephony_network_get_network_name_option(handle, &name_option);
 		if (ret != TELEPHONY_ERROR_NONE) {
-			_E("telephony_network_get_network_name_option failed: %s", get_error_message(ret));
+			ERR("telephony_network_get_network_name_option failed: %s", get_error_message(ret));
 			return NULL;
 		}
 
@@ -113,7 +113,7 @@ static char *_sim_state_text_for_sim_get(telephony_h handle)
 			}
 			break;
 		default:
-			_E("Invalid name option[%d]", name_option);
+			ERR("Invalid name option[%d]", name_option);
 			plmn = _sim_plmn_get(handle);
 			if (plmn != NULL && plmn[0] != 0) {
 				_I("PLMN/SPN - Sim %p using PLMN: %s", handle, plmn);
@@ -180,14 +180,14 @@ int lockscreen_sim_init(void)
 		int ret = telephony_init(&handle_list);
 		if (ret != TELEPHONY_ERROR_NONE)
 		{
-			_E("telephony_init failed: %s", get_error_message(ret));
+			ERR("telephony_init failed: %s", get_error_message(ret));
 			return -1;
 		}
 
 		ret = telephony_set_state_changed_cb(_on_telephony_state_changed_cb, NULL);
 		if (ret != TELEPHONY_ERROR_NONE) {
 			telephony_deinit(&handle_list);
-			_E("telephony_set_state_changed_cb failed: %s", get_error_message(ret));
+			ERR("telephony_set_state_changed_cb failed: %s", get_error_message(ret));
 			return -1;
 		}
 
@@ -198,7 +198,7 @@ int lockscreen_sim_init(void)
 			{
 				ret = telephony_set_noti_cb(handle_list.handle[i], notis[j], _on_sim_info_changed_cb, NULL);
 				if (ret != TELEPHONY_ERROR_NONE) {
-					_E("telephony_set_noti_cb failed: %s", get_error_message(ret));
+					ERR("telephony_set_noti_cb failed: %s", get_error_message(ret));
 				}
 			}
 		}

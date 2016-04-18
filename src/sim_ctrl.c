@@ -49,7 +49,7 @@ static Eina_Bool _sim_status_changed(void *data, int type, void *event_info)
 int lockscreen_sim_ctrl_init(Evas_Object *view)
 {
 	if (lockscreen_sim_init()) {
-		_E("lockscreen_sim_init failed");
+		ERR("lockscreen_sim_init failed");
 		return 1;
 	}
 

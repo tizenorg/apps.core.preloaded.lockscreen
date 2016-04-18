@@ -34,7 +34,7 @@ static Evas_Object *_swipe_layout_create(Evas_Object *parent)
 	swipe_layout = elm_layout_add(parent);
 
 	if (!elm_layout_file_set(swipe_layout, util_get_res_file_path(LOCK_EDJE_FILE), "swipe-lock")) {
-		_E("elm_layout_file_set failed.");
+		ERR("elm_layout_file_set failed.");
 		evas_object_del(swipe_layout);
 		return NULL;
 	}
@@ -134,7 +134,7 @@ bool lockscreen_main_view_background_set(Evas_Object *view, lockscreen_main_view
 	}
 
 	if (!elm_bg_file_set(bg, file, NULL)) {
-		_E("elm_bg_file_set failed: %s", file);
+		ERR("elm_bg_file_set failed: %s", file);
 		return false;
 	}
 
@@ -261,11 +261,11 @@ void lockscreen_main_view_time_set(Evas_Object *view, const char *locale, const 
 	char *str_date, *str_time, *str_meridiem;
 
 	if (!util_time_formatted_time_get(time, locale, timezone, use24hformat, &str_time, &str_meridiem)) {
-		_E("util_time_formatted_time_get failed");
+		ERR("util_time_formatted_time_get failed");
 		return;
 	}
 	if (!util_time_formatted_date_get(time, locale, timezone, "MMMMEd", &str_date)) {
-		_E("util_time_formatted_date_get failed");
+		ERR("util_time_formatted_date_get failed");
 		free(str_time);
 		free(str_meridiem);
 		return;

@@ -38,7 +38,7 @@ static char *_replaceString(char *strInput, const char *strTarget, const char *s
 	int nTargetLength = strlen(strTarget);
 
 	if (nTargetLength < 1) {
-		_E("there is no target to chnage");
+		ERR("there is no target to chnage");
 		return NULL;
 	}
 
@@ -60,7 +60,7 @@ static char *_replaceString(char *strInput, const char *strTarget, const char *s
 	strResult = (char *) malloc(i + 1 + nCount * (nChangeLength - nTargetLength));
 
 	if (!strResult) {
-		_E("fail malloc!!");
+		ERR("fail malloc!!");
 		return NULL;
 	}
 

@@ -36,10 +36,10 @@ static Eina_Bool _lock_idler_cb(void *data)
 
 bool _create_app(void *data)
 {
-	_D("Lockscreen launch request.");
+	DBG("Lockscreen launch request.");
 	elm_config_accel_preference_set("opengl");
-	_D("base scale : %f", elm_app_base_scale_get());
-	_D("edje scale : %f", edje_scale_get());
+	DBG("base scale : %f", elm_app_base_scale_get());
+	DBG("edje scale : %f", edje_scale_get());
 
 	/* Quickfix: run real creation in idler since running device/display API here
 	 * causes SIGSEGV */
@@ -50,7 +50,7 @@ bool _create_app(void *data)
 
 void _terminate_app(void *data)
 {
-	_D("Lockscreen terminated request.");
+	DBG("Lockscreen terminated request.");
 }
 
 int main(int argc, char *argv[])
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 
 	ret = ui_app_main(argc, argv, &lifecycle_callback, NULL);
 	if (ret != APP_ERROR_NONE) {
-		_E("ui_app_main failed: %s", get_error_message(ret));
+		ERR("ui_app_main failed: %s", get_error_message(ret));
 	}
 
 	return ret;
