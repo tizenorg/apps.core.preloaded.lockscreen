@@ -75,7 +75,7 @@ static lockscreen_notification_t *_lockscreen_notification_create(notification_h
 	}
 	if (val) event->title = strdup(val);
 
-	ret = notification_get_text(noti, NOTIFICATION_TEXT_TYPE_CONTENT, &event->content);
+	ret = notification_get_text(noti, NOTIFICATION_TEXT_TYPE_CONTENT, &val);
 	if (ret != NOTIFICATION_ERROR_NONE) {
 		_E("notification_get_text failed: %s", get_error_message(ret));
 		_lockscreen_notification_destroy(event);
