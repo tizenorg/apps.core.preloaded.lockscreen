@@ -20,6 +20,8 @@
 #include "main_view.h"
 #include "notifications.h"
 #include "minicontrollers.h"
+#include "time_format.h"
+#include "util_time.h"
 
 #include <Ecore.h>
 #include <time.h>
@@ -33,7 +35,7 @@ static char *_lockscreen_events_view_ctrl_genlist_noti_text_get(void *data, Evas
 static Evas_Object *_lockscreen_events_view_ctrl_genlist_widget_content_get(void *data, Evas_Object *obj, const char *part);
 
 static Elm_Genlist_Item_Class noti_itc = {
-	.item_style = "double_label",
+	.item_style = NOTI_ITEM_STYLE,
 	.func.content_get = _lockscreen_events_view_ctrl_genlist_noti_content_get,
 	.func.text_get = _lockscreen_events_view_ctrl_genlist_noti_text_get,
 };
@@ -45,7 +47,42 @@ static Elm_Genlist_Item_Class widget_itc = {
 
 static Evas_Object *_lockscreen_events_view_ctrl_genlist_noti_content_get(void *data, Evas_Object *obj, const char *part)
 {
-	return NULL;
+	Evas_Object *ret = NULL;
+	lockscreen_notification_t *noti = data;
+
+	if (!strcmp(part, NOTI_ITEM_ICON)) {
+		ret = elm_icon_add(obj);
+		elm_image_file_set(ret, lockscreen_notification_icon_get(noti), NULL);
+	}
+	else if (!strcmp(part, NOTI_ITEM_ICON_SUB)) {
+		ret = elm_icon_add(obj);
+		elm_image_file_set(ret, lockscreen_notification_sub_icon_get(noti), NULL);
+	}
+	return ret;
+}
+
+static char *_lockscreen_events_view_ctrl_genlist_noti_text_time_get(time_t time)
+{
+	const char *locale = lockscreen_time_format_locale_get();
+	const char *timezone = lockscreen_time_format_timezone_get();
+	bool use24hformat = lockscreen_time_format_use_24h();
+	char *str_time, *str_meridiem;
+	char time_buf[PATH_MAX] = {0,};
+
+	if (!util_time_formatted_time_get(time, locale, timezone, use24hformat, &str_time, &str_meridiem)) {
+		_E("util_time_formatted_time_get failed");
+		return NULL;
+	}
+
+	if (use24hformat) {
+		snprintf(time_buf, sizeof(time_buf), "%s", str_time);
+	} else {
+		snprintf(time_buf, sizeof(time_buf), "%s %s", str_time, str_meridiem);
+	}
+
+	free(str_time);
+	free(str_meridiem);
+	return strdup(time_buf);
 }
 
 static char *_lockscreen_events_view_ctrl_genlist_noti_text_get(void *data, Evas_Object *obj, const char *part)
@@ -53,11 +90,16 @@ static char *_lockscreen_events_view_ctrl_genlist_noti_text_get(void *data, Evas
 	lockscreen_notification_t *noti = data;
 	const char *val = NULL;
 
-	if (!strcmp(part, "elm.text")) {
+	if (!strcmp(part, NOTI_ITEM_TEXT)) {
 		val = lockscreen_notification_title_get(noti);
 	}
-	else if (!strcmp(part, "elm.text.end")) {
+	else if (!strcmp(part, NOTI_ITEM_TEXT_SUB)) {
 		val = lockscreen_notification_content_get(noti);
+	}
+	else if (!strcmp(part, NOTI_ITEM_TEXT_TIME)) {
+		val = _lockscreen_events_view_ctrl_genlist_noti_text_time_get(lockscreen_notification_time_get(noti));
+		_E("Time part text: %s", val);
+		return (char*)val;
 	}
 	return val ? strdup(val) : NULL;
 }
@@ -180,6 +222,12 @@ int lockscreen_events_ctrl_init(Evas_Object *mv)
 		return 1;
 	}
 
+	if (lockscreen_time_format_init()) {
+		FATAL("lockscreen_time_format_init failed.");
+		lockscreen_minicontrollers_shutdown();
+		lockscreen_notifications_shutdown();
+	}
+
 	main_view = mv;
 
 	events_handler = ecore_event_handler_add(LOCKSCREEN_EVENT_NOTIFICATIONS_CHANGED, _lockscreen_events_ctrl_notifications_changed, NULL);
@@ -200,4 +248,5 @@ void lockscreen_events_ctrl_shutdown()
 	ecore_event_handler_del(events_handler);
 	lockscreen_notifications_shutdown();
 	lockscreen_minicontrollers_shutdown();
+	lockscreen_time_format_shutdown();
 }

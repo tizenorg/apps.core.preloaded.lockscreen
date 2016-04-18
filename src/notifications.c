@@ -267,3 +267,13 @@ time_t lockscreen_notification_time_get(lockscreen_notification_t *event)
 {
 	return event->time;
 }
+
+const char *lockscreen_notification_icon_get(lockscreen_notification_t *event)
+{
+	return event->icon_path;
+}
+
+const char *lockscreen_notification_sub_icon_get(lockscreen_notification_t *event)
+{
+	return event->icon_sub_path;
+}

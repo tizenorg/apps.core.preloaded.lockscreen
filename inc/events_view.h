@@ -17,12 +17,12 @@
 #ifndef _LOCKSCREEN_EVENTS_VIEW_H_
 #define _LOCKSCREEN_EVENTS_VIEW_H_
 
-#define NOTI_ITEM_STYLE "noti-item"
-#define NOTI_ITEM_TEXT_MAIN "elm.text"
-#define NOTI_ITEM_TEXT_SUB "elm.sub.text"
-#define NOTI_ITEM_TEXT_TIME "elm.time"
-#define NOTI_ITEM_CONTENT_ICON "elm.icon"
-#define NOTI_ITEM_CONTENT_SUB_ICON "elm.sub.icon"
+#define NOTI_ITEM_STYLE "noti"
+#define NOTI_ITEM_TEXT "elm.text"
+#define NOTI_ITEM_TEXT_SUB "elm.text.sub"
+#define NOTI_ITEM_TEXT_TIME "elm.text.time"
+#define NOTI_ITEM_ICON "elm.swallow.icon"
+#define NOTI_ITEM_ICON_SUB "elm.swallow.sub.icon"
 
 #define WIDGET_ITEM_STYLE "one_icon"
 #define WIDGET_ITEM_CONTENT "elm.swallow.icon"

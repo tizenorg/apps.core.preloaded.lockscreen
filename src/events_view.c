@@ -43,6 +43,9 @@ Evas_Object *lockscreen_events_view_create(Evas_Object *parent)
 	elm_layout_theme_set(genlist, "scroller", "base", "effect");
 	elm_object_part_content_set(layout, "sw.genlist", genlist);
 
+	/* Load theme extenstiion */
+	util_lockscreen_theme_get();
+
 	return layout;
 }
 

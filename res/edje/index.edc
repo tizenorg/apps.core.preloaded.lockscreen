@@ -197,10 +197,30 @@ collections {
 			}
 		}
 	}
-#if 0
 	/* Elementary theme to overwrite */
 	group { name: "elm/genlist/item/noti/default";
-
+		styles {
+			style {
+				name: "variable_style";
+				base: "font=Tizen:style=Regular color=#FFFFFFFF color_class=ATO009 font_size=24 text_class=ATO009 align=right ellipsis=1.0";
+			}
+			style {
+				name: "title_style";
+				base: "font=Tizen:style=Regular color=#FFFFFFFF color_class=ATO039 font_size=30 text_class=ATO039 ellipsis=1.0";
+			}
+			style {
+				name: "content_style";
+				base: "font=Tizen:style=Regular color=#FFFFFFFF color_class=ATO010 font_size=24 text_class=ATO010 ellipsis=1.0";
+			}
+			style {
+				name: "time_style";
+				base: "font=Tizen:style=Regular color=#FFFFFFFF color_class=ATO010 font_size=24 text_class=ATO010 align=right";
+			}
+			style {
+				name: "selected_style";
+				base: "font=Tizen:style=Regular color=#FFFFFFFF color_class=ATO039 font_size=30 text_class=ATO039 wrap=mixed";
+			}
+		}
 	   data.item: "texts" "elm.text elm.text.sub elm.text.time";
 	   data.item: "contents" "elm.swallow.icon elm.swallow.sub.icon";
 
@@ -208,47 +228,133 @@ collections {
 		  // base spacer for item min height
 		  spacer { "base"; scale;
 			 desc { "default";
-				min: 0 100;
+				min: 0 130;
 			 }
 		  }
-		  // icon swallow
-		  swallow { "elm.swallow.icon"; scale;
-			 desc { state: "default";
+		spacer { "padding.left"; scale;
+			  desc { state: "default";
+				fixed: 1 0;
+				min: 26 0;
+				max: 26 -1;
+				align: 0.0 0.5;
+				rel1.relative: 0.0 0.0;
+				rel2.relative: 0.0 1.0;
+			 }
+		}
+		spacer { "padding.right"; scale;
+			  desc { state: "default";
+				fixed: 1 0;
+				min: 26 0;
+				max: 26 -1;
+				align: 1.0 0.5;
+				rel1.relative: 1.0 0.0;
+				rel2.relative: 1.0 1.0;
+			 }
+		}
+		spacer { "padding.top"; scale;
+			  desc { state: "default";
+				fixed: 0 1;
+				min: 0 16;
+				max: -1 16;
+				align: 0.5 0.0;
+				rel1.relative: 0.0 0.0;
+				rel2.relative: 1.0 0.0;
+			 }
+		}
+		spacer { "padding.bottom"; scale;
+			  desc { state: "default";
+				fixed: 0 1;
+				min: 0 16;
+				max: -1 16;
+				align: 0.5 0.0;
+				rel1.relative: 0.0 1.0;
+				rel2.relative: 1.0 1.0;
+			 }
+		}
+		swallow { "elm.swallow.icon"; scale;
+			desc { state: "default";
 				fixed: 1 0;
 				align: 0.0 0.5;
-				rel1 { to_x: "elm.padding.left"; to_y: "elm.padding.top"; relative: 1.0 1.0; }
-				rel2 { to_x: "elm.padding.left"; to_y: "elm.padding.bottom"; relative: 1.0 0.0; }
-			 }
-		  }
-		  // right swallow (Type C)
-		  swallow { "elm.swallow.sub.icon"; scale;
-			 desc { state: "default";
+				min: 98 98;
+				max: 98 98;
+				rel1 { to_x: "padding.left"; to_y: "padding.top"; relative: 1.0 1.0; }
+				rel2 { to_x: "padding.left"; to_y: "padding.bottom"; relative: 1.0 0.0; }
+			}
+		}
+		swallow { "elm.swallow.sub.icon"; scale;
+			desc { state: "default";
 				fixed: 1 0;
-				align: 1.0 0.5;
-				rel1 { to_x: "elm.padding.right"; to_y: "elm.padding.top"; relative: 0.0 1.0; }
-				rel2 { to_x: "elm.padding.right"; to_y: "elm.padding.bottom"; relative: 0.0 0.0; }
+				align: 0.0 0.0;
+				min: 45 45;
+				max: 45 45;
+				rel1 { to: "elm.swallow.icon"; relative: 60/98 60/98; }
+				rel2 { to: "elm.swallow.icon"; relative: 104/98 104/98; }
+			}
+		}
+		spacer { "padding.icon.text"; scale;
+			  desc { state: "default";
+				fixed: 0 1;
+				min: 16 0;
+				max: 16 -1;
+				align: 0 0.5;
+				rel1 { relative: 1.0 1.0; to_x: "elm.swallow.icon"; to_y: "padding.top"; }
+				rel2 { relative: 1.0 1.0; to_x: "elm.swallow.icon"; }
 			 }
-		  }
-		  // sub text line
-		  textblock { "elm.text.sub.end"; scale;
-			 desc { "default";
+		}
+		// sub text line
+		textblock { "elm.text"; scale;
+			desc { "default";
 				fixed: 1 1;
-				min: 0 GENLIST_ITEM_SUB_LINE_HEIGHT_INC;
-				max: GENLIST_ITEM_END_TEXT_WIDTH_INC -1;
-				align: 1.0 1.0;
-				rel1 { to_x: "elm.padding.A.D"; to_y: "elm.padding.bottom"; relative: 0.0 0.0; }
-				rel2 { to_x: "elm.padding.A.D"; to_y: "elm.padding.bottom"; relative: 0.0 0.0; }
-				text.style: "list_text_sub_end";
+				min: 0 54;
+				max: -1 54;
+				align: 0.0 0.0;
+				rel1 { to_x: "padding.icon.text"; to_y: "padding.top"; relative: 1.0 1.0; }
+				//rel2 { to_x: "elm.padding.A.D"; to_y: "elm.padding.bottom"; relative: 0.0 0.0; }
+				text.style: "title_style";
 				text.min: 1 1;
 				text.max: 0 1;
+			}
+		}
+		textblock { "elm.text.sub"; scale;
+			desc { "default";
+				fixed: 1 1;
+				min: 0 43;
+				max: -1 43;
+				align: 0.0 0.0;
+				rel1 { to: "elm.text"; relative: 0.0 1.0; }
+				//rel2 { to_x: "elm.padding.A.D"; to_y: "elm.padding.bottom"; relative: 0.0 0.0; }
+				text.style: "content_style";
+				text.min: 1 1;
+				text.max: 0 1;
+			}
+		}
+		spacer { "padding.text.date"; scale;
+			  desc { state: "default";
+				fixed: 0 1;
+				min: 32 0;
+				max: 32 -1;
+				align: 1.0 0.5;
+				rel1 { relative: 1.0 1.0; to_x: "elm.swallow.icon"; to_y: "padding.top"; }
+				rel2 { relative: 1.0 1.0; to_x: "elm.swallow.icon"; }
 			 }
-			 desc { "pressed"; inherit: "default";
-				text.style: "list_text_sub_end_press";
-			 }
-			 desc { "disabled"; inherit: "default";
-				text.style: "list_text_sub_end_dim";
-			 }
-		  }
+		}
+		textblock { "elm.text.time"; scale;
+			desc { "default";
+				fixed: 1 1;
+				min: 0 54;
+				max: -1 54;
+				align: 0.0 0.0;
+				rel1 { to_x: "padding.text.date"; to_y: "padding.top"; relative: 1.0 1.0; }
+				rel2 { to_x: "padding.right"; to_y: "padding.top"; relative: 0.0 1.0; }
+				text.style: "time_style";
+				text.min: 1 1;
+				text.max: 0 1;
+			}
+		}
+	}
+	}
+}
+#if 0
 		  textblock { "elm.text.sub"; scale;
 			 desc { "default";
 				fixed: 1 1;
@@ -424,5 +530,5 @@ collections {
 		  }
 	   }
 	}
-#endif
 }
+#endif

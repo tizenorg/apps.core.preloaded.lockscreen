@@ -75,7 +75,7 @@ const Elm_Theme *util_lockscreen_theme_get(void)
 	{
 		theme = elm_theme_new();
 		elm_theme_ref_set(theme, NULL);
-		elm_theme_extension_add(theme, util_get_res_file_path(EDJE_DIR"index.edj"));
+		elm_theme_overlay_add(NULL, util_get_res_file_path(EDJE_DIR"index.edj"));
 	}
 	return theme;
 }
