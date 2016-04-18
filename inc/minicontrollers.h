@@ -36,5 +36,7 @@ void lockscreen_minicontrollers_shutdown(void);
 
 Evas_Object *lockscreen_minicontrollers_active_minicontroller_get(Evas_Object *parent);
 
+bool lockscreen_minicontrollers_is_active(void);
+
 #endif
 

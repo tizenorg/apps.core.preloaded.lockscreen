@@ -151,7 +151,13 @@ static Eina_Bool _lockscreen_events_ctrl_notifications_changed(void *data, int e
 static Eina_Bool _lockscreen_events_ctrl_minicontroller_changed(void *data, int event, void *event_info)
 {
 	_lockscreen_events_ctrl_minicontroller_unload();
-	_lockscreen_events_ctrl_minicontroller_load();
+
+	if (lockscreen_minicontrollers_is_active()) {
+		_lockscreen_events_ctrl_view_show();
+		_lockscreen_events_ctrl_minicontroller_load();
+	}
+	else
+		_lockscreen_events_ctrl_view_hide();
 
 	return EINA_TRUE;
 }

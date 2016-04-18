@@ -118,3 +118,8 @@ Evas_Object *lockscreen_minicontrollers_active_minicontroller_get(Evas_Object *p
 	evas_object_show(ret);
 	return ret;
 }
+
+bool lockscreen_minicontrollers_is_active(void)
+{
+	return active_minicontroller ? true : false;
+}
