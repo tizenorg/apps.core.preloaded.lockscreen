@@ -113,7 +113,12 @@ static void _lockscreen_events_ctrl_notifications_load()
 static void _lockscreen_events_ctrl_notifications_unload()
 {
 	Evas_Object *genlist = lockscreen_events_genlist_get(lockscreen_main_view_part_content_get(main_view, PART_EVENTS));
-	elm_genlist_clear(genlist);
+	Elm_Genlist_Item *it;
+	Eina_List *items = elm_genlist_realized_items_get(genlist);
+	EINA_LIST_FREE(items, it) {
+		if (it != active_minicontroller)
+			elm_object_item_del(it);
+	}
 }
 
 static void _lockscreen_events_ctrl_minicontroller_load()
