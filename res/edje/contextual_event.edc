@@ -139,7 +139,7 @@ group {
 			name: "btn,close,clicked";
 			signal: "mouse,clicked,1";
 			source: "btn.close";
-			action: SIGNAL_EMIT "btn,close,clicked" "btn.close";
+			action: SIGNAL_EMIT "btn,close,clicked" "contextual-event";
 		}
 		program {
 			name: "hide,index";

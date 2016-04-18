@@ -17,6 +17,8 @@
 #ifndef _LOCKSCREEN_EVENTS_VIEW_H_
 #define _LOCKSCREEN_EVENTS_VIEW_H_
 
+#include <Elementary.h>
+
 #define NOTI_ITEM_STYLE "noti"
 #define NOTI_ITEM_TEXT "elm.text"
 #define NOTI_ITEM_TEXT_SUB "elm.text.sub"
@@ -28,11 +30,14 @@
 #define WIDGET_ITEM_CONTENT "elm.swallow.icon"
 
 /**
+ * @brief Smart signal emitted when close button is clicked.
+ */
+#define SIGNAL_CLOSE_BUTTON_CLICKED "btn,close,clicked"
+
+/**
  * @brief Smart signal emitted when notification is being selected.
  */
 #define SIGNAL_CAMERA_SELECTED "notification,item,selected"
-
-#include <Elementary.h>
 
 /**
  * @brief Creates camera view object.

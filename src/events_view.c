@@ -22,6 +22,11 @@
 
 #include <Elementary.h>
 
+static void _lockscreen_events_view_close_all_clicked(void *date, Evas_Object *obj, const char *emission, const char *source)
+{
+	evas_object_smart_callback_call(obj, SIGNAL_CLOSE_BUTTON_CLICKED, NULL);
+}
+
 Evas_Object *lockscreen_events_view_create(Evas_Object *parent)
 {
 	Evas_Object *layout = elm_layout_add(parent);
@@ -43,8 +48,11 @@ Evas_Object *lockscreen_events_view_create(Evas_Object *parent)
 	elm_layout_theme_set(genlist, "scroller", "base", "effect");
 	elm_object_part_content_set(layout, "sw.genlist", genlist);
 
-	/* Load theme extenstiion */
+	/* Load theme extension */
 	util_lockscreen_theme_get();
+
+	/* Register close button clicked callback */
+	elm_object_signal_callback_add(layout, "btn,close,clicked", "contextual-event", _lockscreen_events_view_close_all_clicked, NULL);
 
 	return layout;
 }

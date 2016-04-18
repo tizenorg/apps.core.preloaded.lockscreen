@@ -268,6 +268,9 @@ bool lockscreen_event_launch(lockscreen_event_t *event)
 {
 	app_control_h service = NULL;
 
+	if (event->type != LOCKSCREEN_EVENT_TYPE_NOTIFICATION)
+		return false;
+
 	int ret = app_control_create(&service);
 	if (ret != APP_CONTROL_ERROR_NONE) {
 		_E("app_control_create failed: %s", get_error_message(ret));

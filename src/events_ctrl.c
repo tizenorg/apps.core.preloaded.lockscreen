@@ -133,6 +133,12 @@ static int _lockscreen_events_ctrl_sort(const void *data1, const void *data2)
 	return EINA_TRUE;
 }
 
+static void _lockscreen_events_ctrl_item_selected(void *data, Evas_Object *obj, void *info)
+{
+	lockscreen_event_t *event = data;
+	lockscreen_event_launch(event);
+}
+
 static void _lockscreen_events_ctrl_events_load()
 {
 	lockscreen_event_t *event;
@@ -150,7 +156,7 @@ static void _lockscreen_events_ctrl_events_load()
 
 		switch (type) {
 			case LOCKSCREEN_EVENT_TYPE_NOTIFICATION:
-				elm_genlist_item_append(genlist, &noti_itc, event, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+				elm_genlist_item_append(genlist, &noti_itc, event, NULL, ELM_GENLIST_ITEM_NONE, _lockscreen_events_ctrl_item_selected, event);
 				break;
 			case LOCKSCREEN_EVENT_TYPE_MINICONTROLLER:
 				elm_genlist_item_append(genlist, &widget_itc, event, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
