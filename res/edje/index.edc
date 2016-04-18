@@ -20,7 +20,7 @@
 #define INDEX_PAGECONTROL_FONT_SIZE_INC 18
 
 collections {
-	base_scale: 1.7;
+	base_scale: 2.6;
 	group {
 		name: "elm/index/base/vertical/lockscreen/index";
 		alias: "elm/index/base/horizontal/lockscreen/index";
