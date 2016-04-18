@@ -50,7 +50,7 @@ static void _minicontroller_destroy(minicontroller_info_t *info)
 
 static void _minicontroller_start_handle(const char *name, int w, int h)
 {
-	/** FIXME Since minicontroller API do not allow to filter minicontroller
+	/** FIXME Since minicontroller API do not allow to filter minicontrollers
 	 * targeted for lockscreen we just asume that interesting minicontrollers
 	 * has proper suffix in its name */
 	if (name && strstr(name, "LOCKSCREEN]")) {
