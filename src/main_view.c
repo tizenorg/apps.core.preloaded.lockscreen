@@ -287,7 +287,7 @@ void lockscreen_main_view_time_set(Evas_Object *view, const char *locale, const 
 	elm_object_part_text_set(swipe_layout, "txt.time", time_buf);
 	elm_object_part_text_set(swipe_layout, "txt.date", str_date);
 
-	snprintf(time_buf, sizeof(time_buf), "%s %s", str_date, str_time);
+	snprintf(time_buf, sizeof(time_buf), "%s %s", str_time, str_date);
 	elm_object_part_text_set(swipe_layout, "txt.timedate", time_buf);
 
 	free(str_date);

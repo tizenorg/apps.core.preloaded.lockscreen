@@ -18,7 +18,7 @@ group {
 	styles {
 		style {
 			name: "close_style";
-			base: "font=Tizen:style=Regular color=#FFFFFF font_size=21 wrap=none align=center";
+			base: "font=Tizen:style=Regular color=#FFFFFF font_size=26 wrap=none align=center";
 		}
 	}
 	images {
@@ -40,7 +40,7 @@ group {
 			type: RECT;
 			description {
 				state: "default" 0.0;
-				color: 150 150 150 150;
+				color: 0 0 0 50;
 				align: 0.0 0.0;
 				rel1 { relative: 0.0 0.0; }
 				rel2 { relative: 1.0 1.0; }

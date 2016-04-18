@@ -197,4 +197,232 @@ collections {
 			}
 		}
 	}
+#if 0
+	/* Elementary theme to overwrite */
+	group { name: "elm/genlist/item/noti/default";
+
+	   data.item: "texts" "elm.text elm.text.sub elm.text.time";
+	   data.item: "contents" "elm.swallow.icon elm.swallow.sub.icon";
+
+	   parts {
+		  // base spacer for item min height
+		  spacer { "base"; scale;
+			 desc { "default";
+				min: 0 100;
+			 }
+		  }
+		  // icon swallow
+		  swallow { "elm.swallow.icon"; scale;
+			 desc { state: "default";
+				fixed: 1 0;
+				align: 0.0 0.5;
+				rel1 { to_x: "elm.padding.left"; to_y: "elm.padding.top"; relative: 1.0 1.0; }
+				rel2 { to_x: "elm.padding.left"; to_y: "elm.padding.bottom"; relative: 1.0 0.0; }
+			 }
+		  }
+		  // right swallow (Type C)
+		  swallow { "elm.swallow.sub.icon"; scale;
+			 desc { state: "default";
+				fixed: 1 0;
+				align: 1.0 0.5;
+				rel1 { to_x: "elm.padding.right"; to_y: "elm.padding.top"; relative: 0.0 1.0; }
+				rel2 { to_x: "elm.padding.right"; to_y: "elm.padding.bottom"; relative: 0.0 0.0; }
+			 }
+		  }
+		  // sub text line
+		  textblock { "elm.text.sub.end"; scale;
+			 desc { "default";
+				fixed: 1 1;
+				min: 0 GENLIST_ITEM_SUB_LINE_HEIGHT_INC;
+				max: GENLIST_ITEM_END_TEXT_WIDTH_INC -1;
+				align: 1.0 1.0;
+				rel1 { to_x: "elm.padding.A.D"; to_y: "elm.padding.bottom"; relative: 0.0 0.0; }
+				rel2 { to_x: "elm.padding.A.D"; to_y: "elm.padding.bottom"; relative: 0.0 0.0; }
+				text.style: "list_text_sub_end";
+				text.min: 1 1;
+				text.max: 0 1;
+			 }
+			 desc { "pressed"; inherit: "default";
+				text.style: "list_text_sub_end_press";
+			 }
+			 desc { "disabled"; inherit: "default";
+				text.style: "list_text_sub_end_dim";
+			 }
+		  }
+		  textblock { "elm.text.sub"; scale;
+			 desc { "default";
+				fixed: 1 1;
+				min: 0 GENLIST_ITEM_SUB_LINE_HEIGHT_INC;
+				align: 0.5 1.0;
+				rel1 { to_x: "elm.padding.B.A"; to_y: "elm.padding.bottom"; relative: 1.0 0.0; }
+				rel2 { to_x: "elm.padding.sub.text.end"; to_y: "elm.padding.bottom"; relative: 0.0 0.0; }
+				text.style: "list_text_sub_01";
+				text.min: 0 1;
+			 }
+			 desc { "pressed"; inherit: "default";
+				text.style: "list_text_sub_01_press";
+			 }
+			 desc { "disabled"; inherit: "default";
+				text.style: "list_text_sub_01_dim";
+			 }
+		  }
+		  textblock { "elm.text.end"; scale;
+			 desc { "default";
+				fixed: 1 0;
+				min: 0 GENLIST_ITEM_MAIN_LINE_HEIGHT_INC;
+				max: GENLIST_ITEM_END_TEXT_WIDTH_INC -1;
+				align: 1.0 0.5;
+				rel1 { to_x: "elm.padding.A.D"; to_y: "elm.padding.top"; relative: 0.0 1.0; }
+				rel2 { to_x: "elm.padding.A.D"; to_y: "base_line"; relative: 0.0 0.0; }
+				text.style: "list_text_end";
+				text.min: 1 1;
+				text.max: 0 1;
+			 }
+			 desc { "pressed"; inherit: "default";
+				text.style: "list_text_end_press";
+			 }
+			 desc { "disabled"; inherit: "default";
+				text.style: "list_text_end_dim";
+			 }
+		  }
+	   }
+	   programs {
+		  program {
+			 signal: "elm,state,elm.swallow.bg,visible";
+			 source: "elm";
+			 action: STATE_SET "hidden" 0.0;
+			 target: "elm.bottomline";
+		  }
+		  program {
+			 signal: "elm,state,elm.swallow.icon,visible";
+			 source: "elm";
+			 action: STATE_SET "icon_visible" 0.0;
+			 target: "elm.padding.B.A";
+		  }
+		  program {
+			 signal: "elm,state,elm.swallow.icon.2,visible";
+			 source: "elm";
+			 action: STATE_SET "icon_visible" 0.0;
+			 target: "elm.padding.A.D";
+		  }
+		  program {
+			 signal: "elm,state,elm.swallow.end,visible";
+			 source: "elm";
+			 action: STATE_SET "icon_visible" 0.0;
+			 target: "elm.padding.D.C";
+		  }
+		  program {
+			 signal: "elm,state,elm.swallow.icon.0,visible";
+			 source: "elm";
+			 action: STATE_SET "icon_visible" 0.0;
+			 target: "elm.padding.main.icon.text";
+		  }
+		  program {
+			 signal: "elm,state,elm.swallow.icon.1,visible";
+			 source: "elm";
+			 script {
+				if (get_int(sub_end_text_visible) == 0) {
+				   set_state(PART:"elm.padding.main.text.end", "icon_visible", 0.0);
+				   set_state(PART:"elm.padding.sub.text.end", "icon_visible", 0.0);
+				}
+				else {
+				   set_state(PART:"elm.padding.main.text.end", "sub_text_visible", 0.0);
+				   set_state(PART:"elm.padding.sub.text.end", "text_visible", 0.0);
+				}
+				set_int(end_icon_visible, 1);
+			 }
+		  }
+		  program {
+			 signal: "elm,state,elm.text.sub,visible";
+			 source: "elm";
+			 action: STATE_SET "sub_text_visible" 0.0;
+			 target: "base";
+			 target: "base_line";
+		  }
+		  program {
+			 signal: "elm,state,elm.text.end,visible";
+			 source: "elm";
+			 script {
+				if (get_int(end_icon_visible) == 1 && get_int(sub_end_text_visible) == 1) {
+				   set_state(PART:"elm.padding.main.text.end", "sub_text_visible", 0.0);
+				}
+				else {
+				   set_state(PART:"elm.padding.main.text.end", "text_visible", 0.0);
+				}
+			 }
+		  }
+		  program {
+			 signal: "elm,state,elm.text.sub.end,visible";
+			 source: "elm";
+			 script {
+				set_int(sub_end_text_visible, 1);
+				set_state(PART:"elm.padding.sub.text.end", "text_visible", 0.0);
+				set_state(PART:"elm.swallow.icon.1", "text_visible", 0.0);
+			 }
+		  }
+		  program { name: "default";
+			 signal: "elm,state,default";
+			 source: "elm";
+			 script {
+				set_state(PART:"base", "default", 0.0);
+				set_state(PART:"base_line", "default", 0.0);
+				set_state(PART:"elm.swallow.icon.1", "default", 0.0);
+				set_state(PART:"elm.padding.B.A", "default", 0.0);
+				set_state(PART:"elm.padding.A.D", "default", 0.0);
+				set_state(PART:"elm.padding.D.C", "default", 0.0);
+				set_state(PART:"elm.padding.main.icon.text", "default", 0.0);
+				set_state(PART:"elm.padding.main.text.end", "default", 0.0);
+				set_state(PART:"elm.padding.sub.text.end", "default", 0.0);
+				set_state(PART:"elm.bottomline", "default", 0.0);
+				set_state(PART:"bg", "default", 0.0);
+				set_state(PART:"elm.text", "default", 0.0);
+				set_state(PART:"elm.text.end", "default", 0.0);
+				set_state(PART:"elm.text.sub", "default", 0.0);
+				set_state(PART:"elm.text.sub.end", "default", 0.0);
+				set_int(sub_end_text_visible, 0);
+			 }
+		  }
+		  program { name: "pressed";
+			 signal: "elm,state,selected";
+			 source: "elm";
+			 action: STATE_SET "pressed" 0.0;
+			 target: "bg";
+			 target: "elm.text";
+			 target: "elm.text.end";
+			 target: "elm.text.sub";
+			 target: "elm.text.sub.end";
+		  }
+		  program { name: "unpressed";
+			 signal: "elm,state,unselected";
+			 source: "elm";
+			 action: STATE_SET "default" 0.0;
+			 target: "bg";
+			 target: "elm.text";
+			 target: "elm.text.end";
+			 target: "elm.text.sub";
+			 target: "elm.text.sub.end";
+		  }
+		  program { name: "enabled";
+			 signal: "elm,state,enabled";
+			 source: "elm";
+			 action: STATE_SET "default" 0.0;
+			 target: "bg";
+			 target: "elm.text";
+			 target: "elm.text.end";
+			 target: "elm.text.sub";
+			 target: "elm.text.sub.end";
+		  }
+		  program { name: "disabled";
+			 signal: "elm,state,disabled";
+			 source: "elm";
+			 action: STATE_SET "disabled" 0.0;
+			 target: "bg";
+			 target: "elm.text";
+			 target: "elm.text.end";
+			 target: "elm.text.sub";
+			 target: "elm.text.sub.end";
+		  }
+	   }
+	}
+#endif
 }

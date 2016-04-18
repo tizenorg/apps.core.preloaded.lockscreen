@@ -28,7 +28,7 @@ group {
 		}
 		style {
 			name: "time_style_contextual";
-			base: "style=far_shadow,bottom shadow_color=#00000033 font=SamsungNeoNum-3T:style=Regular color=#FFFFFF font_size=28 align=center wrap=none";
+			base: "style=far_shadow,bottom shadow_color=#00000033 font=SamsungNeoNum-3T:style=Regular color=#FFFFFF font_size=30 align=center wrap=none";
 		}
 	}
 	name: "swipe-lock";
@@ -134,7 +134,7 @@ group {
 				align: 0.5 0.5;
 				visible: 0;
 				fixed: 0 0;
-				rel1 { relative: 1.0 1.0; to_x: "padding.left"; to_y: "padding.top"; }
+				rel1 { relative: 1.0 1.0; to_x: "padding.left"; to_y: "padding.top"; offset: 0 45; }
 				rel2 { relative: 0.0 1.0; to_x: "padding.right"; to_y: "padding.top"; }
 				text {
 					style: "time_style_contextual";
@@ -310,7 +310,7 @@ group {
 			description {
 				state: "default" 0.0;
 				align: 0 0;
-				rel1 { relative: 0.0 1.0; to_x: "bg"; to_y: "txt.timedate"; }
+				rel1 { relative: 0.0 1.0; to_x: "bg"; to_y: "txt.timedate"; offset: 0 15; }
 				rel2 { relative: 1.0 (INDICATOR_HEIGHT+CONTEXTUAL_INFO_HEIGHT)/WIN_HEIGHT; to: "bg"; }
 			}
 			description {
