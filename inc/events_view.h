@@ -35,11 +35,6 @@
 #define SIGNAL_CLOSE_BUTTON_CLICKED "btn,close,clicked"
 
 /**
- * @brief Smart signal emitted when notification is being selected.
- */
-#define SIGNAL_CAMERA_SELECTED "notification,item,selected"
-
-/**
  * @brief Creates camera view object.
  * @note parent should be elementary widget.
  */
