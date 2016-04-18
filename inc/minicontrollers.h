@@ -22,7 +22,7 @@
 /**
  * @brief Event fired when minicontroller changes.
  */
-extern int LOCKSCREEN_EVENT_MINICONTROLLER_CHANGED;
+extern int LOCKSCREEN_EVENT_MINICONTROLLERS_CHANGED;
 
 /**
  * @brief Initialize minicontroller support
@@ -34,9 +34,19 @@ int lockscreen_minicontrollers_init(void);
  */
 void lockscreen_minicontrollers_shutdown(void);
 
-Evas_Object *lockscreen_minicontrollers_active_minicontroller_get(Evas_Object *parent);
+/**
+ * @brief Creates minicontroller for name and parent
+ */
+Evas_Object *lockscreen_minicontrollers_minicontroller_create(const char *name, Evas_Object *parent);
 
-bool lockscreen_minicontrollers_is_active(void);
+/**
+ * @brief Gets all minicontroller names targeted for lockscreen
+ *
+ * @note list should be free with eina_list_free
+ * @note data contains const char *
+ * @note list data should not be free
+ */
+Eina_List *lockscreen_minicontrollers_list_get(void);
 
 #endif
 

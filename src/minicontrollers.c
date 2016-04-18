@@ -16,30 +16,62 @@
 
 #include <minicontrol-viewer.h>
 #include <Ecore.h>
+#include <Eina.h>
 
 #include "log.h"
 #include "minicontrollers.h"
 
-static const char *active_minicontroller;
-static int init_count, width, height;
-int LOCKSCREEN_EVENT_MINICONTROLLER_CHANGED;
+typedef struct {
+	const char *name;
+	int width, height;
+} minicontroller_info_t;
+
+static Eina_List *active_minicontroller;
+int LOCKSCREEN_EVENT_MINICONTROLLERS_CHANGED, init_count;
+
+static int _lockscreen_minicontroller_search(const void *data1, const void *data2);
+
+static minicontroller_info_t *_minicontroller_create(const char *name, int w, int h)
+{
+	minicontroller_info_t *ret = calloc(1, sizeof(minicontroller_info_t));
+
+	ret->name = eina_stringshare_add(name);
+	ret->width = w;
+	ret->height = h;
+
+	return ret;
+}
+
+static void _minicontroller_destroy(minicontroller_info_t *info)
+{
+	eina_stringshare_del(info->name);
+	free(info);
+}
 
 static void _minicontroller_start_handle(const char *name, int w, int h)
 {
-	if (!active_minicontroller && strstr(name, "LOCKSCREEN]")) {
-		active_minicontroller = eina_stringshare_add(name);
-		width = w;
-		height = h;
-		ecore_event_add(LOCKSCREEN_EVENT_MINICONTROLLER_CHANGED, NULL, NULL, NULL);
+	/** FIXME Since minicontroller API do not allow to filter minicontroller
+	 * targeted for lockscreen we just asume that interesting minicontrollers
+	 * has proper suffix in its name */
+	if (name && strstr(name, "LOCKSCREEN]")) {
+		minicontroller_info_t *info = eina_list_search_unsorted(active_minicontroller, _lockscreen_minicontroller_search, name);
+		if (!name) {
+			info = _minicontroller_create(name, w, h);
+			active_minicontroller = eina_list_append(active_minicontroller, info);
+			ecore_event_add(LOCKSCREEN_EVENT_MINICONTROLLERS_CHANGED, NULL, NULL, NULL);
+		}
 	}
 }
 
 static void _minicontroller_stop_handle(const char *name)
 {
-	if (active_minicontroller && !strcmp(name, active_minicontroller)) {
-		eina_stringshare_del(active_minicontroller);
-		active_minicontroller = NULL;
-		ecore_event_add(LOCKSCREEN_EVENT_MINICONTROLLER_CHANGED, NULL, NULL, NULL);
+	if (name) {
+		minicontroller_info_t *info = eina_list_search_unsorted(active_minicontroller, _lockscreen_minicontroller_search, name);
+		if (info) {
+			active_minicontroller = eina_list_remove(active_minicontroller, info);
+			_minicontroller_destroy(info);
+			ecore_event_add(LOCKSCREEN_EVENT_MINICONTROLLERS_CHANGED, NULL, NULL, NULL);
+		}
 	}
 }
 
@@ -84,7 +116,7 @@ static void _minicontroler_event(minicontrol_event_e event, const char *minicont
 int lockscreen_minicontrollers_init(void)
 {
 	if (!init_count) {
-		LOCKSCREEN_EVENT_MINICONTROLLER_CHANGED = ecore_event_type_new();
+		LOCKSCREEN_EVENT_MINICONTROLLERS_CHANGED = ecore_event_type_new();
 		int ret = minicontrol_viewer_set_event_cb(_minicontroler_event, NULL);
 		if (ret != MINICONTROL_ERROR_NONE) {
 			_E("minicontrol_viewer_set_event_cb failed: %s", get_error_message(ret));
@@ -97,6 +129,7 @@ int lockscreen_minicontrollers_init(void)
 
 void lockscreen_minicontrollers_shutdown(void)
 {
+	minicontroller_info_t *info;
 	if (init_count) {
 		init_count--;
 		if (!init_count) {
@@ -104,22 +137,43 @@ void lockscreen_minicontrollers_shutdown(void)
 			if (ret != MINICONTROL_ERROR_NONE) {
 				_E("minicontrol_viewer_unset_event_cb failed: %s", get_error_message(ret));
 			}
-			eina_stringshare_del(active_minicontroller);
+			EINA_LIST_FREE(active_minicontroller, info) {
+				_minicontroller_destroy(info);
+			}
+			active_minicontroller = NULL;
 		}
 	}
 }
 
-Evas_Object *lockscreen_minicontrollers_active_minicontroller_get(Evas_Object *parent)
+static int _lockscreen_minicontroller_search(const void *data1, const void *data2)
 {
-	if (!active_minicontroller) return NULL;
-	Evas_Object *ret = minicontrol_viewer_add(parent, active_minicontroller);
-	evas_object_size_hint_min_set(ret, width, height);
-	_D("Create minicontroller for %s, (size: %d %d)", active_minicontroller, width, height);
+	const char *name = data1;
+	const minicontroller_info_t *info = data2;
+	return strcmp(name, info->name);
+}
+
+Evas_Object *lockscreen_minicontrollers_minicontroller_create(const char *name, Evas_Object *parent)
+{
+	minicontroller_info_t *info = eina_list_search_unsorted(active_minicontroller, _lockscreen_minicontroller_search, name);
+ 
+	if (!info) {
+		_E("Invalid minicontroller name: %s", name);
+		return NULL;
+	}
+
+	Evas_Object *ret = minicontrol_viewer_add(parent, info->name);
+	evas_object_size_hint_min_set(ret, info->width, info->height);
 	evas_object_show(ret);
 	return ret;
 }
 
-bool lockscreen_minicontrollers_is_active(void)
+Eina_List *lockscreen_minicontrollers_list_get(void)
 {
-	return active_minicontroller ? true : false;
+	Eina_List *ret = NULL, *l;
+	minicontroller_info_t *info;
+
+	EINA_LIST_FOREACH(active_minicontroller, l, info) {
+		ret = eina_list_append(ret, info->name);
+	}
+	return ret;
 }
