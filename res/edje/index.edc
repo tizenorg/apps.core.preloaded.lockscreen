@@ -313,6 +313,7 @@ collections {
 				text.style: "title_style";
 				text.min: 1 1;
 				text.max: 0 1;
+				text.ellipsis: -1;
 			}
 		}
 		textblock { "elm.text.sub"; scale;
@@ -326,6 +327,7 @@ collections {
 				text.style: "content_style";
 				text.min: 1 1;
 				text.max: 0 1;
+				text.ellipsis: -1;
 			}
 		}
 		spacer { "padding.text.date"; scale;
@@ -349,6 +351,7 @@ collections {
 				text.style: "time_style";
 				text.min: 1 1;
 				text.max: 0 1;
+				text.ellipsis: -1;
 			}
 		}
 	}
