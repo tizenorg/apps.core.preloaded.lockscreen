@@ -257,8 +257,7 @@ void lockscreen_main_view_time_set(Evas_Object *view, const char *locale, const 
 		FATAL("No sw.swipe_layout part");
 		return;
 	}
-	char time_buf[PATH_MAX] = {0,};
-	char date_buf[PATH_MAX] = {0,};
+	char buf[PATH_MAX] = {0,};
 	char *str_date, *str_time, *str_meridiem;
 
 	if (!util_time_formatted_time_get(time, locale, timezone, use24hformat, &str_time, &str_meridiem)) {
@@ -273,22 +272,21 @@ void lockscreen_main_view_time_set(Evas_Object *view, const char *locale, const 
 	}
 
 	if (use24hformat) {
-		snprintf(time_buf, sizeof(time_buf), "%s", str_time);
+		snprintf(buf, sizeof(buf), "%s", str_time);
 	} else {
 		if (_is_korea_locale(locale)) {
-			snprintf(time_buf, sizeof(time_buf), "<%s>%s </>%s", "small_font", str_meridiem, str_time);
+			snprintf(buf, sizeof(buf), "<%s>%s </>%s", "small_font", str_meridiem, str_time);
 		} else {
-			snprintf(time_buf, sizeof(time_buf), "%s<%s> %s</>", str_time, "small_font", str_meridiem);
+			snprintf(buf, sizeof(buf), "%s<%s> %s</>", str_time, "small_font", str_meridiem);
 		}
 	}
+	elm_object_part_text_set(swipe_layout, "txt.time", buf);
 
-	snprintf(date_buf, sizeof(time_buf), "<%s>%s</>", "small_font", str_date);
+	snprintf(buf, sizeof(buf), "<%s>%s</>", "small_font", str_date);
+	elm_object_part_text_set(swipe_layout, "txt.date", buf);
 
-	elm_object_part_text_set(swipe_layout, "txt.time", time_buf);
-	elm_object_part_text_set(swipe_layout, "txt.date", str_date);
-
-	snprintf(time_buf, sizeof(time_buf), "%s %s", str_time, str_date);
-	elm_object_part_text_set(swipe_layout, "txt.timedate", time_buf);
+	snprintf(buf, sizeof(buf), "%s %s", str_time, str_date);
+	elm_object_part_text_set(swipe_layout, "txt.timedate", buf);
 
 	free(str_date);
 	free(str_time);
