@@ -31,7 +31,7 @@ Evas_Object *lockscreen_camera_view_create(Evas_Object *parent)
 {
 	Evas_Object *cam_ly = elm_layout_add(parent);
 	if (!elm_layout_file_set(cam_ly, util_get_res_file_path(LOCK_EDJE_FILE), "camera-layout")) {
-		FATAL("elm_layout_file_set failed");
+		FAT("elm_layout_file_set failed");
 		return false;
 	}
 	elm_object_signal_callback_add(cam_ly, "camera,icon,clicked", "camera-layout", _camera_clicked, cam_ly);

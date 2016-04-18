@@ -58,12 +58,12 @@ static void _display_status_changed(device_callback_e type, void *value, void *u
 	switch (state) {
 		case DISPLAY_STATE_NORMAL:
 		case DISPLAY_STATE_SCREEN_DIM:
-			_I("Display on");
+			INF("Display on");
 			_timer_reset();
 			display_off = false;
 		break;
 		case DISPLAY_STATE_SCREEN_OFF:
-			_I("Display off");
+			INF("Display off");
 			display_off = true;
 		break;
 	}

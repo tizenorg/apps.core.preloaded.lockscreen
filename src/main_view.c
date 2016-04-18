@@ -51,7 +51,7 @@ void lockscreen_main_view_part_content_set(Evas_Object *view, const char *part, 
 {
 	Evas_Object *swipe_layout = elm_object_part_content_get(view, "sw.swipe_layout");
 	if (!swipe_layout) {
-		FATAL("No sw.swipe_layout part");
+		FAT("No sw.swipe_layout part");
 		return;
 	}
 	if (!strcmp(PART_EVENTS, part)) {
@@ -64,7 +64,7 @@ Evas_Object *lockscreen_main_view_part_content_unset(Evas_Object *view, const ch
 {
 	Evas_Object *swipe_layout = elm_object_part_content_get(view, "sw.swipe_layout");
 	if (!swipe_layout) {
-		FATAL("No sw.swipe_layout part");
+		FAT("No sw.swipe_layout part");
 		return false;
 	}
 	if (!strcmp(PART_EVENTS, part)) {
@@ -77,7 +77,7 @@ Evas_Object *lockscreen_main_view_part_content_get(Evas_Object *view, const char
 {
 	Evas_Object *swipe_layout = elm_object_part_content_get(view, "sw.swipe_layout");
 	if (!swipe_layout) {
-		FATAL("No sw.swipe_layout part");
+		FAT("No sw.swipe_layout part");
 		return false;
 	}
 	return elm_object_part_content_get(swipe_layout, part);
@@ -93,7 +93,7 @@ Evas_Object *lockscreen_main_view_create(Evas_Object *win)
 {
 	Evas_Object *layout = elm_layout_add(win);
 	if (!elm_layout_file_set(layout, util_get_res_file_path(LOCK_EDJE_FILE), "lockscreen")) {
-		FATAL("Failed to set edje file for main view.");
+		FAT("Failed to set edje file for main view.");
 		return NULL;
 	}
 
@@ -129,7 +129,7 @@ bool lockscreen_main_view_background_set(Evas_Object *view, lockscreen_main_view
 {
 	Evas_Object *bg = elm_object_part_content_get(view, "sw.bg");
 	if (!bg) {
-		FATAL("No sw.bg part");
+		FAT("No sw.bg part");
 		return false;
 	}
 
@@ -154,7 +154,7 @@ void lockscreen_main_view_battery_status_text_set(Evas_Object *view, const char 
 {
 	Evas_Object *swipe_layout = elm_object_part_content_get(view, "sw.swipe_layout");
 	if (!swipe_layout) {
-		FATAL("No sw.swipe_layout part");
+		FAT("No sw.swipe_layout part");
 		return;
 	}
 	if (battery) {
@@ -170,7 +170,7 @@ void lockscreen_main_view_sim_status_text_set(Evas_Object *view, const char *tex
 {
 	Evas_Object *swipe_layout = elm_object_part_content_get(view, "sw.swipe_layout");
 	if (!swipe_layout) {
-		FATAL("No sw.swipe_layout part");
+		FAT("No sw.swipe_layout part");
 		return;
 	}
 	Evas_Object *label = NULL;
@@ -199,7 +199,7 @@ void lockscreen_main_view_sim_status_text_set(Evas_Object *view, const char *tex
 	Evas_Object *label_edje = elm_layout_edje_get(label);
 	tb = (Evas_Object *)edje_object_part_object_get(label_edje, "elm.text");
 	if (!tb) {
-		FATAL("elm.text part not found in edje");
+		FAT("elm.text part not found in edje");
 	}
 
 	evas_object_textblock_size_native_get(tb, &tb_w, NULL);
@@ -220,7 +220,7 @@ static void _layout_unlocked(void *data, Evas_Object *obj, const char *emission,
 {
 	Evas_Object *swipe_layout = elm_object_part_content_get(data, "sw.swipe_layout");
 	if (!swipe_layout) {
-		FATAL("No sw.swipe_layout part");
+		FAT("No sw.swipe_layout part");
 		return;
 	}
 	evas_object_smart_callback_call(data, SIGNAL_UNLOCK_ANIMATION_FINISHED, NULL);
@@ -231,7 +231,7 @@ void lockscreen_main_view_unlock(Evas_Object *view)
 {
 	Evas_Object *swipe_layout = elm_object_part_content_get(view, "sw.swipe_layout");
 	if (!swipe_layout) {
-		FATAL("No sw.swipe_layout part");
+		FAT("No sw.swipe_layout part");
 		return;
 	}
 	elm_object_signal_callback_add(swipe_layout, "unlock,anim,end", "swipe-layout", _layout_unlocked, view);
@@ -254,7 +254,7 @@ void lockscreen_main_view_time_set(Evas_Object *view, const char *locale, const 
 {
 	Evas_Object *swipe_layout = elm_object_part_content_get(view, "sw.swipe_layout");
 	if (!swipe_layout) {
-		FATAL("No sw.swipe_layout part");
+		FAT("No sw.swipe_layout part");
 		return;
 	}
 	char buf[PATH_MAX] = {0,};

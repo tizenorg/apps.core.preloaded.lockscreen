@@ -31,7 +31,7 @@ Evas_Object *lockscreen_events_view_create(Evas_Object *parent)
 {
 	Evas_Object *layout = elm_layout_add(parent);
 	if (!elm_layout_file_set(layout, util_get_res_file_path(LOCK_EDJE_FILE), "contextual-event")) {
-		FATAL("elm_layout_file_set failed for contextual-event");
+		FAT("elm_layout_file_set failed for contextual-event");
 		evas_object_del(layout);
 		return NULL;
 	}

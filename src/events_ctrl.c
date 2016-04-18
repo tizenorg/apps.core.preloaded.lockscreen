@@ -157,7 +157,7 @@ static void _lockscreen_events_ctrl_events_load()
 
 	Evas_Object *genlist = lockscreen_events_genlist_get(lockscreen_main_view_part_content_get(main_view, PART_EVENTS));
 	if (!genlist) {
-		FATAL("lockscreen_events_genlist_get failed");
+		FAT("lockscreen_events_genlist_get failed");
 		return;
 	}
 
@@ -201,12 +201,12 @@ static Eina_Bool _lockscreen_events_ctrl_events_changed(void *data, int event, v
 int lockscreen_events_ctrl_init(Evas_Object *mv)
 {
 	if (lockscreen_events_init()) {
-		FATAL("lockscreen_events_init failed.");
+		FAT("lockscreen_events_init failed.");
 		return 1;
 	}
 
 	if (lockscreen_time_format_init()) {
-		FATAL("lockscreen_time_format_init failed.");
+		FAT("lockscreen_time_format_init failed.");
 		lockscreen_events_shutdown();
 	}
 

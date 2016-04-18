@@ -75,21 +75,21 @@ int lockscreen_main_ctrl_init(void)
 {
 	win = lockscreen_window_create();
 	if (!win)
-		FATAL("elm_win_add failed.");
+		FAT("elm_win_add failed.");
 
 	view = lockscreen_main_view_create(win);
 	if (!view)
-		FATAL("lockscreen_main_view_create failed.");
+		FAT("lockscreen_main_view_create failed.");
 
 	if (lockscreen_background_init()) {
-		FATAL("lockscreen_background_init failed. Background changes will not be available");
+		FAT("lockscreen_background_init failed. Background changes will not be available");
 	} else {
 		if (!lockscreen_main_view_background_set(view, LOCKSCREEN_BACKGROUND_TYPE_DEFAULT, lockscreen_background_file_get()))
-			FATAL("lockscreen_main_view_background_image_set failed");
+			FAT("lockscreen_main_view_background_image_set failed");
 	}
 
 	if (lockscreen_display_init()) {
-		FATAL("lockscreen_display_init failed. Display on/off changes will not be available.");
+		FAT("lockscreen_display_init failed. Display on/off changes will not be available.");
 	} else {
 		evas_object_smart_callback_add(win, SIGNAL_TOUCH_STARTED, _lockcscreen_main_ctrl_win_touch_start_cb, NULL);
 		evas_object_smart_callback_add(win, SIGNAL_TOUCH_ENDED, _lockcscreen_main_ctrl_win_touch_end_cb, NULL);
@@ -101,19 +101,19 @@ int lockscreen_main_ctrl_init(void)
 
 	// init subcontrollers
 	if (lock_battery_ctrl_init(view))
-		FATAL("lock_battery_ctrl_init failed. Battery information will not be available");
+		FAT("lock_battery_ctrl_init failed. Battery information will not be available");
 
 	if (lockscreen_camera_ctrl_init(view))
-		FATAL("lockscreen_camera_ctrl_init failed. Camera quickshot will not be available");
+		FAT("lockscreen_camera_ctrl_init failed. Camera quickshot will not be available");
 
 	if (lockscreen_time_format_ctrl_init(view))
-		FATAL("lockscreen_time_format_ctrl_init failed. Time format changes will not be available");
+		FAT("lockscreen_time_format_ctrl_init failed. Time format changes will not be available");
 
 	if (lockscreen_sim_ctrl_init(view))
-		FATAL("lockscreen_sim_ctrl_init failed. Sim PLMN updates will not be available");
+		FAT("lockscreen_sim_ctrl_init failed. Sim PLMN updates will not be available");
 
 	if (lockscreen_events_ctrl_init(view))
-		FATAL("lockscreen_events_ctrl_init failed. Lockscreen events will not be displayed");
+		FAT("lockscreen_events_ctrl_init failed. Lockscreen events will not be displayed");
 
 	return 0;
 }

@@ -55,7 +55,7 @@ const char *util_get_file_path(enum app_subdir dir, const char *relative)
 		prefix = app_get_external_shared_data_path();
 		break;
 	default:
-		FATAL("Not handled directory type.");
+		FAT("Not handled directory type.");
 		return NULL;
 	}
 	size_t res = eina_file_path_join(buf, sizeof(buf), prefix, relative);
@@ -86,7 +86,7 @@ void util_feedback_tap_play(void)
 	if (!init) {
 		int ret = feedback_initialize();
 		if (ret != FEEDBACK_ERROR_NONE) {
-			FATAL("feedback_initialize failed.");
+			FAT("feedback_initialize failed.");
 		}
 		init = 1;
 	}

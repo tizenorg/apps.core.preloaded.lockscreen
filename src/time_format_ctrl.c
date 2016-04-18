@@ -72,22 +72,22 @@ static Eina_Bool _display_status_changed(void *data, int event, void *event_info
 int lockscreen_time_format_ctrl_init(Evas_Object *view)
 {
 	if (lockscreen_display_init()) {
-		FATAL("lockscreen_display_init failed");
+		FAT("lockscreen_display_init failed");
 		return 1;
 	}
 
 	if (lockscreen_time_format_init()) {
 		lockscreen_display_shutdown();
-		FATAL("lockscreen_time_format_init failed");
+		FAT("lockscreen_time_format_init failed");
 		return 1;
 	}
 
 	handler = ecore_event_handler_add(LOCKSCREEN_EVENT_TIME_FORMAT_CHANGED, _time_changed, NULL);
 	if (!handler)
-		FATAL("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_TIME_FORMAT_CHANGED event");
+		FAT("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_TIME_FORMAT_CHANGED event");
 	display_handler = ecore_event_handler_add(LOCKSCREEN_EVENT_DISPLAY_STATUS_CHANGED, _display_status_changed, NULL);
 	if (!display_handler)
-		FATAL("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_LCD_STATUS_CHANGED event");
+		FAT("ecore_event_handler_add failed on LOCKSCREEN_DATA_MODEL_EVENT_LCD_STATUS_CHANGED event");
 	main_view = view;
 	update_timer = ecore_timer_add(60.0, _timer_cb, NULL);
 	_time_update();

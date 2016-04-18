@@ -60,7 +60,7 @@ int lockscreen_camera_ctrl_init(Evas_Object *view)
 
 	handler = ecore_event_handler_add(LOCKSCREEN_EVENT_CAMERA_STATUS_CHANGED, _cam_status_changed, NULL);
 	if (!handler)
-		FATAL("ecore_event_handler_add failed on LOCKSCREEN_EVENT_BATTERY_CHANGED event");
+		FAT("ecore_event_handler_add failed on LOCKSCREEN_EVENT_BATTERY_CHANGED event");
 	main_view = view;
 	_camera_view_update();
 

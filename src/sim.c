@@ -87,14 +87,14 @@ static char *_sim_state_text_for_sim_get(telephony_h handle)
 		case TELEPHONY_NETWORK_NAME_OPTION_SPN:
 			spn = _sim_spn_get(handle);
 			if (spn != NULL && spn[0] != 0) {
-				_I("PLMN/SPN - Sim %p using SPN: %s", handle, spn);
+				INF("PLMN/SPN - Sim %p using SPN: %s", handle, spn);
 				snprintf(buf, sizeof(buf), "%s", spn);
 			}
 			break;
 		case TELEPHONY_NETWORK_NAME_OPTION_NETWORK:
 			plmn = _sim_plmn_get(handle);
 			if (plmn != NULL && plmn[0] != 0) {
-				_I("PLMN/SPN - Sim %p using PLMN: %s", handle, plmn);
+				INF("PLMN/SPN - Sim %p using PLMN: %s", handle, plmn);
 				snprintf(buf, sizeof(buf), "%s", plmn);
 			}
 			break;
@@ -102,13 +102,13 @@ static char *_sim_state_text_for_sim_get(telephony_h handle)
 			spn = _sim_spn_get(handle);
 			plmn = _sim_plmn_get(handle);
 			if (spn != NULL && spn[0] != 0 && plmn != NULL && plmn[0] != 0) {
-				_I("PLMN/SPN - Sim %p using SPN: %s, PLMN: %s", handle, spn, plmn);
+				INF("PLMN/SPN - Sim %p using SPN: %s, PLMN: %s", handle, spn, plmn);
 				snprintf(buf, sizeof(buf), "%s - %s", plmn, spn);
 			} else if (spn != NULL && spn[0] != 0) {
-				_I("PLMN/SPN - Sim %p using SPN: %s", handle, spn);
+				INF("PLMN/SPN - Sim %p using SPN: %s", handle, spn);
 				snprintf(buf, sizeof(buf), "%s", spn);
 			} else if (plmn != NULL && plmn[0] != 0) {
-				_I("PLMN/SPN - Sim %p using PLMN: %s", handle, plmn);
+				INF("PLMN/SPN - Sim %p using PLMN: %s", handle, plmn);
 				snprintf(buf, sizeof(buf), "%s", plmn);
 			}
 			break;
@@ -116,7 +116,7 @@ static char *_sim_state_text_for_sim_get(telephony_h handle)
 			ERR("Invalid name option[%d]", name_option);
 			plmn = _sim_plmn_get(handle);
 			if (plmn != NULL && plmn[0] != 0) {
-				_I("PLMN/SPN - Sim %p using PLMN: %s", handle, plmn);
+				INF("PLMN/SPN - Sim %p using PLMN: %s", handle, plmn);
 				snprintf(buf, sizeof(buf), "%s", plmn);
 			}
 			break;
