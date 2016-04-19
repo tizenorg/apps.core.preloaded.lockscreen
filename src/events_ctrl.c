@@ -147,7 +147,6 @@ static int _lockscreen_events_ctrl_sort(const void *data1, const void *data2)
 
 static void _lockscreen_events_ctrl_item_selected(void *data, Evas_Object *obj, void *info)
 {
-	ERR("Launching event...");
 	lockscreen_event_t *event = data;
 	lockscreen_event_launch(event);
 }

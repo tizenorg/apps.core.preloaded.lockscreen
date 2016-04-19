@@ -21,6 +21,7 @@
 #include <Ecore.h>
 
 #include "log.h"
+#include "lockscreen.h"
 #include "events.h"
 #include "minicontrollers.h"
 
@@ -268,6 +269,20 @@ void lockscreen_events_shutdown(void)
 	}
 }
 
+static void _app_control_reply_cb(app_control_h request, app_control_h reply, app_control_result_e result, void *user_data)
+{
+	switch (result) {
+		case APP_CONTROL_RESULT_APP_STARTED:
+		case APP_CONTROL_RESULT_SUCCEEDED:
+			DBG("Application launch succcessed.");
+			break;
+		case APP_CONTROL_RESULT_FAILED:
+		case APP_CONTROL_RESULT_CANCELED:
+			DBG("Application launch failed.");
+			break;
+	}
+}
+
 bool lockscreen_event_launch(lockscreen_event_t *event)
 {
 	app_control_h service = NULL;
@@ -288,7 +303,9 @@ bool lockscreen_event_launch(lockscreen_event_t *event)
 		return false;
 	}
 
-	ret = app_control_send_launch_request(service, NULL, NULL);
+	INF("Launching event for package: %s", event->package);
+
+	ret = app_control_send_launch_request(service, _app_control_reply_cb, NULL);
 	if (ret != APP_CONTROL_ERROR_NONE) {
 		ERR("app_control_send_launch_request failed: %s", get_error_message(ret));
 		app_control_destroy(service);
