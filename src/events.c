@@ -43,6 +43,7 @@ struct lockscreen_event {
 	bundle *service_handle;
 	time_t time;
 	char *package;
+	notification_h noti;
 };
 
 static bool _notification_accept(notification_h noti)
@@ -64,6 +65,7 @@ static void _lockscreen_event_destroy(lockscreen_event_t *event)
 	if (event->icon_sub_path) free(event->icon_sub_path);
 	if (event->package) free(event->package);
 	if (event->service_handle) bundle_free(event->service_handle);
+	if (event->noti) notification_free(event->noti);
 
 	free(event);
 }
@@ -144,6 +146,13 @@ static lockscreen_event_t *_lockscreen_event_notification_create(notification_h 
 
 	if (event->service_handle) {
 		event->service_handle = bundle_dup(event->service_handle);
+	}
+
+	ret = notification_clone(noti, &event->noti);
+	if (ret != NOTIFICATION_ERROR_NONE) {
+		ERR("notification_clone failed: %s", get_error_message(ret));
+		_lockscreen_event_destroy(event);
+		return NULL;
 	}
 
 	DBG("Title: %s", event->title);
@@ -271,19 +280,23 @@ void lockscreen_events_shutdown(void)
 
 static void _app_control_reply_cb(app_control_h request, app_control_h reply, app_control_result_e result, void *user_data)
 {
+	bool ret = false;
+	Launch_Result_Cb cb = user_data;
+
 	switch (result) {
 		case APP_CONTROL_RESULT_APP_STARTED:
 		case APP_CONTROL_RESULT_SUCCEEDED:
-			DBG("Application launch succcessed.");
+			ret = true;
 			break;
 		case APP_CONTROL_RESULT_FAILED:
 		case APP_CONTROL_RESULT_CANCELED:
-			DBG("Application launch failed.");
+			ret = false;
 			break;
 	}
+	if (cb) cb(ret);
 }
 
-bool lockscreen_event_launch(lockscreen_event_t *event)
+bool lockscreen_event_launch(lockscreen_event_t *event, Launch_Result_Cb cb)
 {
 	app_control_h service = NULL;
 
@@ -305,7 +318,7 @@ bool lockscreen_event_launch(lockscreen_event_t *event)
 
 	INF("Launching event for package: %s", event->package);
 
-	ret = app_control_send_launch_request(service, _app_control_reply_cb, NULL);
+	ret = app_control_send_launch_request(service, _app_control_reply_cb, cb);
 	if (ret != APP_CONTROL_ERROR_NONE) {
 		ERR("app_control_send_launch_request failed: %s", get_error_message(ret));
 		app_control_destroy(service);
@@ -362,4 +375,26 @@ Evas_Object *lockscreen_event_minicontroller_create(lockscreen_event_t *event, E
 	if (event->type != LOCKSCREEN_EVENT_TYPE_MINICONTROLLER)
 		return NULL;
 	return lockscreen_minicontrollers_minicontroller_create(event->minicontroller_name, parent);
+}
+
+static void _lockscreen_event_notifications_delete(void)
+{
+	lockscreen_event_t *event;
+	int ret;
+
+	EINA_LIST_FREE(notifications, event) {
+		ret = notification_delete(event->noti);
+		if (ret != NOTIFICATION_ERROR_NONE) {
+			ERR("notification_delete failed: %s", get_error_message(ret));
+		}
+		_lockscreen_event_destroy(event);
+	}
+	notifications = NULL;
+}
+
+void lockscreen_events_remove(int types)
+{
+	if (types & LOCKSCREEN_EVENT_TYPE_NOTIFICATION) {
+		_lockscreen_event_notifications_delete();
+	}
 }

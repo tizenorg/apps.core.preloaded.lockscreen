@@ -24,6 +24,7 @@
 
 #include <Ecore.h>
 #include <time.h>
+#include <app.h>
 
 static Ecore_Event_Handler *events_handler;
 static Evas_Object *main_view;
@@ -111,18 +112,24 @@ static Evas_Object *_lockscreen_events_view_ctrl_genlist_widget_content_get(void
 	return NULL;
 }
 
+static void _lockscreen_events_view_close_all_button_clicked(void *data, Evas_Object *obj, void *event_info)
+{
+	lockscreen_events_remove(LOCKSCREEN_EVENT_TYPE_NOTIFICATION);
+}
+
 static void _lockscreen_events_ctrl_view_show()
 {
 	Evas_Object *events_view = lockscreen_main_view_part_content_get(main_view, PART_EVENTS);
 	if (!events_view) {
 		events_view = lockscreen_events_view_create(main_view);
+		evas_object_smart_callback_add(events_view, SIGNAL_CLOSE_BUTTON_CLICKED, _lockscreen_events_view_close_all_button_clicked, NULL);
 		lockscreen_main_view_part_content_set(main_view, PART_EVENTS, events_view);
 	}
 }
 
 static void _lockscreen_events_ctrl_view_hide()
 {
-	Evas_Object *events_view = lockscreen_main_view_part_content_get(main_view, PART_EVENTS);
+	Evas_Object *events_view = lockscreen_main_view_part_content_unset(main_view, PART_EVENTS);
 	if (events_view) {
 		evas_object_del(events_view);
 	}
@@ -145,10 +152,25 @@ static int _lockscreen_events_ctrl_sort(const void *data1, const void *data2)
 	return time1 > time2 ? -1 : 1;
 }
 
+static void _lockscreen_events_ctrl_main_view_unlocked(void *data, Evas_Object *obj, void *event_info)
+{
+	ui_app_exit();
+}
+
+static void _lockscreen_events_ctrl_launch_result(bool result)
+{
+	if (result) {
+		evas_object_smart_callback_add(main_view, SIGNAL_UNLOCK_ANIMATION_FINISHED, _lockscreen_events_ctrl_main_view_unlocked, NULL);
+		lockscreen_main_view_unlock(main_view);
+	} else {
+		INF("Failed to launch application");
+	}
+}
+
 static void _lockscreen_events_ctrl_item_selected(void *data, Evas_Object *obj, void *info)
 {
 	lockscreen_event_t *event = data;
-	lockscreen_event_launch(event);
+	lockscreen_event_launch(event, _lockscreen_events_ctrl_launch_result);
 }
 
 static void _lockscreen_events_ctrl_events_load()

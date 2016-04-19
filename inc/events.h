@@ -20,8 +20,8 @@
 #include <time.h>
 
 typedef enum {
-	LOCKSCREEN_EVENT_TYPE_NOTIFICATION,
-	LOCKSCREEN_EVENT_TYPE_MINICONTROLLER
+	LOCKSCREEN_EVENT_TYPE_NOTIFICATION = (1 << 0),
+	LOCKSCREEN_EVENT_TYPE_MINICONTROLLER = (1 << 1)
 } lockscreen_event_type_e;
 
 /**
@@ -72,9 +72,14 @@ const char *lockscreen_event_content_get(const lockscreen_event_t *event);
 time_t lockscreen_event_time_get(const lockscreen_event_t *event);
 
 /**
+ * @brief Result of launch true if launch has successed, false otherwise
+ */
+typedef void (*Launch_Result_Cb)(bool result);
+
+/**
  * @brief Launch application which posted the event
  */
-bool lockscreen_event_launch(lockscreen_event_t *event);
+bool lockscreen_event_launch(lockscreen_event_t *event, Launch_Result_Cb cb);
 
 /**
  * @brief Get event type.
@@ -98,5 +103,10 @@ bool lockscreen_events_exists(void);
  * @brief Creates minicontroller for given event.
  */
 Evas_Object *lockscreen_event_minicontroller_create(lockscreen_event_t *event, Evas_Object *parent);
+
+/**
+ * @brief Clears all notification of given type
+ */
+void lockscreen_events_remove(int types);
 
 #endif

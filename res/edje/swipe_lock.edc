@@ -421,7 +421,7 @@ group {
 			name: "contextual,events,hide";
 			signal: "contextual,events,hide";
 			source: "lockscreen";
-			action: STATE_SET "contextual_event" 0.0;
+			action: STATE_SET "default" 0.0;
 			target: "txt.battery";
 			target: "txt.time";
 			target: "txt.date";
