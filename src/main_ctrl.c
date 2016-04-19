@@ -115,6 +115,8 @@ int lockscreen_main_ctrl_init(void)
 	if (lockscreen_events_ctrl_init(view))
 		FAT("lockscreen_events_ctrl_init failed. Lockscreen events will not be displayed");
 
+	util_feedback_tap_play();
+
 	return 0;
 }
 
