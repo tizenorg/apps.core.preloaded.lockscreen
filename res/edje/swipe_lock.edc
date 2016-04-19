@@ -23,12 +23,12 @@ group {
 		}
 		style {
 			name: "date_style_default";
-			base: "style=far_shadow,bottom shadow_color=#00000033 font=Tizen:style=Regular font_size=40 color=#FFFFFF wrap=none align=left text_class=ATO003";
-			tag: "small_font" "+ font_size=24";
+			base: "style=far_shadow,bottom shadow_color=#00000033 font=Tizen:style=Regular font_size=44 color=#FFFFFF wrap=none align=left text_class=ATO003";
+			tag: "small_font" "+ font_size=32";
 		}
 		style {
 			name: "time_style_contextual";
-			base: "style=far_shadow,bottom shadow_color=#00000033 font=SamsungNeoNum-3T:style=Regular color=#FFFFFF font_size=30 align=center wrap=none";
+			base: "style=far_shadow,bottom shadow_color=#00000033 font=SamsungNeoNum-3T:style=Regular color=#FFFFFF font_size=34 align=center wrap=none";
 		}
 	}
 	name: "swipe-lock";
