@@ -36,6 +36,8 @@ typedef struct lockscreen_event lockscreen_event_t;
 
 /**
  * @brief Initialize event support
+ *
+ * @return: 0 on success, other value on failure.
  */
 int lockscreen_events_init(void);
 

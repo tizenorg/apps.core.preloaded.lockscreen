@@ -24,6 +24,8 @@
  *
  * time format controller manages time updates na @main_view object
  * and apply proper time formating when system default settings changes.
+ *
+ * @return: 0 on success, other value on failure.
  */
 int lockscreen_time_format_ctrl_init(Evas_Object *main_view);
 

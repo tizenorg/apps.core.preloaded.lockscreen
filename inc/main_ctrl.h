@@ -22,6 +22,8 @@
  *
  * Application's root controller. Manages all other controllers.
  * Creates main_view.
+ *
+ * @return: 0 on success, other value on failure.
  */
 int lockscreen_main_ctrl_init();
 

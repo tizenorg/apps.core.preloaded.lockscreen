@@ -26,6 +26,8 @@ extern int LOCKSCREEN_EVENT_MINICONTROLLERS_CHANGED;
 
 /**
  * @brief Initialize minicontroller support
+ *
+ * @return: 0 on success, other value on failure.
  */
 int lockscreen_minicontrollers_init(void);
 

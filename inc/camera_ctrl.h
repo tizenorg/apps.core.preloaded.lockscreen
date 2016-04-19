@@ -24,6 +24,8 @@
  *
  * Camera controller module is responsible for displaying camera icon on
  * @main_view and launching camera application when requested by user.
+ *
+ * @return: 0 on success, other value on failure.
  */
 int lockscreen_camera_ctrl_init(Evas_Object *main_view);
 

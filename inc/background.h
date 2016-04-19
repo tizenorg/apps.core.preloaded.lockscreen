@@ -26,6 +26,8 @@ extern int LOCKSCREEN_EVENT_BACKGROUND_CHANGED;
 
 /**
  * @brief Initializes background notification changes.
+ *
+ * @return: 0 on success, other value on failure.
  */
 int lockscreen_background_init(void);
 
@@ -34,6 +36,7 @@ int lockscreen_background_init(void);
  * If @path parameter is NULL the default background will be used.
  *
  * @note can fire LOCKSCREEN_EVENT_BACKGROUND_CHANGED event
+ * @return: 0 on success, other value on failure.
  */
 int lockscreen_background_file_set(const char *path);
 

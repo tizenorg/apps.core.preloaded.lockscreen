@@ -29,11 +29,15 @@ extern int LOCKSCREEN_EVENT_CAMERA_STATUS_CHANGED;
 
 /**
  * @brief Initializes camera module
+ *
+ * @return: 0 on success, other value on failure.
  */
 int lockscreen_camera_init(void);
 
 /**
  * @brief Activates system-default camera application.
+ *
+ * @return: 0 on success, other value on failure.
  */
 int lockscreen_camera_activate();
 

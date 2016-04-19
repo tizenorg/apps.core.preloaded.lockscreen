@@ -28,6 +28,7 @@ extern int LOCKSCREEN_EVENT_BATTERY_CHANGED;
 
 /**
  * @brief Initializes battery notification changes.
+ * @return: 0 on success, other value on failure.
  */
 int lockscreen_battery_init(void);
 

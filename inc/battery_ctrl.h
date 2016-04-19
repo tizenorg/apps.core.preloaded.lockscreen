@@ -24,6 +24,8 @@
  *
  * Battery controller manages battery information
  * presentation on @main_view object.
+ *
+ * @return: 0 on success, other value on failure.
  */
 int lock_battery_ctrl_init(Evas_Object *main_view);
 

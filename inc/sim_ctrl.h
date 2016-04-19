@@ -24,6 +24,8 @@
  *
  * Sim controller is resposible for updating main_view information when sim PLMN
  * information changes.
+ *
+ * @return: 0 on success, other value on failure.
  */
 int lockscreen_sim_ctrl_init(Evas_Object *main_view);
 

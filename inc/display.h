@@ -26,6 +26,8 @@ extern int LOCKSCREEN_EVENT_DISPLAY_STATUS_CHANGED;
 
 /**
  * @brief Initializes display notifications.
+ *
+ * @return: 0 on success, other value on failure.
  */
 int lockscreen_display_init(void);
 

@@ -24,6 +24,8 @@ extern int LOCKSCREEN_EVENT_SIM_STATUS_CHANGED;
 
 /**
  * @brief Initializes sim information changes
+ *
+ * @return: 0 on success, other value on failure.
  */
 int lockscreen_sim_init();
 
