@@ -16,34 +16,18 @@ SET(PROJECT_PO_DIR "${PROJECT_RESOURCES_DIR}/po")
 
 INCLUDE(FindPkgConfig)
 pkg_check_modules(MENU_PKGS REQUIRED
+	dlog
 	bundle
-	appcore-efl
-	evas
-	edje
 	elementary
-	ecore
-	eina
-	capi-system-sensor
 	capi-system-info
 	capi-system-runtime-info
 	capi-system-system-settings
 	capi-system-device
 	capi-appfw-application
-	capi-appfw-preference
 	capi-appfw-app-manager
-	capi-ui-efl-util
-	aul
-	ail
 	notification
 	minicontrol-viewer
-	minicontrol-monitor
-	ui-gadget-1
 	feedback
-	msg-service
-	efl-extension
-	key-manager
-	accounts-svc
-	deviced
 	tzsh-lockscreen-service
 	capi-base-utils-i18n
 	capi-telephony
