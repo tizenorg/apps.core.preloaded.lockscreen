@@ -53,9 +53,9 @@ static void _minicontroller_start_handle(const char *name, int w, int h)
 	/** FIXME Since minicontroller API do not allow to filter minicontrollers
 	 * targeted for lockscreen we just asume that interesting minicontrollers
 	 * has proper suffix in its name */
-	if (name && strstr(name, "LOCKSCREEN]")) {
+	if (name && strstr(name, "LOCKSCREEN")) {
 		minicontroller_info_t *info = eina_list_search_unsorted(active_minicontroller, _lockscreen_minicontroller_search, name);
-		if (!name) {
+		if (name) {
 			info = _minicontroller_create(name, w, h);
 			active_minicontroller = eina_list_append(active_minicontroller, info);
 			ecore_event_add(LOCKSCREEN_EVENT_MINICONTROLLERS_CHANGED, NULL, NULL, NULL);
@@ -147,8 +147,8 @@ void lockscreen_minicontrollers_shutdown(void)
 
 static int _lockscreen_minicontroller_search(const void *data1, const void *data2)
 {
-	const char *name = data1;
-	const minicontroller_info_t *info = data2;
+	const minicontroller_info_t *info = data1;
+	const char *name = data2;
 	return strcmp(name, info->name);
 }
 

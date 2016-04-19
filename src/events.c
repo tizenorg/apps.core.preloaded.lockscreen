@@ -233,6 +233,10 @@ int lockscreen_events_init(void)
 {
 	if (!init_count) {
 		LOCKSCREEN_EVENT_EVENTS_CHANGED = ecore_event_type_new();
+		if (lockscreen_minicontrollers_init()) {
+			ERR("lockscreen_minicontrollers_init failed");
+			return 1;
+		}
 		int ret = notification_register_detailed_changed_cb(_noti_changed_cb, NULL);
 		if (ret != NOTIFICATION_ERROR_NONE) {
 			ERR("notification_register_detailed_changed_cb failed: %d", get_error_message(ret));
