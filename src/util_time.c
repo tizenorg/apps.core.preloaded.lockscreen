@@ -90,12 +90,12 @@ static i18n_udate_format_h __util_time_date_formatter_get(const char *locale, co
 
 static i18n_udate_format_h __util_time_time_formatter_get(bool use24hformat, const char *locale, const char *timezone_id)
 {
-	char buf[64] = {0,};
+	char buf[128] = { 0, };
 	int status;
-	i18n_uchar u_pattern[64] = {0,};
-	i18n_uchar u_best_pattern[64] = {0,};
+	i18n_uchar u_pattern[128] = { 0, };
+	i18n_uchar u_best_pattern[128] = { 0, };
 	int32_t u_best_pattern_capacity, u_best_pattern_len;
-	char a_best_pattern[128] = {0,};
+	char a_best_pattern[128] = { 0, };
 
 	i18n_udate_format_h formatter = NULL;
 
@@ -106,10 +106,10 @@ static i18n_udate_format_h __util_time_time_formatter_get(bool use24hformat, con
 	}
 
 	if (use24hformat) {
-		snprintf(buf, sizeof(buf)-1, "%s", "HH:mm");
+		snprintf(buf, sizeof(buf), "%s", "HH:mm");
 	} else {
 		/* set time format 12 */
-		snprintf(buf, sizeof(buf)-1, "%s", "h:mm");
+		snprintf(buf, sizeof(buf), "%s", "h:mm");
 	}
 
 	i18n_ustring_copy_ua_n(u_pattern, buf, sizeof(u_pattern));
@@ -126,8 +126,9 @@ static i18n_udate_format_h __util_time_time_formatter_get(bool use24hformat, con
 
 	i18n_ustring_copy_au(a_best_pattern, u_best_pattern);
 
-	char *a_best_pattern_fixed = strtok(a_best_pattern, "a");
-	a_best_pattern_fixed = strtok(a_best_pattern_fixed, " ");
+	char *saveptr= NULL;
+	char *a_best_pattern_fixed = strtok_r(a_best_pattern, "a", &saveptr);
+	a_best_pattern_fixed = strtok_r(a_best_pattern_fixed, " ", &saveptr);
 	if (a_best_pattern_fixed) {
 		i18n_ustring_copy_ua(u_best_pattern, a_best_pattern_fixed);
 	}
